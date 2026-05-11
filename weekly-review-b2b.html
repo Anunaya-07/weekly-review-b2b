@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Weekly Review (HTM) — Apr 27–May 3, 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px 56px;
+        }
+        .deck-wrap {
+            width: min(100%, 1200px);
+            aspect-ratio: 16 / 9;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.06);
+        }
+        .deck { width: 100%; height: 100%; }
+        .slide { display: none; width: 100%; height: 100%; position: absolute; inset: 0; }
+        .slide.active { display: flex; }
+        .cover {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5a 55%, #1d4ed8 100%);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+            padding: 32px 40px;
+        }
+        .cover-eyebrow { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+        .cover h1 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.1; margin-bottom: 8px; }
+        .cover-sub { font-size: .9rem; color: rgba(255,255,255,.6); margin-bottom: 20px; }
+        .cover-period { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 100px; padding: 5px 18px; font-size: .76rem; color: rgba(255,255,255,.75); margin-bottom: 32px; }
+        .cover-metrics { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .cover-metric { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px 20px; text-align: left; min-width: 130px; }
+        .cm-label { font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.4); margin-bottom: 5px; }
+        .cm-val { font-size: 1.35rem; font-weight: 700; }
+        .cm-wow { font-size: .68rem; margin-top: 3px; }
+        .cm-wow.up { color: #4ade80; }
+        .cm-wow.down { color: #f87171; }
+        .cm-wow.flat { color: rgba(255,255,255,.35); }
+        .two-col { flex-direction: row; }
+        .left-panel {
+            width: 30%; flex-shrink: 0; display: flex; flex-direction: column;
+            padding: 28px 22px 24px; color: #fff; position: relative; overflow: hidden;
+        }
+        .left-panel::before {
+            content: ''; position: absolute; bottom: -80px; right: -80px;
+            width: 220px; height: 220px; border-radius: 50%;
+            background: rgba(255,255,255,.05); pointer-events: none;
+        }
+        .slide-num { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; opacity: .45; margin-bottom: 3px; }
+        .slide-ttl { font-size: clamp(.9rem, 1.5vw, 1.1rem); font-weight: 700; line-height: 1.25; margin-bottom: 3px; }
+        .slide-sub { font-size: .67rem; opacity: .55; margin-bottom: 20px; }
+        .hero-num { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-bottom: 3px; }
+        .hero-lbl { font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; opacity: .55; margin-bottom: 8px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 3px; font-size: .72rem; font-weight: 600; border-radius: 100px; padding: 3px 10px; margin-bottom: 10px; }
+        .hero-badge.up   { background: rgba(74,222,128,.22);  color: #4ade80; }
+        .hero-badge.down { background: rgba(248,113,113,.22); color: #f87171; }
+        .hero-badge.flat { background: rgba(255,255,255,.1);  color: rgba(255,255,255,.55); }
+        .infer-box { background: rgba(255,255,255,.09); border-radius: 7px; padding: 9px 11px; margin-bottom: 12px; }
+        .infer-title { font-size: .66rem; text-transform: uppercase; letter-spacing: .1em; opacity: .5; margin-bottom: 7px; font-weight: 700; }
+        .infer-point { display: flex; gap: 6px; margin-bottom: 5px; font-size: .72rem; line-height: 1.45; opacity: .92; }
+        .infer-point:last-child { margin-bottom: 0; }
+        .infer-bullet { flex-shrink: 0; opacity: .7; }
+        .stat-list { display: flex; flex-direction: column; gap: 0; margin-top: auto; }
+        .stat-item { display: flex; justify-content: space-between; align-items: flex-end; padding: 9px 0; border-top: 1px solid rgba(255,255,255,.1); }
+        .si-lbl { font-size: .62rem; text-transform: uppercase; letter-spacing: .07em; opacity: .5; }
+        .si-val { font-size: .88rem; font-weight: 700; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; background: #fff; padding: 20px 24px 14px; }
+        .chart-area { flex: 1; position: relative; min-height: 0; }
+        .insight-row { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9; display: flex; gap: 18px; flex-wrap: wrap; }
+        .ins-chip { display: flex; align-items: center; gap: 5px; font-size: .67rem; color: #64748b; }
+        .ins-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .nav-bar { margin-top: 16px; display: flex; align-items: center; gap: 14px; }
+        .nav-btn { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #fff; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: .95rem; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+        .nav-btn:hover { background: rgba(255,255,255,.2); }
+        .nav-btn:disabled { opacity: .25; cursor: default; }
+        .dots { display: flex; gap: 6px; align-items: center; }
+        .dot-btn { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.28); border: none; cursor: pointer; padding: 0; transition: all .15s; }
+        .dot-btn.active { background: #fff; transform: scale(1.35); }
+        .right-panel h2 { font-size: .9rem; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+        .right-panel .rp-sub { font-size: .66rem; color: #94a3b8; margin-bottom: 10px; }
+        .note-banner { position: absolute; bottom: 10px; right: 14px; font-size: .6rem; color: rgba(255,255,255,.35); pointer-events: none; }
+        @media print { body { background: #fff; padding: 0; } .deck-wrap { box-shadow: none; border-radius: 0; } .nav-bar { display: none; } }
+    </style>
+</head>
+<body>
+<div class="deck-wrap">
+  <div class="deck">
+
+    <!-- Slide 0: Cover -->
+    <div class="slide active cover">
+        <div class="cover-eyebrow">B2B Distribution Platform · Weekly Review</div>
+        <h1>Weekly Business<br>Review</h1>
+        <div class="cover-sub">Trades · GTV · Distributors · Clients</div>
+        <div style="display:inline-block;background:rgba(251,191,36,.18);border:1px solid rgba(251,191,36,.35);border-radius:100px;padding:3px 14px;font-size:.68rem;color:#fbbf24;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">HTM Trades Only</div>
+        <div class="cover-period" id="cover-period"></div>
+        <div id="cover-metrics" class="cover-metrics"></div>
+    </div>
+
+    <!-- Slide 1: Trades & GTV -->
+    <div class="slide two-col" style="--navy:#1e40af;">
+      <div class="left-panel" style="background:#1e40af;">
+        <div class="slide-num">Slide 01</div>
+        <div class="slide-ttl">Trades & GTV</div>
+        <div class="slide-sub">Weekly settled trades & gross transaction value</div>
+        <div class="hero-lbl">GTV last week (₹cr)</div>
+        <div class="hero-num" id="h1-val">—</div>
+        <div class="hero-badge" id="h1-delta">—</div>
+        <div class="infer-box" id="inf-s1"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">Trades last week</span><span class="si-val" id="s1-trades">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Prior week GTV</span><span class="si-val" id="s1-prev">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk avg GTV</span><span class="si-val" id="s1-avg">—</span></div>
+          <div class="stat-item"><span class="si-lbl">MTD vs prior month</span><span class="si-val" id="s1-mtd">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-gtv"></canvas></div>
+        <div class="insight-row" id="ins-s1"></div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Onboarding Pipeline -->
+    <div class="slide two-col" style="--navy:#065f46;">
+      <div class="left-panel" style="background:#065f46;">
+        <div class="slide-num">Slide 02</div>
+        <div class="slide-ttl">Onboarding Pipeline</div>
+        <div class="slide-sub">New distributors & clients added per week</div>
+        <div class="hero-lbl">New distributors (last wk)</div>
+        <div class="hero-num" id="h7-val">—</div>
+        <div class="hero-badge" id="h7-delta">—</div>
+        <div class="infer-box" id="inf-s7"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">New clients last wk</span><span class="si-val" id="s7-clients">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk avg new dist</span><span class="si-val" id="s7-avgd">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Total dist onboarded</span><span class="si-val" id="s7-total">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Never traded (dist)</span><span class="si-val" id="s7-dormant">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-onboarding"></canvas></div>
+        <div class="insight-row" id="ins-s7"></div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Distributor & Client Activity -->
+    <div class="slide two-col" style="--navy:#4c1d95;">
+      <div class="left-panel" style="background:linear-gradient(160deg,#6d28d9,#047857);">
+        <div class="slide-num">Slide 03</div>
+        <div class="slide-ttl">Distributor & Client Activity</div>
+        <div class="slide-sub">Weekly trading activity · new first-time additions</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+          <div style="background:rgba(255,255,255,.12);border-radius:7px;padding:8px 10px;">
+            <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:.09em;opacity:.55;margin-bottom:3px;">Active Dist</div>
+            <div class="hero-num" id="h2-val" style="font-size:clamp(1.3rem,2.8vw,2rem);">—</div>
+            <div class="hero-badge" id="h2-delta" style="font-size:.62rem;padding:2px 7px;margin-top:4px;margin-bottom:0;">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,.12);border-radius:7px;padding:8px 10px;">
+            <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:.09em;opacity:.55;margin-bottom:3px;">Active Clients</div>
+            <div class="hero-num" id="h3-val" style="font-size:clamp(1.3rem,2.8vw,2rem);">—</div>
+            <div class="hero-badge" id="h3-delta" style="font-size:.62rem;padding:2px 7px;margin-top:4px;margin-bottom:0;">—</div>
+          </div>
+        </div>
+        <div class="infer-box" id="inf-s23"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">New dist (last wk)</span><span class="si-val" id="s23-newd">—</span></div>
+          <div class="stat-item"><span class="si-lbl">New clients (last wk)</span><span class="si-val" id="s23-newc">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk avg active dist</span><span class="si-val" id="s23-avgd">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk avg clients</span><span class="si-val" id="s23-avgc">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-dist-cli"></canvas></div>
+        <div class="insight-row" id="ins-s23"></div>
+      </div>
+    </div>
+
+    <!-- Slide 4: GTV by Issuer -->
+    <div class="slide two-col" style="--navy:#4f46e5;">
+      <div class="left-panel" style="background:#4f46e5;">
+        <div class="slide-num">Slide 04</div>
+        <div class="slide-ttl">GTV by Issuer</div>
+        <div class="slide-sub">Top bonds by ₹ invested last week</div>
+        <div class="hero-lbl">Top issuer share (last wk)</div>
+        <div class="hero-num" id="h4-val">—</div>
+        <div class="hero-badge" id="h4-badge">—</div>
+        <div class="infer-box" id="inf-s4"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">#1 WoW pp</span><span class="si-val" id="s4-top1">—</span></div>
+          <div class="stat-item"><span class="si-lbl">#2 WoW pp</span><span class="si-val" id="s4-top2">—</span></div>
+          <div class="stat-item"><span class="si-lbl">#3 WoW pp</span><span class="si-val" id="s4-top3">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-issuer"></canvas></div>
+        <div class="insight-row" id="ins-s4"></div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Avg Order Size -->
+    <div class="slide two-col" style="--navy:#b45309;">
+      <div class="left-panel" style="background:#b45309;">
+        <div class="slide-num">Slide 05</div>
+        <div class="slide-ttl">Average Order Size</div>
+        <div class="slide-sub">Weekly avg trade size · 8-week trend</div>
+        <div class="hero-lbl">Avg order size (last wk)</div>
+        <div class="hero-num" id="h5-val">—</div>
+        <div class="hero-badge" id="h5-delta">—</div>
+        <div class="infer-box" id="inf-s5"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">Prior week</span><span class="si-val" id="s5-prev">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk avg</span><span class="si-val" id="s5-avg">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Dist retention (last wk)</span><span class="si-val" id="s5-ret">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-ordersize"></canvas></div>
+        <div class="insight-row" id="ins-s5"></div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Top Distributor Breakdown -->
+    <div class="slide two-col" style="--navy:#0c4a6e;">
+      <div class="left-panel" style="background:#0c4a6e;">
+        <div class="slide-num">Slide 06</div>
+        <div class="slide-ttl">Top Distributors</div>
+        <div class="slide-sub">Last week · 8-week total GTV contribution</div>
+        <div class="hero-lbl">#1 dist GTV share (last wk)</div>
+        <div class="hero-num" id="h8-val">—</div>
+        <div class="hero-badge" id="h8-badge">—</div>
+        <div class="infer-box" id="inf-s8"></div>
+        <div class="stat-list" id="s8-list"></div>
+      </div>
+      <div class="right-panel" style="gap:0;">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:5px;">This Week · Top 5 by GTV (₹cr)</div>
+        <div style="flex:1;position:relative;min-height:0;">
+          <canvas id="chart-topdist-week"></canvas>
+        </div>
+        <div style="border-top:1px solid #f1f5f9;margin:8px 0 5px;"></div>
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:5px;">8-Week Total · GTV Share</div>
+        <div style="flex:1;position:relative;min-height:0;">
+          <canvas id="chart-topdist-8wk"></canvas>
+        </div>
+        <div class="insight-row" id="ins-s8"></div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Category-wise GTV -->
+    <div class="slide two-col" style="--navy:#5b21b6;">
+      <div class="left-panel" style="background:#5b21b6;">
+        <div class="slide-num">Slide 07</div>
+        <div class="slide-ttl">GTV by Category</div>
+        <div class="slide-sub">Distributor type · weekly GTV mix</div>
+        <div class="hero-lbl">Top category GTV% (last wk)</div>
+        <div class="hero-num" id="h9-val">—</div>
+        <div class="hero-badge" id="h9-badge">—</div>
+        <div class="infer-box" id="inf-s9"></div>
+        <div class="stat-list" id="s9-list"></div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-category"></canvas></div>
+        <div class="insight-row" id="ins-s9"></div>
+      </div>
+    </div>
+
+
+    <!-- ─── FD Engagement Slides ──────────────────────────────────────────────── -->
+
+    <!-- FD Cover -->
+    <div class="slide cover" id="fd-s0">
+      <div class="cover-eyebrow">Yubi Wealth · BtoBtoC</div>
+      <h1>FD Engagement<br>Weekly Review</h1>
+      <div class="cover-sub">Distributor · Investor · Orders</div>
+      <div class="cover-period">Week ending May 03, 2026 &nbsp;·&nbsp; 6-week trailing view (from Mar 23)</div>
+      <div class="cover-metrics">
+        <div class="cover-metric">
+          <div class="cm-label">Onboarded Distributors</div>
+          <div class="cm-val">9</div>
+          <div class="cm-wow up">▲ +80% vs prior wk</div>
+        </div>
+        <div class="cover-metric">
+          <div class="cm-label">Onboarded Investors</div>
+          <div class="cm-val">0</div>
+          <div class="cm-wow down">▼ from 6 peak</div>
+        </div>
+        <div class="cover-metric">
+          <div class="cm-label">Total Orders</div>
+          <div class="cm-val">12</div>
+          <div class="cm-wow down">▼ from 14</div>
+        </div>
+        <div class="cover-metric">
+          <div class="cm-label">FD Booked</div>
+          <div class="cm-val">2</div>
+          <div class="cm-wow flat">= prior wk</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FD Slide 1: Weekly Onboarded Distributors -->
+    <div class="slide two-col" id="fd-s1">
+      <div class="left-panel" style="background:linear-gradient(160deg,#1d4ed8,#3b82f6);">
+        <div class="slide-num">FD · Slide 01</div>
+        <div class="slide-ttl">Weekly Onboarded Distributors</div>
+        <div class="slide-sub">Count of onboarded distributors per week</div>
+        <div class="hero-num">9</div>
+        <div class="hero-lbl">Last week onboarded</div>
+        <div class="hero-badge up">▲ +80% vs prior wk</div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">5</span></div>
+          <div class="stat-item"><span class="si-lbl">Peak (6-wk)</span><span class="si-val">11</span></div>
+          <div class="stat-item"><span class="si-lbl">6-Wk Average</span><span class="si-val">6.7</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <h2>Count of Onboarded Distributors</h2>
+        <div class="rp-sub">vs. start date of the week</div>
+        <div class="chart-area"><canvas id="fd-chart-dist"></canvas></div>
+        <div class="insight-row">
+          <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Rebound after Mar-30 trough</span>
+          <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak 11 on Apr-13</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FD Slide 3: Weekly Onboarded Investors -->
+    <div class="slide two-col" id="fd-s3">
+      <div class="left-panel" style="background:linear-gradient(160deg,#065f46,#10b981);">
+        <div class="slide-num">FD · Slide 02</div>
+        <div class="slide-ttl">Weekly Onboarded Investors</div>
+        <div class="slide-sub">New onboarded distinct clients added per week</div>
+        <div class="hero-num">0</div>
+        <div class="hero-lbl">Last week onboarded</div>
+        <div class="hero-badge down">▼ from 6 (Apr-13 peak)</div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">Peak (6-wk)</span><span class="si-val">6</span></div>
+          <div class="stat-item"><span class="si-lbl">Second peak</span><span class="si-val">5</span></div>
+          <div class="stat-item"><span class="si-lbl">6-Wk Average</span><span class="si-val">2.3</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <h2>Client Onboarding Per Week</h2>
+        <div class="rp-sub">count of new onboarded distinct clients</div>
+        <div class="chart-area"><canvas id="chart-inv"></canvas></div>
+        <div class="insight-row">
+          <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak of 6 on Apr-13</span>
+          <span class="ins-chip"><span class="ins-dot" style="background:#f59e0b"></span>Trailing weeks trending to 0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FD Slide 5: Total Orders vs FD Booked -->
+    <div class="slide two-col" id="fd-s5">
+      <div class="left-panel" style="background:linear-gradient(160deg,#881337,#ec4899);">
+        <div class="slide-num">FD · Slide 03</div>
+        <div class="slide-ttl">Total Orders vs FD Booked</div>
+        <div class="slide-sub">Order volume vs confirmed FD bookings</div>
+        <div class="hero-num">12</div>
+        <div class="hero-lbl">Orders last week</div>
+        <div class="hero-badge down">▼ from 14 peak (Apr-13)</div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">FD Booked (last wk)</span><span class="si-val">2</span></div>
+          <div class="stat-item"><span class="si-lbl">Order→Book Rate</span><span class="si-val">~17%</span></div>
+          <div class="stat-item"><span class="si-lbl">Peak Orders</span><span class="si-val">14</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <h2>Total Orders vs FD Booked</h2>
+        <div class="rp-sub">weekly · by created_at</div>
+        <div class="chart-area"><canvas id="chart-orders"></canvas></div>
+        <div class="insight-row">
+          <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Total orders</span>
+          <span class="ins-chip"><span class="ins-dot" style="background:#ef4444"></span>FD booked</span>
+          <span class="ins-chip"><span class="ins-dot" style="background:#f59e0b"></span>Large gap = booking friction</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="note-banner">FD slides: values read from PDF charts — approximate</div>
+
+<!-- Navigation -->
+<div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+</div>
+
+<script>
+const D = {"generated":"May 08, 2026 · auto","period":"Apr 27–May 3, 2026","trade_filter":"HTM only","labels":["Mar 9–15","Mar 16–22","Mar 23–29","Mar 30–Apr 5","Apr 6–12","Apr 13–19","Apr 20–26","Apr 27–May 3"],"weekly_trades":[235,181,174,130,359,402,429,165],"weekly_gtv_cr":[50.98,15.14,53.05,23.55,53.83,38.55,42.64,26.49],"weekly_unique_dist":[73,60,66,33,78,70,85,65],"weekly_unique_clients":[174,137,127,89,242,272,286,108],"weekly_new_dist":[25,18,15,16,16,31,20,20],"weekly_new_clients":[50,61,38,38,50,56,60,56],"weekly_avg_order_l":[21.69,8.36,30.49,18.12,14.99,9.59,9.94,16.05],"weekly_dist_retention":[null,42.5,43.3,21.2,69.7,41.0,47.1,40.0],"weekly_new_cli_pct":[7.5,18.2,7.9,5.6,7.4,7.0,4.9,15.7],"weekly_repeat_cli_pct":[92.5,81.8,92.1,94.4,92.6,93.0,95.1,84.3],"weekly_fee_l":[31.95,15.15,18.04,3.46,10.36,10.19,9.94,9.4],"kpi_trades":{"this":165,"last":429,"avg":259.4,"delta":-264},"kpi_gtv":{"this":26.49,"last":42.64,"avg":38.0,"delta":-16.15,"suffix":"cr"},"kpi_dist":{"this":65,"last":85,"avg":66.2,"delta":-20},"kpi_clients":{"this":108,"last":286,"avg":179.4,"delta":-178},"kpi_new_dist":{"this":20,"last":20,"avg":20.1,"delta":0},"kpi_new_clients":{"this":56,"last":60,"avg":51.1,"delta":-4},"kpi_avg_order":{"this":16.05,"last":9.94,"avg":16.2,"delta":6.11},"kpi_retention":{"this":40.0,"last":47.1,"avg":43.5,"delta":-7.1,"suffix":"%"},"gtv_by_issuer":[{"name":"KEERTANA FINSERV LIMITED","gtv_this":5.45,"gtv_last":1.01,"pct_this":20.6,"pct_last":2.4,"wow_pp":18.2},{"name":"IIFL SAMASTA FINANCE LIMITED","gtv_this":5.34,"gtv_last":3.71,"pct_this":20.2,"pct_last":8.7,"wow_pp":11.5},{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","gtv_this":2.79,"gtv_last":6.26,"pct_this":10.5,"pct_last":14.7,"wow_pp":-4.2},{"name":"MUTHOOT MCRED LIMITED","gtv_this":2.3,"gtv_last":4.69,"pct_this":8.7,"pct_last":11.0,"wow_pp":-2.3},{"name":"Navi Finserv Limited","gtv_this":2.19,"gtv_last":1.24,"pct_this":8.3,"pct_last":2.9,"wow_pp":5.4}],"week_label_this":"Apr 27–May 3","week_label_prev":"Apr 20–26","gtv_mtd_this":26.46,"gtv_mtd_prev":24.15,"mtd_month_this":"May","mtd_month_prev":"Apr","top5_dist_share":68.0,"total_dist_onboarded":2074,"total_clients_onboarded":3966,"dist_never_traded":1426,"dist_categories":{"wealth_distribution_partner":436,"independent_financial_advisor":1491,"advisory_firm":46,"family_office":84,"obpp":10,"corporate_treasury":5,"chartered_accountant":2},"top5_dist_last_week":[{"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_cr":6.44,"pct":24.3},{"name":"Sunrise Gilts & Securities Private Limited","gtv_cr":3.3,"pct":12.5},{"name":"Ladderup Wealth Management","gtv_cr":2.96,"pct":11.2},{"name":"TRUST SECURITIES SERVICES PRIVATE LIMITED","gtv_cr":2.92,"pct":11.0},{"name":"TRUVANTA WEALTH PRIVATE LIMITED","gtv_cr":2.39,"pct":9.0}],"top5_dist_8wk":[{"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_cr":52.52,"pct":17.3},{"name":"Stable Finserv Private Limited","gtv_cr":35.28,"pct":11.6},{"name":"Ladderup Wealth Management","gtv_cr":23.85,"pct":7.8},{"name":"Ambium Finserve Private Limited","gtv_cr":23.1,"pct":7.6},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_cr":16.96,"pct":5.6}],"top5_8wk_weekly_gtv":{"CORPCARE INVESTECH PRIVATE LIMITED":[19.57,0.0,32.95,0.0,0.0,0.0,0.0,0.0],"Stable Finserv Private Limited":[4.0,0.99,0.0,4.91,4.66,11.8,8.93,0.0],"Ladderup Wealth Management":[0.87,1.92,0.75,0.0,12.67,0.59,4.08,2.96],"Ambium Finserve Private Limited":[0.0,0.0,0.0,9.79,13.31,0.0,0.0,0.0],"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED":[3.56,1.93,0.98,0.98,2.9,5.63,0.98,0.0]},"cat_gtv_last_week":{"WDP":{"gtv_cr":22.19,"pct":83.8,"trades":67,"active_dist":24},"IFA":{"gtv_cr":3.48,"pct":13.1,"trades":56,"active_dist":35},"Advisory":{"gtv_cr":0.32,"pct":1.2,"trades":3,"active_dist":2},"OBPP":{"gtv_cr":0.37,"pct":1.4,"trades":35,"active_dist":2},"Family Office":{"gtv_cr":0.13,"pct":0.5,"trades":4,"active_dist":2}},"cat_gtv_8wk":{"WDP":{"gtv_cr":199.8,"pct":65.7,"trades":454,"active_dist":60},"IFA":{"gtv_cr":28.75,"pct":9.5,"trades":507,"active_dist":148},"Advisory":{"gtv_cr":17.75,"pct":5.8,"trades":37,"active_dist":6},"OBPP":{"gtv_cr":46.25,"pct":15.2,"trades":1030,"active_dist":6},"Family Office":{"gtv_cr":11.59,"pct":3.8,"trades":46,"active_dist":22},"Uncategorized":{"gtv_cr":0.08,"pct":0.0,"trades":1,"active_dist":1}},"cat_weekly_gtv":{"WDP":[32.86,7.02,48.79,15.61,38.12,16.68,18.53,22.19],"IFA":[5.1,5.19,3.21,2.29,3.37,1.61,4.5,3.48],"Advisory":[5.1,1.08,0.42,0.1,5.08,2.89,2.76,0.32],"OBPP":[6.84,1.65,0.51,5.45,6.43,13.63,11.36,0.37],"Family Office":[1.08,0.12,0.11,0.1,0.83,3.75,5.48,0.13],"Uncategorized":[0.0,0.08,0.0,0.0,0.0,0.0,0.0,0.0]},"mod_cat_col_name":"modified category","total_unique_cli_excl_self":[155,128,111,80,225,251,261,89],"self_trade_weekly":[36,22,29,18,46,52,61,48],"dist_cat_weekly":{"WDP":[24,17,21,13,26,27,26,24],"OBPP":[5,3,3,3,4,2,3,2],"IFA":[37,35,37,15,42,33,46,35],"Advisory":[3,2,3,1,3,2,3,2],"Family Office":[4,2,2,1,3,6,7,2],"Uncategorized":[0,1,0,0,0,0,0,0]},"cli_cat_weekly":{"WDP":[35,32,26,14,30,37,32,31],"OBPP":[83,51,51,51,139,173,176,25],"IFA":[49,49,45,22,61,48,66,45],"Advisory":[3,2,3,1,6,7,3,3],"Family Office":[4,2,2,1,6,7,9,4],"Uncategorized":[0,1,0,0,0,0,0,0]}};
+
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot-btn' + (i === 0 ? ' active' : '');
+    b.onclick = () => { current = i; showSlide(i); };
+    dotsEl.appendChild(b);
+});
+function showSlide(n) {
+    slides.forEach(s => s.classList.remove('active'));
+    slides[n].classList.add('active');
+    document.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === n));
+    document.getElementById('btn-prev').disabled = (n === 0);
+    document.getElementById('btn-next').disabled = (n === total - 1);
+}
+function navigate(dir) {
+    current = Math.max(0, Math.min(total - 1, current + dir));
+    showSlide(current);
+}
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+});
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function num(v)  { return v != null ? Math.round(v).toLocaleString() : '—'; }
+function cr(v)   { return v != null ? '₹' + (+v).toFixed(1) + 'cr' : '—'; }
+function pct(v)  { return v != null ? (+v).toFixed(1) + '%' : '—'; }
+function lakh(v) { return v != null ? '₹' + (+v).toFixed(1) + 'L' : '—'; }
+
+function setEl(id, txt) { const e = document.getElementById(id); if (e) e.textContent = txt; }
+
+function setHero(valId, badgeId, valTxt, delta, suf, last) {
+    setEl(valId, valTxt);
+    const el = document.getElementById(badgeId);
+    if (!el) return;
+    if (delta === null || delta === undefined) { el.textContent = '—'; el.className = 'hero-badge flat'; return; }
+    const cls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+    const arr = delta > 0 ? '▲' : delta < 0 ? '▼' : '–';
+    let pctStr = '';
+    if (last != null && last !== 0 && suf !== 'pp') {
+        const pctVal = ((delta / Math.abs(last)) * 100).toFixed(1);
+        const sign = delta >= 0 ? '+' : '';
+        pctStr = ` (${sign}${pctVal}%)`;
+    }
+    el.textContent = arr + ' ' + Math.abs(delta) + (suf || '') + pctStr + ' WoW';
+    el.className = 'hero-badge ' + cls;
+}
+
+function insights(id, chips) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = chips.map(c =>
+        `<div class="ins-chip"><span class="ins-dot" style="background:${c.color}"></span>${c.txt}</div>`
+    ).join('');
+}
+
+
+function setInfer(id, points) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '<div class="infer-title">Key Takeaway</div>' +
+        points.map(p => `<div class="infer-point"><span class="infer-bullet">›</span><span>${p}</span></div>`).join('');
+}
+
+const BLUE   = '#3b82f6';
+const VIOLET = '#8b5cf6';
+const GREEN  = '#10b981';
+const AMBER  = '#f59e0b';
+const ROSE   = '#ec4899';
+const TEAL   = '#14b8a6';
+const INDIGO = '#6366f1';
+const ORANGE = '#f97316';
+const GREY   = '#94a3b8';
+
+function mkOpts(extra) {
+    return {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { font: { size: 9 }, boxWidth: 9, padding: 10 } },
+            tooltip: { mode: 'index', intersect: false },
+        },
+        scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 8 }, maxRotation: 30 } },
+            y: { grid: { color: '#f8fafc' }, ticks: { font: { size: 8 } }, beginAtZero: true },
+            ...(extra || {}),
+        },
+    };
+}
+const Y2     = { y2: { position: 'right', grid: { display: false }, ticks: { font: { size: 8 } } } };
+const Y2_PCT = { y2: { position: 'right', grid: { display: false }, ticks: { font: { size: 8 }, callback: v => v + '%' }, suggestedMin: 0 } };
+
+function mkChart(id, datasets, extra) {
+    new Chart(document.getElementById(id), { data: { labels: D.labels, datasets }, options: mkOpts(extra) });
+}
+function bar(label, data, color, stack) {
+    return { type: 'bar', label, data, backgroundColor: color + 'bb', borderColor: color, borderWidth: 1, borderRadius: 3, ...(stack ? { stack } : {}) };
+}
+function line(label, data, color, yAxisID) {
+    return { type: 'line', label, data, borderColor: color, backgroundColor: 'transparent', pointRadius: 3, pointHoverRadius: 5, tension: .35, ...(yAxisID ? { yAxisID } : {}) };
+}
+
+// ── Cover ─────────────────────────────────────────────────────────────────────
+document.getElementById('cover-period').textContent =
+    D.period + ' · ' + (D.trade_filter || '') + ' · Generated ' + D.generated;
+
+(function() {
+    const items = [
+        { lbl: 'GTV',             val: cr(D.kpi_gtv.this),          wow: D.kpi_gtv.delta,          suf: 'cr', last: D.kpi_gtv.last      },
+        { lbl: 'Trades',          val: num(D.kpi_trades.this),       wow: D.kpi_trades.delta,       suf: '',   last: D.kpi_trades.last    },
+        { lbl: 'Active Dist',     val: num(D.kpi_dist.this),         wow: D.kpi_dist.delta,         suf: '',   last: D.kpi_dist.last      },
+        { lbl: 'Active Clients',  val: num(D.kpi_clients.this),      wow: D.kpi_clients.delta,      suf: '',   last: D.kpi_clients.last   },
+        { lbl: 'New Dist',        val: num(D.kpi_new_dist.this),     wow: D.kpi_new_dist.delta,     suf: '',   last: D.kpi_new_dist.last  },
+    ];
+    document.getElementById('cover-metrics').innerHTML = items.map(it => {
+        let ww = '';
+        if (it.wow !== null && it.wow !== undefined) {
+            const cls = it.wow >= 0 ? 'up' : 'down';
+            const a   = it.wow >= 0 ? '▲' : '▼';
+            let pctStr = '';
+            if (it.last != null && it.last !== 0) {
+                const pctVal = ((it.wow / Math.abs(it.last)) * 100).toFixed(1);
+                const sign = it.wow >= 0 ? '+' : '';
+                pctStr = ` (${sign}${pctVal}%)`;
+            }
+            ww = `<div class="cm-wow ${cls}">${a} ${Math.abs(it.wow)}${it.suf}${pctStr} WoW</div>`;
+        }
+        return `<div class="cover-metric"><div class="cm-label">${it.lbl}</div><div class="cm-val">${it.val}</div>${ww}</div>`;
+    }).join('');
+})();
+
+// ── Slide 1: Trades & GTV ────────────────────────────────────────────────────
+setHero('h1-val', 'h1-delta', cr(D.kpi_gtv.this), D.kpi_gtv.delta, 'cr', D.kpi_gtv.last);
+setEl('s1-trades', num(D.kpi_trades.this));
+setEl('s1-prev',   cr(D.kpi_gtv.last));
+setEl('s1-avg',    cr(D.kpi_gtv.avg));
+setEl('s1-mtd',    '₹' + D.gtv_mtd_this + 'cr (' + D.mtd_month_this + ')');
+mkChart('chart-gtv', [
+    bar('Weekly Trades', D.weekly_trades, BLUE),
+    line('GTV (₹cr)', D.weekly_gtv_cr, AMBER, 'y2'),
+], Y2);
+insights('ins-s1', [
+    { color: AMBER, txt: `GTV last wk: ${cr(D.kpi_gtv.this)} · prior: ${cr(D.kpi_gtv.last)} · 8-wk avg: ${cr(D.kpi_gtv.avg)}` },
+    { color: BLUE,  txt: `${D.mtd_month_this} MTD: ₹${D.gtv_mtd_this}cr · Trades last wk: ${num(D.kpi_trades.this)} · avg: ${num(D.kpi_trades.avg)}` },
+]);
+
+
+
+// ── Slide 4: GTV by Issuer ───────────────────────────────────────────────────
+(function() {
+    const INDIGO_LITE = '#a5b4fc';
+    const issuers = D.gtv_by_issuer || [];
+    if (!issuers.length) { setEl('h4-val', 'N/A'); return; }
+    const top3 = issuers.slice(0, 3);
+    const top  = top3[0];
+    setEl('h4-val', top.pct_this + '%');
+    const badge = document.getElementById('h4-badge');
+    if (badge) {
+        const arr = top.wow_pp > 0 ? '▲' : top.wow_pp < 0 ? '▼' : '→';
+        badge.textContent = top.name.slice(0,20) + '… · ' + arr + ' ' + Math.abs(top.wow_pp) + 'pp WoW';
+        badge.className = top.wow_pp > 0 ? 'hero-badge up' : top.wow_pp < 0 ? 'hero-badge down' : 'hero-badge flat';
+    }
+    top3.forEach((x, i) => {
+        const nm  = x.name.length > 16 ? x.name.slice(0, 15) + '…' : x.name;
+        const sgn = x.wow_pp >= 0 ? '+' : '';
+        setEl(`s4-top${i+1}`, `${nm}: ${sgn}${x.wow_pp}pp`);
+    });
+    new Chart(document.getElementById('chart-issuer'), {
+        type: 'bar',
+        data: {
+            labels: top3.map(x => x.name.length > 22 ? x.name.slice(0,21)+'…' : x.name),
+            datasets: [
+                { label: `This Wk [${D.week_label_this}] (₹cr)`, data: top3.map(x => x.gtv_this), backgroundColor: INDIGO+'cc', borderColor: INDIGO, borderWidth: 1, borderRadius: 3 },
+                { label: `Prior Wk [${D.week_label_prev}] (₹cr)`, data: top3.map(x => x.gtv_last), backgroundColor: INDIGO_LITE+'bb', borderColor: INDIGO_LITE, borderWidth: 1, borderRadius: 3 },
+            ],
+        },
+        options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { font: { size: 9 }, boxWidth: 9, padding: 10 } }, tooltip: { callbacks: { label: ctx => { const x = top3[ctx.dataIndex]; const p = ctx.datasetIndex === 0 ? x.pct_this : x.pct_last; return `₹${ctx.raw}cr (${p}% of week GTV)`; } } } },
+            scales: { x: { grid: { color: '#f8fafc' }, ticks: { font: { size: 8 } }, beginAtZero: true }, y: { grid: { display: false }, ticks: { font: { size: 8 } } } },
+        },
+    });
+    insights('ins-s4', issuers.slice(0,3).map(x => {
+        const sgn = x.wow_pp >= 0 ? '+' : '';
+        return { color: INDIGO, txt: `${x.name.slice(0,30)}: ₹${x.gtv_this}cr (${sgn}${x.wow_pp}pp share WoW)` };
+    }));
+})();
+
+
+
+// ── Slide 7: Onboarding Pipeline ─────────────────────────────────────────────
+setHero('h7-val', 'h7-delta', num(D.kpi_new_dist.this), D.kpi_new_dist.delta, '', D.kpi_new_dist.last);
+setEl('s7-clients', num(D.kpi_new_clients.this));
+setEl('s7-avgd',    num(D.kpi_new_dist.avg));
+setEl('s7-total',   D.total_dist_onboarded.toLocaleString());
+setEl('s7-dormant', D.dist_never_traded.toLocaleString() + ' (' + (D.dist_never_traded/D.total_dist_onboarded*100).toFixed(0) + '%)');
+mkChart('chart-onboarding', [
+    bar('New Distributors', D.weekly_new_dist,    TEAL),
+    bar('New Clients',      D.weekly_new_clients, BLUE),
+], null);
+insights('ins-s7', [
+    { color: TEAL, txt: `New dist last wk: ${num(D.kpi_new_dist.this)} · prior: ${num(D.kpi_new_dist.last)} · 8-wk avg: ${num(D.kpi_new_dist.avg)}/wk` },
+    { color: BLUE, txt: `${D.dist_never_traded.toLocaleString()} distributors onboarded but never traded — activation gap opportunity` },
+]);
+
+
+
+// ── Slide 3: Distributor & Client Activity ────────────────────────────────────
+setHero('h2-val', 'h2-delta', num(D.kpi_dist.this), D.kpi_dist.delta, '', D.kpi_dist.last);
+setHero('h3-val', 'h3-delta', num(D.kpi_clients.this), D.kpi_clients.delta, '', D.kpi_clients.last);
+setEl('s23-newd', num(D.kpi_new_dist.this));
+setEl('s23-newc', num(D.kpi_new_clients.this));
+setEl('s23-avgd', num(D.kpi_dist.avg));
+setEl('s23-avgc', num(D.kpi_clients.avg));
+mkChart('chart-dist-cli', [
+    bar('Unique Active Dist',    D.weekly_unique_dist,    VIOLET),
+    bar('Unique Active Clients', D.weekly_unique_clients, GREEN),
+], null);
+insights('ins-s23', [
+    { color: VIOLET, txt: `Active dist: ${num(D.kpi_dist.this)} last wk vs ${num(D.kpi_dist.last)} prior · avg: ${num(D.kpi_dist.avg)}/wk` },
+    { color: GREEN,  txt: `Active clients: ${num(D.kpi_clients.this)} last wk vs ${num(D.kpi_clients.last)} prior · avg: ${num(D.kpi_clients.avg)}/wk` },
+]);
+
+// ── Slide 5: Avg Order Size ───────────────────────────────────────────────────
+setHero('h5-val', 'h5-delta', lakh(D.kpi_avg_order.this), D.kpi_avg_order.delta, 'L', D.kpi_avg_order.last);
+setEl('s5-prev', lakh(D.kpi_avg_order.last));
+setEl('s5-avg',  lakh(D.kpi_avg_order.avg));
+setEl('s5-ret',  pct(D.weekly_dist_retention[7]));
+mkChart('chart-ordersize', [
+    bar('Avg Order Size (₹L)', D.weekly_avg_order_l, ORANGE),
+], null);
+insights('ins-s5', [
+    { color: ORANGE, txt: `Avg order size last wk: ${lakh(D.kpi_avg_order.this)} · prior: ${lakh(D.kpi_avg_order.last)} · 8-wk avg: ${lakh(D.kpi_avg_order.avg)}` },
+    { color: VIOLET, txt: `Dist WoW retention: ${pct(D.weekly_dist_retention[7])} last wk (% of prior-week traders who traded again)` },
+]);
+
+// ── Inferences ───────────────────────────────────────────────────────────────
+setInfer('inf-s1', [
+    D.kpi_gtv.delta > 0
+        ? `GTV grew ₹${D.kpi_gtv.delta}cr WoW despite fewer trades — avg order size jumped to ${lakh(D.kpi_avg_order.this)}, indicating a shift toward fewer but larger deals`
+        : `GTV fell ₹${Math.abs(D.kpi_gtv.delta)}cr WoW — investigate if this is seasonal or driven by distributor drop-off`,
+    D.kpi_trades.delta < -50
+        ? `Trade count dropped ${Math.abs(D.kpi_trades.delta)} WoW — this could reflect a short week, public holidays, or reduced distributor activity`
+        : `Trade volume is holding steady near the 8-wk avg of ${num(D.kpi_trades.avg)}/wk`,
+]);
+
+
+
+setInfer('inf-s4', (function() {
+    const top = (D.gtv_by_issuer || [])[0] || {};
+    const top2 = (D.gtv_by_issuer || [])[1] || {};
+    return [
+        top.wow_pp > 10
+            ? `${top.name ? top.name.split(' ').slice(0,2).join(' ') : 'Top issuer'} surged +${top.wow_pp}pp in share WoW — understand if this is intentional inventory push or distributor preference`
+            : `Issuer mix is relatively stable WoW — no single bond dominating unexpectedly`,
+        top2.wow_pp < -5
+            ? `${top2.name ? top2.name.split(' ')[0] : '#2 issuer'} share fell ${top2.wow_pp}pp — check if inventory availability or yield competitiveness changed`
+            : `Top 3 issuers together account for ${((D.gtv_by_issuer||[]).slice(0,3).reduce((s,x)=>s+x.pct_this,0)).toFixed(0)}% of GTV — healthy diversification signal`,
+    ];
+})());
+setInfer('inf-s23', [
+    D.kpi_dist.delta < 0
+        ? `Active distributor count fell ${Math.abs(D.kpi_dist.delta)} WoW — ${Math.abs(D.kpi_dist.delta)} distributors who traded last week did not return`
+        : `Distributor activity is up — ${D.kpi_dist.delta} more distributors active than prior week`,
+    D.kpi_clients.delta < -50
+        ? `Unique trading clients dropped sharply by ${Math.abs(D.kpi_clients.delta)} — most important signal to investigate`
+        : `Client trading activity stable relative to prior week — ${num(D.kpi_new_clients.this)} new first-time traders added`,
+]);
+
+setInfer('inf-s5', [
+    D.kpi_avg_order.this > D.kpi_avg_order.avg
+        ? `Avg order size (${lakh(D.kpi_avg_order.this)}) is above the 8-wk avg (${lakh(D.kpi_avg_order.avg)}) — a few large-ticket trades are inflating GTV; verify trade mix quality`
+        : `Avg order size (${lakh(D.kpi_avg_order.this)}) is below the 8-wk avg (${lakh(D.kpi_avg_order.avg)}) — ticket size compression may be reducing GTV efficiency`,
+    `Distributor retention at ${pct(D.weekly_dist_retention[7])} — improving this metric is the highest-leverage retention action for consistent GTV`,
+]);
+
+
+
+
+setInfer('inf-s7', [
+    `Onboarding pipeline is steady at ~${num(D.kpi_new_dist.avg)} new distributors/week, but activation remains the bottleneck — not acquisition`,
+    `With ${D.dist_never_traded.toLocaleString()} dormant distributors, a targeted re-engagement campaign could unlock significant GTV without adding a single new signup`,
+]);
+
+// ── Slide 8: Top Distributor Breakdown ───────────────────────────────────────
+(function() {
+    const top5lw = D.top5_dist_last_week || [];
+    const top5_8 = D.top5_dist_8wk || [];
+    if (!top5lw.length) return;
+    const top = top5lw[0];
+
+    // Hero: #1 dist share last week
+    setEl('h8-val', top.pct + '%');
+    const badge8 = document.getElementById('h8-badge');
+    if (badge8) {
+        badge8.textContent = (top.name.length > 22 ? top.name.slice(0,21)+'…' : top.name) + ' · ₹' + top.gtv_cr + 'cr';
+        badge8.className = 'hero-badge up';
+    }
+
+    // Stat list: top 5 last week
+    const listEl = document.getElementById('s8-list');
+    if (listEl) {
+        listEl.innerHTML = top5lw.map(d => {
+            const shortName = d.name.length > 20 ? d.name.slice(0,18)+'…' : d.name;
+            return `<div class="stat-item"><span class="si-lbl">${shortName}</span><span class="si-val">₹${d.gtv_cr}cr (${d.pct}%)</span></div>`;
+        }).join('');
+    }
+
+    const chartColors = [BLUE, VIOLET, GREEN, AMBER, ROSE];
+
+    // Chart A: horizontal bar — this week's top 5 by GTV
+    new Chart(document.getElementById('chart-topdist-week'), {
+        type: 'bar',
+        data: {
+            labels: top5lw.map(d => d.name.length > 24 ? d.name.slice(0,22)+'…' : d.name),
+            datasets: [{
+                data: top5lw.map(d => d.gtv_cr),
+                backgroundColor: chartColors.map(c => c + 'cc'),
+                borderColor: chartColors,
+                borderWidth: 1, borderRadius: 4,
+            }],
+        },
+        options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: ctx => `₹${ctx.raw}cr · ${top5lw[ctx.dataIndex].pct}% of week GTV` } },
+            },
+            scales: {
+                x: { grid: { color: '#f8fafc' }, ticks: { font: { size: 8 } }, beginAtZero: true },
+                y: { grid: { display: false }, ticks: { font: { size: 8 } } },
+            },
+        },
+    });
+
+    // Chart B: doughnut — 8-week total GTV share
+    new Chart(document.getElementById('chart-topdist-8wk'), {
+        type: 'doughnut',
+        data: {
+            labels: top5_8.map(d => d.name.length > 22 ? d.name.slice(0,20)+'…' : d.name),
+            datasets: [{
+                data: top5_8.map(d => d.gtv_cr),
+                backgroundColor: chartColors.map(c => c + 'cc'),
+                borderColor: '#fff', borderWidth: 2,
+            }],
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { font: { size: 8 }, boxWidth: 8, padding: 5 } },
+                tooltip: { callbacks: { label: ctx => `₹${ctx.raw}cr (${top5_8[ctx.dataIndex].pct}% of 8wk GTV)` } },
+            },
+        },
+    });
+
+    // Insight row
+    insights('ins-s8', [
+        { color: BLUE,   txt: `This wk #1: ${top.name.slice(0,28)} — ₹${top.gtv_cr}cr (${top.pct}%)` },
+        { color: VIOLET, txt: `8-wk #1: ${top5_8[0].name.slice(0,28)} — ₹${top5_8[0].gtv_cr}cr (${top5_8[0].pct}% of total 8wk GTV)` },
+    ]);
+
+    // Inferences
+    const top8wk = top5_8[0];
+    const top8wk2 = top5_8[1];
+    setInfer('inf-s8', [
+        `${top.name.split(' ')[0]} led last week with ${top.pct}% share (₹${top.gtv_cr}cr) — top 5 together drove ${D.top5_dist_share}% of weekly GTV`,
+        top8wk.name !== top.name
+            ? `8-week leader is ${top8wk.name.split(' ')[0]} (${top8wk.pct}% of 8wk GTV) vs ${top.name.split(' ')[0]} who led last week — watch for churn signals in ${top8wk.name.split(' ')[0]}`
+            : `${top8wk.name.split(' ')[0]} is both the last-week and 8-week #1 — retention of this partner is the single highest-priority relationship`,
+    ]);
+})();
+
+// ── Slide 9: Category-wise GTV ───────────────────────────────────────────────
+(function() {
+    const catLW = D.cat_gtv_last_week || {};
+    const cat8w = D.cat_gtv_8wk || {};
+    const catWkly = D.cat_weekly_gtv || {};
+
+    // Sorted categories by last-week GTV (excl Uncategorized for hero)
+    const knownCats = Object.keys(catLW).filter(c => c !== 'Uncategorized').sort((a,b) => (catLW[b]?.gtv_cr||0) - (catLW[a]?.gtv_cr||0));
+    const topCat = knownCats[0] || 'WDP';
+    const topData = catLW[topCat] || {};
+
+    setEl('h9-val', topData.pct + '%');
+    const badge9 = document.getElementById('h9-badge');
+    if (badge9) {
+        badge9.textContent = topCat + ' · ₹' + (topData.gtv_cr || 0) + 'cr last wk';
+        badge9.className = 'hero-badge up';
+    }
+
+    // Stat list: top 4 known categories by 8wk GTV
+    const knownCats8 = Object.keys(cat8w).filter(c => c !== 'Uncategorized').sort((a,b) => (cat8w[b]?.gtv_cr||0) - (cat8w[a]?.gtv_cr||0));
+    const listEl9 = document.getElementById('s9-list');
+    if (listEl9) {
+        listEl9.innerHTML = knownCats8.slice(0,5).map(c => {
+            const d8 = cat8w[c] || {};
+            const dlw = catLW[c] || {};
+            return `<div class="stat-item"><span class="si-lbl">${c} (8wk: ${d8.pct}%)</span><span class="si-val">₹${d8.gtv_cr}cr · ${d8.active_dist} dist</span></div>`;
+        }).join('');
+    }
+
+    // Chart: stacked bar of weekly GTV by category
+    const catOrder = ['WDP','IFA','Corp Treasury','OBPP','Advisory','Family Office'];
+    const catColors = [BLUE, GREEN, AMBER, VIOLET, ROSE, TEAL];
+    const catDatasets = catOrder.filter(c => catWkly[c]).map((c, i) =>
+        bar(c, catWkly[c], catColors[i], 'cstk')
+    );
+    mkChart('chart-category', catDatasets, null);
+
+    // Insight row
+    insights('ins-s9', [
+        { color: BLUE,  txt: `WDP drove ${(cat8w['WDP']||{}).pct||0}% of 8wk GTV (₹${(cat8w['WDP']||{}).gtv_cr||0}cr) via ${(cat8w['WDP']||{}).active_dist||0} dist — highest GTV-per-dist segment` },
+        { color: GREEN, txt: `IFA segment: ${(cat8w['IFA']||{}).active_dist||0} active distributors, ₹${(cat8w['IFA']||{}).gtv_cr||0}cr 8wk GTV — largest dist count, lower avg ticket` },
+    ]);
+
+    // Inferences
+    const wdpLW = (catLW['WDP']||{}).gtv_cr || 0;
+    const ifaLW = (catLW['IFA']||{}).gtv_cr || 0;
+    const wdpDist8 = (cat8w['WDP']||{}).active_dist || 0;
+    const ifaDist8 = (cat8w['IFA']||{}).active_dist || 0;
+    setInfer('inf-s9', [
+        `WDP (Wealth Distribution Partners) generated ₹${wdpLW}cr last week from just ${(catLW['WDP']||{}).active_dist||0} distributors — highest revenue-per-distributor segment; prioritise deepening these relationships`,
+        `IFA segment has ${ifaDist8} distributors active 8-wk but only ${(catLW['IFA']||{}).active_dist||0} traded last week — large activation gap; a structured IFA engagement programme could significantly lift GTV`,
+    ]);
+})();
+
+// ── FD Engagement Charts ──────────────────────────────────────────────────────
+(function() {
+    const fdLabels = ['Mar 23','Mar 30','Apr 06','Apr 13','Apr 20','Apr 27'];
+    const fdGrid   = '#f1f5f9';
+    function fdLineOpts(maxY) {
+        return {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: fdGrid }, ticks: { font: { size: 10 } } },
+                y: { beginAtZero: true, suggestedMax: maxY, grid: { color: fdGrid }, ticks: { stepSize: 2 } },
+            },
+            elements: {
+                line: { tension: 0.3, borderWidth: 2.5 },
+                point: { radius: 3.5, hoverRadius: 5, borderWidth: 2, backgroundColor: '#fff' },
+            },
+        };
+    }
+    function fdLineOptsLegend(maxY) {
+        const o = fdLineOpts(maxY);
+        o.plugins.legend = { labels: { font: { size: 10 }, boxWidth: 10 } };
+        return o;
+    }
+
+    // FD Slide 1: Distributors
+    new Chart(document.getElementById('fd-chart-dist'), {
+        type: 'line',
+        data: { labels: fdLabels, datasets: [{ data: [6,1,8,11,5,9], borderColor: '#3b82f6', pointBorderColor: '#3b82f6' }] },
+        options: fdLineOpts(12),
+    });
+
+    // FD Slide 3: Investors
+    new Chart(document.getElementById('chart-inv'), {
+        type: 'line',
+        data: { labels: fdLabels, datasets: [{ data: [1,1,5,6,1,0], borderColor: '#10b981', pointBorderColor: '#10b981' }] },
+        options: fdLineOpts(8),
+    });
+
+    // FD Slide 5: Orders vs FD Booked
+    new Chart(document.getElementById('chart-orders'), {
+        type: 'line',
+        data: { labels: fdLabels, datasets: [
+            { label: 'Total Orders', data: [5,1,1,14,12,0], borderColor: '#3b82f6', pointBorderColor: '#3b82f6' },
+            { label: 'FD Booked',    data: [0,0,0,1,2,0],   borderColor: '#ef4444', pointBorderColor: '#ef4444' },
+        ]},
+        options: fdLineOptsLegend(16),
+    });
+})();
+
+showSlide(0);
+</script>
+</body>
+</html>
