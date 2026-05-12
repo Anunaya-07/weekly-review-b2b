@@ -294,145 +294,12 @@
         <div class="slide-sub">New onboardings per week · distributor &amp; client</div>
         <div class="stat-list" id="cat-ob-stats"></div>
       </div>
-      <div class="right-panel" style="gap:0;">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">New Distributors Onboarded by Category · 8-week</div>
-        <div style="flex:1.2;position:relative;min-height:0;"><canvas id="chart-cat-ob-dist"></canvas></div>
-        <div style="border-top:1px solid #f1f5f9;margin:6px 0 4px;"></div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">New Clients Onboarded by Category · 8-week</div>
-        <div style="flex:1;position:relative;min-height:0;"><canvas id="chart-cat-ob-cli"></canvas></div>
+      <div class="right-panel" style="gap:4px;overflow:hidden;" id="cat-ob-right">
         <div class="insight-row" id="ins-cat-ob"></div>
       </div>
     </div>
 
-    <!-- Category Top Distributors -->
-    <div class="slide" id="cat-top-dist" style="flex-direction:column;background:#0f172a;padding:28px 32px;">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-        <span class="slide-num" style="position:static;margin:0;opacity:.7;">Cat · Top Dist</span>
-        <span style="color:#f1f5f9;font-size:1.25rem;font-weight:700;letter-spacing:-.01em;">Top GTV Distributors by Category</span>
-        <span style="color:#64748b;font-size:.65rem;margin-left:auto;" id="cat-td-period">—</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;overflow:hidden;" id="cat-top-dist-grid"></div>
-    </div>
-
-    <!-- Category Deep Dive: WDP -->
-    <div class="slide two-col" id="cat-wdp">
-      <div class="left-panel" style="background:#0c4a6e;">
-        <div class="slide-num">Cat · Slide 01</div>
-        <div class="slide-ttl">Wealth Distribution Partners</div>
-        <div class="slide-sub">Weekly metrics · 8-week trend · WDP</div>
-        <div class="hero-lbl">GTV last week (₹cr)</div>
-        <div class="hero-num" id="cat-wdp-gtvnum">—</div>
-        <div class="hero-badge" id="cat-wdp-badge">—</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Trades last wk / prev</span><span class="si-val" id="cat-wdp-trades">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active dist / 8wk avg</span><span class="si-val" id="cat-wdp-dist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active clients / 8wk avg</span><span class="si-val" id="cat-wdp-clients">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Avg order / 8wk avg</span><span class="si-val" id="cat-wdp-avgord">—</span></div>
-          <div class="stat-item"><span class="si-lbl">8-wk total GTV</span><span class="si-val" id="cat-wdp-8wkgtv">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New dist onboarded (last wk)</span><span class="si-val" id="cat-wdp-newdist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New clients onboarded (last wk)</span><span class="si-val" id="cat-wdp-newcli">—</span></div>
-        </div>
-        <div class="infer-box" id="inf-cat-wdp"></div>
-      </div>
-      <div class="right-panel" style="gap:0;">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Weekly GTV (₹cr) &amp; Trades · 8-week trend</div>
-        <div style="flex:1.2;position:relative;min-height:0;"><canvas id="chart-cat-wdp-1"></canvas></div>
-        <div style="border-top:1px solid #f1f5f9;margin:6px 0 4px;"></div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Active Distributors &amp; Clients · 8-week trend</div>
-        <div style="flex:1;position:relative;min-height:0;"><canvas id="chart-cat-wdp-2"></canvas></div>
-        <div class="insight-row" id="ins-cat-wdp"></div>
-      </div>
-    </div>
-
-    <!-- Category Deep Dive: IFA -->
-    <div class="slide two-col" id="cat-ifa">
-      <div class="left-panel" style="background:#047857;">
-        <div class="slide-num">Cat · Slide 02</div>
-        <div class="slide-ttl">Independent Financial Advisors</div>
-        <div class="slide-sub">Weekly metrics · 8-week trend · IFA</div>
-        <div class="hero-lbl">GTV last week (₹cr)</div>
-        <div class="hero-num" id="cat-ifa-gtvnum">—</div>
-        <div class="hero-badge" id="cat-ifa-badge">—</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Trades last wk / prev</span><span class="si-val" id="cat-ifa-trades">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active dist / 8wk avg</span><span class="si-val" id="cat-ifa-dist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active clients / 8wk avg</span><span class="si-val" id="cat-ifa-clients">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Avg order / 8wk avg</span><span class="si-val" id="cat-ifa-avgord">—</span></div>
-          <div class="stat-item"><span class="si-lbl">8-wk total GTV</span><span class="si-val" id="cat-ifa-8wkgtv">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New dist onboarded (last wk)</span><span class="si-val" id="cat-ifa-newdist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New clients onboarded (last wk)</span><span class="si-val" id="cat-ifa-newcli">—</span></div>
-        </div>
-        <div class="infer-box" id="inf-cat-ifa"></div>
-      </div>
-      <div class="right-panel" style="gap:0;">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Weekly GTV (₹cr) &amp; Trades · 8-week trend</div>
-        <div style="flex:1.2;position:relative;min-height:0;"><canvas id="chart-cat-ifa-1"></canvas></div>
-        <div style="border-top:1px solid #f1f5f9;margin:6px 0 4px;"></div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Active Distributors &amp; Clients · 8-week trend</div>
-        <div style="flex:1;position:relative;min-height:0;"><canvas id="chart-cat-ifa-2"></canvas></div>
-        <div class="insight-row" id="ins-cat-ifa"></div>
-      </div>
-    </div>
-
-    <!-- Category Deep Dive: OBPP -->
-    <div class="slide two-col" id="cat-obpp">
-      <div class="left-panel" style="background:#7c3aed;">
-        <div class="slide-num">Cat · Slide 03</div>
-        <div class="slide-ttl">Online Bond Platforms</div>
-        <div class="slide-sub">Weekly metrics · 8-week trend · OBPP</div>
-        <div class="hero-lbl">GTV last week (₹cr)</div>
-        <div class="hero-num" id="cat-obpp-gtvnum">—</div>
-        <div class="hero-badge" id="cat-obpp-badge">—</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Trades last wk / prev</span><span class="si-val" id="cat-obpp-trades">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active dist / 8wk avg</span><span class="si-val" id="cat-obpp-dist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active clients / 8wk avg</span><span class="si-val" id="cat-obpp-clients">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Avg order / 8wk avg</span><span class="si-val" id="cat-obpp-avgord">—</span></div>
-          <div class="stat-item"><span class="si-lbl">8-wk total GTV</span><span class="si-val" id="cat-obpp-8wkgtv">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New dist onboarded (last wk)</span><span class="si-val" id="cat-obpp-newdist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New clients onboarded (last wk)</span><span class="si-val" id="cat-obpp-newcli">—</span></div>
-        </div>
-        <div class="infer-box" id="inf-cat-obpp"></div>
-      </div>
-      <div class="right-panel" style="gap:0;">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Weekly GTV (₹cr) &amp; Trades · 8-week trend</div>
-        <div style="flex:1.2;position:relative;min-height:0;"><canvas id="chart-cat-obpp-1"></canvas></div>
-        <div style="border-top:1px solid #f1f5f9;margin:6px 0 4px;"></div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Active Distributors &amp; Clients · 8-week trend</div>
-        <div style="flex:1;position:relative;min-height:0;"><canvas id="chart-cat-obpp-2"></canvas></div>
-        <div class="insight-row" id="ins-cat-obpp"></div>
-      </div>
-    </div>
-
-    <!-- Category Deep Dive: Family Office -->
-    <div class="slide two-col" id="cat-fo">
-      <div class="left-panel" style="background:#be185d;">
-        <div class="slide-num">Cat · Slide 04</div>
-        <div class="slide-ttl">Family Offices</div>
-        <div class="slide-sub">Weekly metrics · 8-week trend · Family Office</div>
-        <div class="hero-lbl">GTV last week (₹cr)</div>
-        <div class="hero-num" id="cat-fo-gtvnum">—</div>
-        <div class="hero-badge" id="cat-fo-badge">—</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Trades last wk / prev</span><span class="si-val" id="cat-fo-trades">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active dist / 8wk avg</span><span class="si-val" id="cat-fo-dist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Active clients / 8wk avg</span><span class="si-val" id="cat-fo-clients">—</span></div>
-          <div class="stat-item"><span class="si-lbl">Avg order / 8wk avg</span><span class="si-val" id="cat-fo-avgord">—</span></div>
-          <div class="stat-item"><span class="si-lbl">8-wk total GTV</span><span class="si-val" id="cat-fo-8wkgtv">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New dist onboarded (last wk)</span><span class="si-val" id="cat-fo-newdist">—</span></div>
-          <div class="stat-item"><span class="si-lbl">New clients onboarded (last wk)</span><span class="si-val" id="cat-fo-newcli">—</span></div>
-        </div>
-        <div class="infer-box" id="inf-cat-fo"></div>
-      </div>
-      <div class="right-panel" style="gap:0;">
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Weekly GTV (₹cr) &amp; Trades · 8-week trend</div>
-        <div style="flex:1.2;position:relative;min-height:0;"><canvas id="chart-cat-fo-1"></canvas></div>
-        <div style="border-top:1px solid #f1f5f9;margin:6px 0 4px;"></div>
-        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:4px;">Active Distributors &amp; Clients · 8-week trend</div>
-        <div style="flex:1;position:relative;min-height:0;"><canvas id="chart-cat-fo-2"></canvas></div>
-        <div class="insight-row" id="ins-cat-fo"></div>
-      </div>
-    </div>
+    <!-- Category Deep Dive: per-category slides generated by JS -->
 
 
     <!-- ─── FD Engagement Slides ──────────────────────────────────────────────── -->
@@ -463,58 +330,6 @@
           <div class="cm-label">FD Booked</div>
           <div class="cm-val">2</div>
           <div class="cm-wow flat">= prior wk</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FD Slide 1: Weekly Onboarded Distributors -->
-    <div class="slide two-col" id="fd-s1">
-      <div class="left-panel" style="background:linear-gradient(160deg,#1d4ed8,#3b82f6);">
-        <div class="slide-num">FD · Slide 01</div>
-        <div class="slide-ttl">Weekly Onboarded Distributors</div>
-        <div class="slide-sub">Count of onboarded distributors per week</div>
-        <div class="hero-num">9</div>
-        <div class="hero-lbl">Last week onboarded</div>
-        <div class="hero-badge up">▲ +80% vs prior wk</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">5</span></div>
-          <div class="stat-item"><span class="si-lbl">Peak (6-wk)</span><span class="si-val">11</span></div>
-          <div class="stat-item"><span class="si-lbl">6-Wk Average</span><span class="si-val">6.7</span></div>
-        </div>
-      </div>
-      <div class="right-panel">
-        <h2>Count of Onboarded Distributors</h2>
-        <div class="rp-sub">vs. start date of the week</div>
-        <div class="chart-area"><canvas id="fd-chart-dist"></canvas></div>
-        <div class="insight-row">
-          <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Rebound after Mar-30 trough</span>
-          <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak 11 on Apr-13</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- FD Slide 3: Weekly Onboarded Investors -->
-    <div class="slide two-col" id="fd-s3">
-      <div class="left-panel" style="background:linear-gradient(160deg,#065f46,#10b981);">
-        <div class="slide-num">FD · Slide 02</div>
-        <div class="slide-ttl">Weekly Onboarded Investors</div>
-        <div class="slide-sub">New onboarded distinct clients added per week</div>
-        <div class="hero-num">0</div>
-        <div class="hero-lbl">Last week onboarded</div>
-        <div class="hero-badge down">▼ from 6 (Apr-13 peak)</div>
-        <div class="stat-list">
-          <div class="stat-item"><span class="si-lbl">Peak (6-wk)</span><span class="si-val">6</span></div>
-          <div class="stat-item"><span class="si-lbl">Second peak</span><span class="si-val">5</span></div>
-          <div class="stat-item"><span class="si-lbl">6-Wk Average</span><span class="si-val">2.3</span></div>
-        </div>
-      </div>
-      <div class="right-panel">
-        <h2>Client Onboarding Per Week</h2>
-        <div class="rp-sub">count of new onboarded distinct clients</div>
-        <div class="chart-area"><canvas id="chart-inv"></canvas></div>
-        <div class="insight-row">
-          <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak of 6 on Apr-13</span>
-          <span class="ins-chip"><span class="ins-dot" style="background:#f59e0b"></span>Trailing weeks trending to 0</span>
         </div>
       </div>
     </div>
@@ -558,18 +373,24 @@
 </div>
 
 <script>
-const D = {"generated":"May 12, 2026 · 15:15","period":"May 4–10, 2026","trade_filter":"HTM only","labels":["Mar 16–22","Mar 23–29","Mar 30–Apr 5","Apr 6–12","Apr 13–19","Apr 20–26","Apr 27–May 3","May 4–10"],"weekly_trades":[181,174,130,359,402,429,165,235],"weekly_gtv_cr":[15.14,53.05,23.55,53.83,38.55,42.64,26.49,44.0],"weekly_unique_dist":[60,66,33,78,70,85,65,86],"weekly_unique_clients":[137,127,89,242,272,286,108,157],"weekly_new_dist":[18,15,16,16,31,20,20,22],"weekly_new_clients":[61,38,38,50,56,60,56,78],"weekly_avg_order_l":[8.36,30.49,18.12,14.99,9.59,9.94,16.05,18.72],"weekly_dist_retention":[null,43.3,21.2,69.7,41.0,47.1,40.0,36.9],"weekly_new_cli_pct":[100.0,83.5,80.9,81.4,76.8,73.1,61.1,66.9],"weekly_repeat_cli_pct":[0.0,16.5,19.1,18.6,23.2,26.9,38.9,33.1],"weekly_fee_l":[15.15,18.04,3.46,10.36,10.19,9.94,9.4,11.8],"kpi_trades":{"this":235,"last":165,"avg":259.4,"delta":70},"kpi_gtv":{"this":44.0,"last":26.49,"avg":37.2,"delta":17.51,"suffix":"cr"},"kpi_dist":{"this":86,"last":65,"avg":67.9,"delta":21},"kpi_clients":{"this":157,"last":108,"avg":177.2,"delta":49},"kpi_new_dist":{"this":22,"last":20,"avg":19.8,"delta":2},"kpi_new_clients":{"this":78,"last":56,"avg":54.6,"delta":22},"kpi_avg_order":{"this":18.72,"last":16.05,"avg":15.8,"delta":2.67},"kpi_retention":{"this":36.9,"last":40.0,"avg":42.7,"delta":-3.1,"suffix":"%"},"gtv_by_issuer":[{"name":"MUFIN GREEN FINANCE LIMITED","gtv_this":14.0,"gtv_last":1.38,"pct_this":31.8,"pct_last":5.2,"wow_pp":26.6},{"name":"INCRED FINANCIAL SERVICES LIMITED","gtv_this":9.67,"gtv_last":0.01,"pct_this":22.0,"pct_last":0.0,"wow_pp":21.9},{"name":"MUTHOOT MCRED LIMITED","gtv_this":5.49,"gtv_last":2.3,"pct_this":12.5,"pct_last":8.7,"wow_pp":3.8},{"name":"Indel Money Limited","gtv_this":2.73,"gtv_last":2.09,"pct_this":6.2,"pct_last":7.9,"wow_pp":-1.7},{"name":"KEERTANA FINSERV LIMITED","gtv_this":2.29,"gtv_last":5.45,"pct_this":5.2,"pct_last":20.6,"wow_pp":-15.4}],"week_label_this":"May 4–10","week_label_prev":"Apr 27–May 3","gtv_mtd_this":44.0,"gtv_mtd_prev":166.69,"mtd_month_this":"May","mtd_month_prev":"Apr","top5_dist_share":66.4,"total_dist_onboarded":2082,"total_clients_onboarded":4004,"dist_never_traded":1433,"dist_categories":{"wealth_distribution_partner":449,"independent_financial_advisor":1532,"family_office":86,"obpp":10,"corporate_treasury":5},"top5_dist_last_week":[{"name":"Ambium Finserve Private Limited","gtv_cr":13.15,"pct":29.9},{"name":"Axis Securities Ltd.","gtv_cr":7.06,"pct":16.1},{"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_cr":4.12,"pct":9.4},{"name":"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED","gtv_cr":2.91,"pct":6.6},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_cr":1.95,"pct":4.4}],"top5_dist_8wk":[{"name":"Ambium Finserve Private Limited","gtv_cr":36.25,"pct":12.2},{"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_cr":32.95,"pct":11.1},{"name":"Stable Finserv Private Limited","gtv_cr":32.79,"pct":11.0},{"name":"Ladderup Wealth Management","gtv_cr":24.78,"pct":8.3},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_cr":15.35,"pct":5.2}],"top5_8wk_weekly_gtv":{"Ambium Finserve Private Limited":[0.0,0.0,9.79,13.31,0.0,0.0,0.0,13.15],"CORPCARE INVESTECH PRIVATE LIMITED":[0.0,32.95,0.0,0.0,0.0,0.0,0.0,0.0],"Stable Finserv Private Limited":[0.99,0.0,4.91,4.66,11.8,8.93,0.0,1.51],"Ladderup Wealth Management":[1.92,0.75,0.0,12.67,0.59,4.08,2.96,1.8],"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED":[1.93,0.98,0.98,2.9,5.63,0.98,0.0,1.95]},"cat_gtv_last_week":{"WDP":{"gtv_cr":35.26,"pct":80.1,"trades":96,"active_dist":31},"OBPP":{"gtv_cr":4.8,"pct":10.9,"trades":51,"active_dist":4},"IFA":{"gtv_cr":3.57,"pct":8.1,"trades":80,"active_dist":45},"Family Office":{"gtv_cr":0.37,"pct":0.8,"trades":8,"active_dist":6}},"cat_gtv_8wk":{"WDP":{"gtv_cr":214.84,"pct":72.3,"trades":519,"active_dist":67},"OBPP":{"gtv_cr":44.21,"pct":14.9,"trades":977,"active_dist":5},"IFA":{"gtv_cr":27.31,"pct":9.2,"trades":530,"active_dist":152},"Family Office":{"gtv_cr":10.88,"pct":3.7,"trades":49,"active_dist":20}},"cat_weekly_gtv":{"Family Office":[0.12,0.11,0.1,0.83,3.75,5.48,0.13,0.37],"IFA":[5.27,3.21,2.29,3.38,1.61,4.5,3.48,3.57],"OBPP":[1.65,0.51,5.45,6.43,13.63,11.36,0.37,4.8],"WDP":[8.1,49.21,15.71,43.19,19.56,21.29,22.51,35.26]},"mod_cat_col_name":"modified category","total_unique_cli_excl_self":[126,110,80,224,250,260,87,140],"self_trade_weekly":[25,31,18,47,53,63,50,58],"dist_cat_weekly":{"Family Office":[2,2,1,3,6,7,2,6],"IFA":[36,37,15,43,34,46,35,45],"OBPP":[3,3,3,4,2,3,2,4],"WDP":[19,24,14,28,28,29,26,31]},"cli_cat_weekly":{"Family Office":[2,2,1,6,7,9,4,8],"IFA":[51,45,22,62,49,66,45,64],"OBPP":[51,51,51,139,173,176,25,42],"WDP":[33,29,15,35,43,35,34,43]},"cat_weekly_trades":{"WDP":[51,45,25,75,80,77,70,96],"IFA":[65,61,29,88,60,91,56,80],"OBPP":[63,66,75,188,247,252,35,51],"Family Office":[2,2,1,8,15,9,4,8]},"cat_weekly_avg_order":{"WDP":[15.89,109.37,62.83,57.58,24.46,27.65,32.16,36.72],"IFA":[8.1,5.27,7.89,3.84,2.68,4.95,6.21,4.46],"OBPP":[2.62,0.77,7.27,3.42,5.52,4.51,1.06,9.42],"Family Office":[5.87,5.39,10.11,10.32,24.98,60.92,3.21,4.62]},"cat_kpis":{"WDP":{"kpi_gtv":{"this":35.26,"last":22.51,"avg":26.9,"delta":12.75,"suffix":"cr"},"kpi_trades":{"this":96,"last":70,"avg":64.9,"delta":26},"kpi_dist":{"this":31,"last":26,"avg":24.9,"delta":5},"kpi_clients":{"this":43,"last":34,"avg":33.4,"delta":9},"kpi_avg_order":{"this":36.72,"last":32.16,"avg":45.8,"delta":4.56}},"IFA":{"kpi_gtv":{"this":3.57,"last":3.48,"avg":3.4,"delta":0.09,"suffix":"cr"},"kpi_trades":{"this":80,"last":56,"avg":66.2,"delta":24},"kpi_dist":{"this":45,"last":35,"avg":36.4,"delta":10},"kpi_clients":{"this":64,"last":45,"avg":50.5,"delta":19},"kpi_avg_order":{"this":4.46,"last":6.21,"avg":5.4,"delta":-1.75}},"OBPP":{"kpi_gtv":{"this":4.8,"last":0.37,"avg":5.5,"delta":4.43,"suffix":"cr"},"kpi_trades":{"this":51,"last":35,"avg":122.1,"delta":16},"kpi_dist":{"this":4,"last":2,"avg":3.0,"delta":2},"kpi_clients":{"this":42,"last":25,"avg":88.5,"delta":17},"kpi_avg_order":{"this":9.42,"last":1.06,"avg":4.3,"delta":8.36}},"Family Office":{"kpi_gtv":{"this":0.37,"last":0.13,"avg":1.4,"delta":0.24,"suffix":"cr"},"kpi_trades":{"this":8,"last":4,"avg":6.1,"delta":4},"kpi_dist":{"this":6,"last":2,"avg":3.6,"delta":4},"kpi_clients":{"this":8,"last":4,"avg":4.9,"delta":4},"kpi_avg_order":{"this":4.62,"last":3.21,"avg":15.7,"delta":1.41}}},"cat_top3_dist":{"WDP":[{"name":"Ambium Finserve Private Limited","gtv_cr":13.15,"pct":37.3},{"name":"Axis Securities Ltd.","gtv_cr":7.06,"pct":20.0},{"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_cr":4.12,"pct":11.7}],"IFA":[{"name":"DEEPAK THUKRAL","gtv_cr":0.93,"pct":25.9},{"name":"JHAPAT BAHADUR SINGH","gtv_cr":0.3,"pct":8.4},{"name":"PINAL N SHAH","gtv_cr":0.3,"pct":8.4}],"OBPP":[{"name":"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED","gtv_cr":2.91,"pct":60.6},{"name":"Stable Finserv Private Limited","gtv_cr":1.51,"pct":31.4},{"name":"SUSTVEST BROKING PRIVATE LIMITED","gtv_cr":0.37,"pct":7.6}],"Family Office":[{"name":"HIMANSHU H MODY","gtv_cr":0.1,"pct":27.0},{"name":"ALPA CHETAN TURAKHIA","gtv_cr":0.1,"pct":26.9},{"name":"DARSHIL RAMESH THAKKAR","gtv_cr":0.05,"pct":13.3}]},"cat_weekly_new_dist":{"WDP":[1,1,2,1,4,2,2,2],"IFA":[17,14,13,15,24,16,17,18],"OBPP":[0,0,0,0,0,0,0,0],"Family Office":[0,0,1,0,3,2,1,2]},"cat_weekly_new_cli":{"WDP":[9,6,4,15,12,14,11,17],"IFA":[45,30,26,33,42,41,42,51],"OBPP":[0,0,0,0,0,0,0,0],"Family Office":[4,0,5,0,0,1,2,8]},"cat_kpi_new_dist":{"WDP":{"this":2,"last":2,"avg":1.9,"delta":0},"IFA":{"this":18,"last":17,"avg":16.8,"delta":1},"OBPP":{"this":0,"last":0,"avg":0.0,"delta":0},"Family Office":{"this":2,"last":1,"avg":1.1,"delta":1}},"cat_kpi_new_cli":{"WDP":{"this":17,"last":11,"avg":11.0,"delta":6},"IFA":{"this":51,"last":42,"avg":38.8,"delta":9},"OBPP":{"this":0,"last":0,"avg":0.0,"delta":0},"Family Office":{"this":8,"last":2,"avg":2.5,"delta":6}}};
+const D = {"generated":"May 12, 2026 · 15:15","period":"May 4–10, 2026","trade_filter":"HTM only","labels":["Mar 16–22","Mar 23–29","Mar 30–Apr 5","Apr 6–12","Apr 13–19","Apr 20–26","Apr 27–May 3","May 4–10"],"weekly_trades":[181,174,130,359,402,429,165,235],"weekly_gtv_cr":[15.14,53.05,23.55,53.83,38.55,42.64,26.49,44.0],"weekly_unique_dist":[60,66,33,78,70,85,65,86],"weekly_unique_clients":[137,127,89,242,272,286,108,157],"weekly_new_dist":[18,15,16,16,31,20,20,22],"weekly_new_clients":[61,38,38,50,56,60,56,78],"weekly_avg_order_l":[8.36,30.49,18.12,14.99,9.59,9.94,16.05,18.72],"weekly_dist_retention":[null,43.3,21.2,69.7,41.0,47.1,40.0,36.9],"weekly_new_cli_pct":[100.0,83.5,80.9,81.4,76.8,73.1,61.1,66.9],"weekly_repeat_cli_pct":[0.0,16.5,19.1,18.6,23.2,26.9,38.9,33.1],"weekly_fee_l":[15.15,18.04,3.46,10.36,10.19,9.94,9.4,11.8],"kpi_trades":{"this":235,"last":165,"avg":259.4,"delta":70},"kpi_gtv":{"this":44.0,"last":26.49,"avg":37.2,"delta":17.51,"suffix":"cr"},"kpi_dist":{"this":86,"last":65,"avg":67.9,"delta":21},"kpi_clients":{"this":157,"last":108,"avg":177.2,"delta":49},"kpi_new_dist":{"this":22,"last":20,"avg":19.8,"delta":2},"kpi_new_clients":{"this":78,"last":56,"avg":54.6,"delta":22},"kpi_avg_order":{"this":18.72,"last":16.05,"avg":15.8,"delta":2.67},"kpi_retention":{"this":36.9,"last":40.0,"avg":42.7,"delta":-3.1,"suffix":"%"},"gtv_by_issuer":[{"name":"MUFIN GREEN FINANCE LIMITED","gtv_this":14.0,"gtv_last":1.38,"pct_this":31.8,"pct_last":5.2,"wow_pp":26.6},{"name":"INCRED FINANCIAL SERVICES LIMITED","gtv_this":9.67,"gtv_last":0.01,"pct_this":22.0,"pct_last":0.0,"wow_pp":21.9},{"name":"MUTHOOT MCRED LIMITED","gtv_this":5.49,"gtv_last":2.3,"pct_this":12.5,"pct_last":8.7,"wow_pp":3.8},{"name":"Indel Money Limited","gtv_this":2.73,"gtv_last":2.09,"pct_this":6.2,"pct_last":7.9,"wow_pp":-1.7},{"name":"KEERTANA FINSERV LIMITED","gtv_this":2.29,"gtv_last":5.45,"pct_this":5.2,"pct_last":20.6,"wow_pp":-15.4}],"week_label_this":"May 4–10","week_label_prev":"Apr 27–May 3","gtv_mtd_this":44.0,"gtv_mtd_prev":166.69,"mtd_month_this":"May","mtd_month_prev":"Apr","top5_dist_share":66.4,"total_dist_onboarded":2082,"total_clients_onboarded":4004,"dist_never_traded":1433,"dist_categories":{"wealth_distribution_partner":449,"independent_financial_advisor":1532,"family_office":86,"obpp":10,"corporate_treasury":5},"top5_dist_last_week":[{"name":"Ambium Finserve Private Limited","gtv_cr":13.15,"pct":29.9},{"name":"Axis Securities Ltd.","gtv_cr":7.06,"pct":16.1},{"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_cr":4.12,"pct":9.4},{"name":"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED","gtv_cr":2.91,"pct":6.6},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_cr":1.95,"pct":4.4}],"top5_dist_8wk":[{"name":"Ambium Finserve Private Limited","gtv_cr":36.25,"pct":12.2},{"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_cr":32.95,"pct":11.1},{"name":"Stable Finserv Private Limited","gtv_cr":32.79,"pct":11.0},{"name":"Ladderup Wealth Management","gtv_cr":24.78,"pct":8.3},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_cr":15.35,"pct":5.2}],"top5_8wk_weekly_gtv":{"Ambium Finserve Private Limited":[0.0,0.0,9.79,13.31,0.0,0.0,0.0,13.15],"CORPCARE INVESTECH PRIVATE LIMITED":[0.0,32.95,0.0,0.0,0.0,0.0,0.0,0.0],"Stable Finserv Private Limited":[0.99,0.0,4.91,4.66,11.8,8.93,0.0,1.51],"Ladderup Wealth Management":[1.92,0.75,0.0,12.67,0.59,4.08,2.96,1.8],"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED":[1.93,0.98,0.98,2.9,5.63,0.98,0.0,1.95]},"cat_gtv_last_week":{"WDP":{"gtv_cr":35.26,"pct":80.1,"trades":96,"active_dist":31},"OBPP":{"gtv_cr":4.8,"pct":10.9,"trades":51,"active_dist":4},"IFA":{"gtv_cr":3.57,"pct":8.1,"trades":80,"active_dist":45},"Family Office":{"gtv_cr":0.37,"pct":0.8,"trades":8,"active_dist":6}},"cat_gtv_8wk":{"WDP":{"gtv_cr":214.84,"pct":72.3,"trades":519,"active_dist":67},"OBPP":{"gtv_cr":44.21,"pct":14.9,"trades":977,"active_dist":5},"IFA":{"gtv_cr":27.31,"pct":9.2,"trades":530,"active_dist":152},"Family Office":{"gtv_cr":10.88,"pct":3.7,"trades":49,"active_dist":20}},"cat_weekly_gtv":{"Family Office":[0.12,0.11,0.1,0.83,3.75,5.48,0.13,0.37],"IFA":[5.27,3.21,2.29,3.38,1.61,4.5,3.48,3.57],"OBPP":[1.65,0.51,5.45,6.43,13.63,11.36,0.37,4.8],"WDP":[8.1,49.21,15.71,43.19,19.56,21.29,22.51,35.26]},"mod_cat_col_name":"modified category","total_unique_cli_excl_self":[126,110,80,224,250,260,87,140],"self_trade_weekly":[25,31,18,47,53,63,50,58],"dist_cat_weekly":{"Family Office":[2,2,1,3,6,7,2,6],"IFA":[36,37,15,43,34,46,35,45],"OBPP":[3,3,3,4,2,3,2,4],"WDP":[19,24,14,28,28,29,26,31]},"cli_cat_weekly":{"Family Office":[2,2,1,6,7,9,4,8],"IFA":[51,45,22,62,49,66,45,64],"OBPP":[51,51,51,139,173,176,25,42],"WDP":[33,29,15,35,43,35,34,43]},"cat_weekly_trades":{"WDP":[51,45,25,75,80,77,70,96],"IFA":[65,61,29,88,60,91,56,80],"OBPP":[63,66,75,188,247,252,35,51],"Family Office":[2,2,1,8,15,9,4,8]},"cat_weekly_avg_order":{"WDP":[15.89,109.37,62.83,57.58,24.46,27.65,32.16,36.72],"IFA":[8.1,5.27,7.89,3.84,2.68,4.95,6.21,4.46],"OBPP":[2.62,0.77,7.27,3.42,5.52,4.51,1.06,9.42],"Family Office":[5.87,5.39,10.11,10.32,24.98,60.92,3.21,4.62]},"cat_kpis":{"WDP":{"kpi_gtv":{"this":35.26,"last":22.51,"avg":26.9,"delta":12.75,"suffix":"cr"},"kpi_trades":{"this":96,"last":70,"avg":64.9,"delta":26},"kpi_dist":{"this":31,"last":26,"avg":24.9,"delta":5},"kpi_clients":{"this":43,"last":34,"avg":33.4,"delta":9},"kpi_avg_order":{"this":36.72,"last":32.16,"avg":45.8,"delta":4.56}},"IFA":{"kpi_gtv":{"this":3.57,"last":3.48,"avg":3.4,"delta":0.09,"suffix":"cr"},"kpi_trades":{"this":80,"last":56,"avg":66.2,"delta":24},"kpi_dist":{"this":45,"last":35,"avg":36.4,"delta":10},"kpi_clients":{"this":64,"last":45,"avg":50.5,"delta":19},"kpi_avg_order":{"this":4.46,"last":6.21,"avg":5.4,"delta":-1.75}},"OBPP":{"kpi_gtv":{"this":4.8,"last":0.37,"avg":5.5,"delta":4.43,"suffix":"cr"},"kpi_trades":{"this":51,"last":35,"avg":122.1,"delta":16},"kpi_dist":{"this":4,"last":2,"avg":3.0,"delta":2},"kpi_clients":{"this":42,"last":25,"avg":88.5,"delta":17},"kpi_avg_order":{"this":9.42,"last":1.06,"avg":4.3,"delta":8.36}},"Family Office":{"kpi_gtv":{"this":0.37,"last":0.13,"avg":1.4,"delta":0.24,"suffix":"cr"},"kpi_trades":{"this":8,"last":4,"avg":6.1,"delta":4},"kpi_dist":{"this":6,"last":2,"avg":3.6,"delta":4},"kpi_clients":{"this":8,"last":4,"avg":4.9,"delta":4},"kpi_avg_order":{"this":4.62,"last":3.21,"avg":15.7,"delta":1.41}}},"cat_top3_dist":{"WDP":[{"name":"Ambium Finserve Private Limited","gtv_cr":13.15,"pct":37.3},{"name":"Axis Securities Ltd.","gtv_cr":7.06,"pct":20.0},{"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_cr":4.12,"pct":11.7}],"IFA":[{"name":"DEEPAK THUKRAL","gtv_cr":0.93,"pct":25.9},{"name":"JHAPAT BAHADUR SINGH","gtv_cr":0.3,"pct":8.4},{"name":"PINAL N SHAH","gtv_cr":0.3,"pct":8.4}],"OBPP":[{"name":"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED","gtv_cr":2.91,"pct":60.6},{"name":"Stable Finserv Private Limited","gtv_cr":1.51,"pct":31.4},{"name":"SUSTVEST BROKING PRIVATE LIMITED","gtv_cr":0.37,"pct":7.6}],"Family Office":[{"name":"HIMANSHU H MODY","gtv_cr":0.1,"pct":27.0},{"name":"ALPA CHETAN TURAKHIA","gtv_cr":0.1,"pct":26.9},{"name":"DARSHIL RAMESH THAKKAR","gtv_cr":0.05,"pct":13.3}]},"cat_weekly_new_dist":{"WDP":[1,1,2,1,4,2,2,2],"IFA":[17,14,13,15,24,16,17,18],"OBPP":[0,0,0,0,0,0,0,0],"Family Office":[0,0,1,0,3,2,1,2]},"cat_weekly_new_cli":{"WDP":[9,6,4,15,12,14,11,17],"IFA":[45,30,26,33,42,41,42,51],"OBPP":[0,0,0,0,0,0,0,0],"Family Office":[4,0,5,0,0,1,2,8]},"cat_kpi_new_dist":{"WDP":{"this":2,"last":2,"avg":1.9,"delta":0},"IFA":{"this":18,"last":17,"avg":16.8,"delta":1},"OBPP":{"this":0,"last":0,"avg":0.0,"delta":0},"Family Office":{"this":2,"last":1,"avg":1.1,"delta":1}},"cat_kpi_new_cli":{"WDP":{"this":17,"last":11,"avg":11.0,"delta":6},"IFA":{"this":51,"last":42,"avg":38.8,"delta":9},"OBPP":{"this":0,"last":0,"avg":0.0,"delta":0},"Family Office":{"this":8,"last":2,"avg":2.5,"delta":6}},"cat_top3_8wk_dist":{"WDP":[{"name":"Ambium Finserve Private Limited","total_8wk":36.25},{"name":"CORPCARE INVESTECH PRIVATE LIMITED","total_8wk":32.94},{"name":"Ladderup Wealth Management","total_8wk":24.78}],"IFA":[{"name":"DEEPAK THUKRAL","total_8wk":3.62},{"name":"EQ ADDWISE LLP","total_8wk":2.85},{"name":"PINAL N SHAH","total_8wk":2.51}],"OBPP":[{"name":"Stable Finserv Private Limited","total_8wk":32.79},{"name":"SUSTVEST BROKING PRIVATE LIMITED","total_8wk":8.18},{"name":"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED","total_8wk":2.91}],"Family Office":[{"name":"ACG ASSOCIATED CAPSULES PRIVATE LIMITED","total_8wk":4.97},{"name":"DAKSHANA BABURAO RATHOD","total_8wk":1.66},{"name":"DHRITI KAMLESH GANDHI","total_8wk":1.0}]},"cat_top3_8wk_weekly_gtv":{"WDP":{"Ambium Finserve Private Limited":[0.0,0.0,9.79,13.31,0.0,0.0,0.0,13.15],"CORPCARE INVESTECH PRIVATE LIMITED":[0.0,32.94,0.0,0.0,0.0,0.0,0.0,0.0],"Ladderup Wealth Management":[1.92,0.75,0.0,12.67,0.59,4.08,2.96,1.8]},"IFA":{"DEEPAK THUKRAL":[1.29,0.16,0.0,0.02,0.21,0.0,1.02,0.93],"EQ ADDWISE LLP":[1.6,1.01,0.0,0.0,0.25,0.0,0.0,0.0],"PINAL N SHAH":[0.25,0.0,0.0,0.5,0.0,0.65,0.81,0.3]},"OBPP":{"Stable Finserv Private Limited":[0.99,0.0,4.91,4.66,11.8,8.93,0.0,1.51],"SUSTVEST BROKING PRIVATE LIMITED":[0.67,0.5,0.54,1.63,1.84,2.38,0.27,0.37],"TECHWEALTH CAPITAL SERVICES PRIVATE LIMITED":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.91]},"Family Office":{"ACG ASSOCIATED CAPSULES PRIVATE LIMITED":[0.0,0.0,0.0,0.0,0.0,4.97,0.0,0.0],"DAKSHANA BABURAO RATHOD":[0.0,0.0,0.1,0.21,1.21,0.1,0.0,0.04],"DHRITI KAMLESH GANDHI":[0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0]}}};
+
 
 let current = 0;
-const slides = document.querySelectorAll('.slide');
-const total  = slides.length;
+let slides, total;
 const dotsEl = document.getElementById('dots');
-slides.forEach((_, i) => {
-    const b = document.createElement('button');
-    b.className = 'dot-btn' + (i === 0 ? ' active' : '');
-    b.onclick = () => { current = i; showSlide(i); };
-    dotsEl.appendChild(b);
-});
+function initNav() {
+    slides = document.querySelectorAll('.slide');
+    total  = slides.length;
+    dotsEl.innerHTML = '';
+    slides.forEach((_, i) => {
+        const b = document.createElement('button');
+        b.className = 'dot-btn' + (i === 0 ? ' active' : '');
+        b.onclick = () => { current = i; showSlide(i); };
+        dotsEl.appendChild(b);
+    });
+}
+initNav();
 function showSlide(n) {
     slides.forEach(s => s.classList.remove('active'));
     slides[n].classList.add('active');
@@ -1012,20 +833,6 @@ setInfer('inf-s7', [
         return o;
     }
 
-    // FD Slide 1: Distributors
-    new Chart(document.getElementById('fd-chart-dist'), {
-        type: 'line',
-        data: { labels: fdLabels, datasets: [{ data: [6,1,8,11,5,9], borderColor: '#3b82f6', pointBorderColor: '#3b82f6' }] },
-        options: fdLineOpts(12),
-    });
-
-    // FD Slide 3: Investors
-    new Chart(document.getElementById('chart-inv'), {
-        type: 'line',
-        data: { labels: fdLabels, datasets: [{ data: [1,1,5,6,1,0], borderColor: '#10b981', pointBorderColor: '#10b981' }] },
-        options: fdLineOpts(8),
-    });
-
     // FD Slide 5: Orders vs FD Booked
     new Chart(document.getElementById('chart-orders'), {
         type: 'line',
@@ -1051,10 +858,17 @@ setInfer('inf-s7', [
     const wkND  = D.cat_weekly_new_dist || {};
     const wkNC  = D.cat_weekly_new_cli  || {};
 
+    // Only show categories that have at least one non-zero onboarding across the 8-week window
+    const ACTIVE_CATS = CATS.filter(c => {
+        const nd = wkND[c.name] || [];
+        const nc = wkNC[c.name] || [];
+        return nd.some(v => v > 0) || nc.some(v => v > 0);
+    });
+
     // Left panel stat list
     const statsEl = document.getElementById('cat-ob-stats');
     if (statsEl) {
-        statsEl.innerHTML = CATS.map(c => {
+        statsEl.innerHTML = ACTIVE_CATS.map(c => {
             const nd = kpiND[c.name] || {};
             const nc = kpiNC[c.name] || {};
             return `<div class="stat-item">
@@ -1064,85 +878,68 @@ setInfer('inf-s7', [
         }).join('');
     }
 
-    // Charts
-    mkChart('chart-cat-ob-dist',
-        CATS.map(c => bar(c.name, wkND[c.name] || [], c.color)),
-        null
-    );
-    mkChart('chart-cat-ob-cli',
-        CATS.map(c => bar(c.name, wkNC[c.name] || [], c.color)),
-        null
-    );
+    // Charts — one per active category showing new dist & clients as grouped bars
+    const obRightEl = document.getElementById('cat-ob-right');
+    const obInsRow  = document.getElementById('ins-cat-ob');
+    if (obRightEl && obInsRow) {
+        ACTIVE_CATS.forEach(c => {
+            const slug = c.name.toLowerCase().replace(/\s+/g, '-');
+            const cid  = `chart-cat-ob-${slug}`;
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;';
+            wrap.innerHTML = `<div style="font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${c.color};margin-bottom:2px;">${c.name} · New Dist &amp; Clients · 8-week</div><div style="flex:1;position:relative;min-height:0;"><canvas id="${cid}"></canvas></div>`;
+            obRightEl.insertBefore(wrap, obInsRow);
+            new Chart(document.getElementById(cid), {
+                type: 'bar',
+                data: {
+                    labels: D.labels,
+                    datasets: [
+                        { label: 'New Dist',    data: wkND[c.name]||[], backgroundColor: c.color+'cc', borderColor: c.color,     borderWidth: 1, borderRadius: 3 },
+                        { label: 'New Clients', data: wkNC[c.name]||[], backgroundColor: c.color+'33', borderColor: c.color+'88', borderWidth: 1, borderRadius: 3 },
+                    ],
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { font: { size: 8 }, boxWidth: 8, padding: 4 } } },
+                    scales: {
+                        x: { grid: { color: '#f8fafc' }, ticks: { font: { size: 7 }, maxRotation: 30 } },
+                        y: { beginAtZero: true, grid: { color: '#f8fafc' }, ticks: { font: { size: 7 }, stepSize: 5 } },
+                    },
+                },
+            });
+        });
+    }
 
     // Insights
-    const topND = CATS.reduce((a, b) => ((kpiND[a.name]||{}).this||0) >= ((kpiND[b.name]||{}).this||0) ? a : b);
-    const topNC = CATS.reduce((a, b) => ((kpiNC[a.name]||{}).this||0) >= ((kpiNC[b.name]||{}).this||0) ? a : b);
+    if (ACTIVE_CATS.length === 0) return;
+    const topND = ACTIVE_CATS.reduce((a, b) => ((kpiND[a.name]||{}).this||0) >= ((kpiND[b.name]||{}).this||0) ? a : b);
+    const topNC = ACTIVE_CATS.reduce((a, b) => ((kpiNC[a.name]||{}).this||0) >= ((kpiNC[b.name]||{}).this||0) ? a : b);
     insights('ins-cat-ob', [
         { color: topND.color, txt: `${topND.name} leads dist onboarding this week: ${(kpiND[topND.name]||{}).this||0} new · 8-wk avg: ${(kpiND[topND.name]||{}).avg||0}/wk` },
         { color: topNC.color, txt: `${topNC.name} leads client onboarding: ${(kpiNC[topNC.name]||{}).this||0} new this week · 8-wk avg: ${(kpiNC[topNC.name]||{}).avg||0}/wk` },
     ]);
 })();
 
-// ── Category Top Distributors Slide ──────────────────────────────────────────
-(function() {
-    const CATS_CFG = [
-        { name: 'WDP',           colorHex: '#0ea5e9' },
-        { name: 'IFA',           colorHex: '#10b981' },
-        { name: 'OBPP',          colorHex: '#8b5cf6' },
-        { name: 'Family Office', colorHex: '#f43f5e' },
-    ];
-    const top3   = D.cat_top3_dist      || {};
-    const catLW  = D.cat_gtv_last_week  || {};
-
-    const periodEl = document.getElementById('cat-td-period');
-    if (periodEl) periodEl.textContent = (D.week_label_this || '') + ' · ' + (D.trade_filter || '');
-
-    const gridEl = document.getElementById('cat-top-dist-grid');
-    if (!gridEl) return;
-
-    gridEl.innerHTML = CATS_CFG.map(cfg => {
-        const dists  = top3[cfg.name] || [];
-        const catGTV = (catLW[cfg.name] || {}).gtv_cr || 0;
-        const rows   = dists.length
-            ? dists.map((d, i) => `
-                <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-top:1px solid rgba(255,255,255,.07);">
-                    <div style="font-size:.75rem;font-weight:700;color:${cfg.colorHex};min-width:16px;">${i + 1}</div>
-                    <div style="flex:1;">
-                        <div style="font-size:.63rem;color:#e2e8f0;font-weight:600;line-height:1.3;">${d.name}</div>
-                        <div style="font-size:.58rem;color:#94a3b8;margin-top:2px;">₹${d.gtv_cr}cr · ${d.pct}% of ${cfg.name} GTV</div>
-                    </div>
-                </div>`).join('')
-            : '<div style="font-size:.65rem;color:#475569;padding:8px 0;">No trade data</div>';
-
-        return `
-            <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;">
-                <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:${cfg.colorHex};font-weight:700;margin-bottom:4px;">${cfg.name}</div>
-                <div style="font-size:1.15rem;font-weight:800;color:#f1f5f9;margin-bottom:2px;">₹${catGTV}cr</div>
-                <div style="font-size:.55rem;color:#64748b;margin-bottom:10px;">Total GTV last week</div>
-                ${rows}
-            </div>`;
-    }).join('');
-})();
-
-// ── Category Deep Dive Slides ─────────────────────────────────────────────────
+// ── Category Deep Dive Slides (3 per category, dynamically generated) ────────
 (function() {
     const CAT_CFG = [
-        { slug:'wdp',      name:'WDP',          fullName:'Wealth Distribution Partners',  chartColor:BLUE   },
-        { slug:'ifa',      name:'IFA',           fullName:'Independent Financial Advisors',chartColor:GREEN  },
-        { slug:'obpp',     name:'OBPP',          fullName:'Online Bond Platforms',          chartColor:VIOLET },
-        { slug:'fo',       name:'Family Office', fullName:'Family Offices',                 chartColor:ROSE   },
+        { slug:'wdp',  name:'WDP',          fullName:'Wealth Distribution Partners',   bg:'#0c4a6e', chartColor:BLUE,   slices:['#0ea5e9','#38bdf8','#7dd3fc','#334155'] },
+        { slug:'ifa',  name:'IFA',           fullName:'Independent Financial Advisors', bg:'#047857', chartColor:GREEN,  slices:['#10b981','#34d399','#6ee7b7','#334155'] },
+        { slug:'obpp', name:'OBPP',          fullName:'Online Bond Platforms',          bg:'#7c3aed', chartColor:VIOLET, slices:['#8b5cf6','#a78bfa','#c4b5fd','#334155'] },
+        { slug:'fo',   name:'Family Office', fullName:'Family Offices',                 bg:'#be185d', chartColor:ROSE,   slices:['#f43f5e','#fb7185','#fda4af','#334155'] },
     ];
-    const catKpis    = D.cat_kpis    || {};
-    const catWklyGtv = D.cat_weekly_gtv   || {};
-    const catWklyTrd = D.cat_weekly_trades || {};
-    const distCatWk  = D.dist_cat_weekly  || {};
-    const cliCatWk   = D.cli_cat_weekly   || {};
-    const catWklyAO  = D.cat_weekly_avg_order || {};
-    const catTop3    = D.cat_top3_dist    || {};
-    const catLW      = D.cat_gtv_last_week || {};
-    const cat8W      = D.cat_gtv_8wk      || {};
+    const catKpis    = D.cat_kpis             || {};
+    const catWklyGtv = D.cat_weekly_gtv       || {};
+    const catWklyTrd = D.cat_weekly_trades    || {};
+    const distCatWk  = D.dist_cat_weekly      || {};
+    const cliCatWk   = D.cli_cat_weekly       || {};
+    const catTop3    = D.cat_top3_dist        || {};
+    const catLW      = D.cat_gtv_last_week    || {};
+    const cat8W      = D.cat_gtv_8wk          || {};
+    const catKpiND   = D.cat_kpi_new_dist     || {};
+    const catKpiNC   = D.cat_kpi_new_cli      || {};
 
-    // Category cover
+    // ── Category Cover ─────────────────────────────────────────────────────────
     const cpEl = document.getElementById('cat-cover-period');
     if (cpEl) cpEl.textContent = D.period + ' · ' + (D.trade_filter||'');
     const cmEl = document.getElementById('cat-cover-metrics');
@@ -1157,74 +954,203 @@ setInfer('inf-s7', [
         }).join('');
     }
 
-    // Per-category slides
+    // ── HTML generator: 3 slides per category ──────────────────────────────────
+    function mkCatSlides(cfg) {
+        const s = cfg.slug, n = cfg.name, fn = cfg.fullName, bg = cfg.bg;
+        return `
+    <!-- ${fn} · Slide 01: Trades & GTV -->
+    <div class="slide two-col" id="cat-${s}-s1">
+      <div class="left-panel" style="background:${bg};">
+        <div class="slide-num">${n} · 01</div>
+        <div class="slide-ttl">Trades &amp; GTV</div>
+        <div class="slide-sub">Weekly volume · gross transaction value · ${n}</div>
+        <div class="hero-lbl">GTV last week (₹cr)</div>
+        <div class="hero-num" id="cs1-${s}-gtvnum">—</div>
+        <div class="hero-badge" id="cs1-${s}-badge">—</div>
+        <div class="infer-box" id="cs1-${s}-infer"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">GTV prior wk / 8wk avg</span><span class="si-val" id="cs1-${s}-gtvprev">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Trades last wk / prior / avg</span><span class="si-val" id="cs1-${s}-trades">—</span></div>
+          <div class="stat-item"><span class="si-lbl">Avg order size (last wk / avg)</span><span class="si-val" id="cs1-${s}-avgord">—</span></div>
+          <div class="stat-item"><span class="si-lbl">8-wk total GTV · active dist</span><span class="si-val" id="cs1-${s}-8wkgtv">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-cs1-${s}"></canvas></div>
+        <div class="insight-row" id="ins-cs1-${s}"></div>
+      </div>
+    </div>
+
+    <!-- ${fn} · Slide 02: Dist & Client Activity -->
+    <div class="slide two-col" id="cat-${s}-s2">
+      <div class="left-panel" style="background:${bg};">
+        <div class="slide-num">${n} · 02</div>
+        <div class="slide-ttl">Dist &amp; Client Activity</div>
+        <div class="slide-sub">Active distributors · clients · onboarding · ${n}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+          <div style="background:rgba(255,255,255,.12);border-radius:7px;padding:8px 10px;">
+            <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:.09em;opacity:.55;margin-bottom:3px;">Active Dist</div>
+            <div class="hero-num" id="cs2-${s}-distnum" style="font-size:clamp(1.3rem,2.8vw,2rem);">—</div>
+            <div class="hero-badge" id="cs2-${s}-distbadge" style="font-size:.62rem;padding:2px 7px;margin-top:4px;margin-bottom:0;">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,.12);border-radius:7px;padding:8px 10px;">
+            <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:.09em;opacity:.55;margin-bottom:3px;">Active Clients</div>
+            <div class="hero-num" id="cs2-${s}-clinum" style="font-size:clamp(1.3rem,2.8vw,2rem);">—</div>
+            <div class="hero-badge" id="cs2-${s}-clibadge" style="font-size:.62rem;padding:2px 7px;margin-top:4px;margin-bottom:0;">—</div>
+          </div>
+        </div>
+        <div class="infer-box" id="cs2-${s}-infer"></div>
+        <div class="stat-list">
+          <div class="stat-item"><span class="si-lbl">8wk avg active dist / clients</span><span class="si-val" id="cs2-${s}-avgs">—</span></div>
+          <div class="stat-item"><span class="si-lbl">New dist onboarded (last wk)</span><span class="si-val" id="cs2-${s}-newdist">—</span></div>
+          <div class="stat-item"><span class="si-lbl">New clients onboarded (last wk)</span><span class="si-val" id="cs2-${s}-newcli">—</span></div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-cs2-${s}"></canvas></div>
+        <div class="insight-row" id="ins-cs2-${s}"></div>
+      </div>
+    </div>
+
+    <!-- ${fn} · Slide 03: Top Distributors -->
+    <div class="slide two-col" id="cat-${s}-s3">
+      <div class="left-panel" style="background:${bg};">
+        <div class="slide-num">${n} · 03</div>
+        <div class="slide-ttl">Top Distributors</div>
+        <div class="slide-sub">GTV contribution last week · ${n}</div>
+        <div class="hero-lbl">#1 dist share of ${n} GTV</div>
+        <div class="hero-num" id="cs3-${s}-topshare">—</div>
+        <div class="hero-badge" id="cs3-${s}-topname">—</div>
+        <div class="infer-box" id="cs3-${s}-infer"></div>
+        <div class="stat-list" id="cs3-${s}-list"></div>
+      </div>
+      <div class="right-panel">
+        <div class="chart-area"><canvas id="chart-cs3-${s}"></canvas></div>
+        <div class="insight-row" id="ins-cs3-${s}"></div>
+      </div>
+    </div>`;
+    }
+
+    // Insert all 12 slides before the FD cover
+    const fdCover = document.getElementById('fd-s0');
+    if (fdCover) {
+        fdCover.insertAdjacentHTML('beforebegin', CAT_CFG.map(mkCatSlides).join('\n'));
+    }
+
+    // Re-init navigation to include the newly inserted slides
+    initNav();
+
+    // ── Populate per-category slides ───────────────────────────────────────────
     CAT_CFG.forEach(cfg => {
-        const kp  = catKpis[cfg.name] || {};
-        const gKpi= kp.kpi_gtv      || {};
-        const tKpi= kp.kpi_trades   || {};
-        const dKpi= kp.kpi_dist     || {};
-        const cKpi= kp.kpi_clients  || {};
-        const aKpi= kp.kpi_avg_order|| {};
-        const c8w = cat8W[cfg.name] || {};
-        const cLW = catLW[cfg.name] || {};
+        const s     = cfg.slug;
+        const kp    = catKpis[cfg.name]      || {};
+        const gKpi  = kp.kpi_gtv             || {};
+        const tKpi  = kp.kpi_trades          || {};
+        const dKpi  = kp.kpi_dist            || {};
+        const cKpi  = kp.kpi_clients         || {};
+        const aKpi  = kp.kpi_avg_order       || {};
+        const c8w   = cat8W[cfg.name]        || {};
+        const ndKpi = catKpiND[cfg.name]     || {};
+        const ncKpi = catKpiNC[cfg.name]     || {};
 
-        // Hero number + badge
-        setEl(`cat-${cfg.slug}-gtvnum`, cr(gKpi.this));
-        const badge = document.getElementById(`cat-${cfg.slug}-badge`);
-        if (badge) {
-            const delta = gKpi.delta;
-            if (delta !== null && delta !== undefined) {
-                const cls= delta>0?'up':delta<0?'down':'flat';
-                const arr= delta>0?'▲':'▼';
-                let pS='';
-                if (gKpi.last!=null && gKpi.last!==0) {
-                    const pv=((delta/Math.abs(gKpi.last))*100).toFixed(1);
-                    pS=` (${delta>=0?'+':''}${pv}%)`;
-                }
-                badge.textContent = arr+' ₹'+Math.abs(delta).toFixed(2)+'cr'+pS+' WoW';
-                badge.className = 'hero-badge '+cls;
-            }
-        }
-
-        // Stat items
-        setEl(`cat-${cfg.slug}-trades`,  `${num(tKpi.this)} / ${num(tKpi.last)} · avg: ${num(tKpi.avg)}`);
-        setEl(`cat-${cfg.slug}-dist`,    `${num(dKpi.this)} · 8wk avg: ${num(dKpi.avg)}`);
-        setEl(`cat-${cfg.slug}-clients`, `${num(cKpi.this)} · 8wk avg: ${num(cKpi.avg)}`);
-        setEl(`cat-${cfg.slug}-avgord`,  `${lakh(aKpi.this)} · 8wk avg: ${lakh(aKpi.avg)}`);
-        setEl(`cat-${cfg.slug}-8wkgtv`,  `₹${c8w.gtv_cr||0}cr · ${c8w.active_dist||0} active dist`);
-
-        // New onboarding stats
-        const catKpiND = (D.cat_kpi_new_dist || {})[cfg.name] || {};
-        const catKpiNC = (D.cat_kpi_new_cli  || {})[cfg.name] || {};
-        setEl(`cat-${cfg.slug}-newdist`, `${num(catKpiND.this)} (8wk avg: ${catKpiND.avg||0})`);
-        setEl(`cat-${cfg.slug}-newcli`,  `${num(catKpiNC.this)} (8wk avg: ${catKpiNC.avg||0})`);
-
-        // Charts
-        mkChart(`chart-cat-${cfg.slug}-1`, [
-            bar('GTV (₹cr)',  catWklyGtv[cfg.name]||[], cfg.chartColor),
-            line('Trades',         catWklyTrd[cfg.name]||[], GREY, 'y2'),
+        // ── Slide S1: Trades & GTV ─────────────────────────────────────────────
+        setHero(`cs1-${s}-gtvnum`, `cs1-${s}-badge`, cr(gKpi.this), gKpi.delta, 'cr', gKpi.last);
+        setEl(`cs1-${s}-gtvprev`, `${cr(gKpi.last)} / 8wk avg ${cr(gKpi.avg)}`);
+        setEl(`cs1-${s}-trades`,  `${num(tKpi.this)} / ${num(tKpi.last)} / avg ${num(tKpi.avg)}`);
+        setEl(`cs1-${s}-avgord`,  `${lakh(aKpi.this)} / 8wk avg ${lakh(aKpi.avg)}`);
+        setEl(`cs1-${s}-8wkgtv`, `${cr(c8w.gtv_cr)} · ${c8w.active_dist||0} dist`);
+        mkChart(`chart-cs1-${s}`, [
+            bar('GTV (₹cr)', catWklyGtv[cfg.name]||[], cfg.chartColor),
+            line('Trades',   catWklyTrd[cfg.name]||[], GREY, 'y2'),
         ], Y2);
-        mkChart(`chart-cat-${cfg.slug}-2`, [
-            bar('Active Dist',    distCatWk[cfg.name]||[], cfg.chartColor),
-            line('Active Clients',cliCatWk[cfg.name] ||[], AMBER, 'y2'),
-        ], Y2);
-
-        // Key highlights (infer-box)
-        const gtvPct = gKpi.last > 0 ? Math.round((gKpi.this - gKpi.last) / gKpi.last * 100) : 0;
+        const gtvPct  = gKpi.last > 0 ? Math.round((gKpi.this - gKpi.last) / gKpi.last * 100) : 0;
         const gtvSign = gtvPct >= 0 ? '+' : '';
         const gtvDir  = gKpi.this >= (gKpi.avg||0) ? 'above' : 'below';
-        const distDir = dKpi.this >= (dKpi.avg||0) ? 'above' : 'below';
-        const aoDir   = aKpi.this >= (aKpi.avg||0) ? 'above' : 'below';
-        setInfer(`inf-cat-${cfg.slug}`, [
-            `GTV ${gtvSign}${gtvPct}% WoW (₹${gKpi.this}cr vs ₹${gKpi.last}cr) — ${gtvDir} 8-wk avg of ${cr(gKpi.avg)}`,
-            `${num(dKpi.this)} active dist (${distDir} avg ${num(dKpi.avg)}) · avg order ${lakh(aKpi.this)} ${aoDir} 8wk avg ${lakh(aKpi.avg)}`,
-            `${num(catKpiND.this)} new dist · ${num(catKpiNC.this)} new clients onboarded this week`,
+        setInfer(`cs1-${s}-infer`, [
+            `GTV ${gtvSign}${gtvPct}% WoW — ${cr(gKpi.this)} vs ${cr(gKpi.last)} prior · ${gtvDir} 8-wk avg of ${cr(gKpi.avg)}`,
+            `${num(tKpi.this)} trades this wk vs ${num(tKpi.last)} prior · avg order ${lakh(aKpi.this)} (8wk avg ${lakh(aKpi.avg)})`,
+        ]);
+        insights(`ins-cs1-${s}`, [
+            { color: cfg.chartColor, txt: `GTV ${gtvSign}${gtvPct}% WoW · ${cr(gKpi.this)} vs ${cr(gKpi.last)} prior · 8wk avg ${cr(gKpi.avg)}` },
+            { color: AMBER, txt: `${num(tKpi.this)} trades · avg order ${lakh(aKpi.this)} · 8wk total GTV ${cr(c8w.gtv_cr)}` },
         ]);
 
-        // Insight chips
-        insights(`ins-cat-${cfg.slug}`, [
-            { color: cfg.chartColor, txt: `GTV ${gtvSign}${gtvPct}% WoW · ${cr(gKpi.this)} vs ${cr(gKpi.last)} prior · 8wk avg ${cr(gKpi.avg)}` },
-            { color: AMBER,          txt: `${num(dKpi.this)} active dist · ${num(cKpi.this)} clients · avg order ${lakh(aKpi.this)}` },
+        // ── Slide S2: Dist & Client Activity ──────────────────────────────────
+        setHero(`cs2-${s}-distnum`, `cs2-${s}-distbadge`, num(dKpi.this), dKpi.delta, '', dKpi.last);
+        setHero(`cs2-${s}-clinum`,  `cs2-${s}-clibadge`,  num(cKpi.this), cKpi.delta, '', cKpi.last);
+        setEl(`cs2-${s}-avgs`,    `${num(dKpi.avg)} dist / ${num(cKpi.avg)} clients per wk`);
+        setEl(`cs2-${s}-newdist`, `${num(ndKpi.this)} (8wk avg: ${ndKpi.avg||0}/wk)`);
+        setEl(`cs2-${s}-newcli`,  `${num(ncKpi.this)} (8wk avg: ${ncKpi.avg||0}/wk)`);
+        mkChart(`chart-cs2-${s}`, [
+            bar('Active Dist',    distCatWk[cfg.name]||[], cfg.chartColor),
+            line('Active Clients', cliCatWk[cfg.name]||[], AMBER, 'y2'),
+        ], Y2);
+        const distDir = dKpi.this >= (dKpi.avg||0) ? 'above' : 'below';
+        const cliDir  = cKpi.this >= (cKpi.avg||0) ? 'above' : 'below';
+        setInfer(`cs2-${s}-infer`, [
+            `${num(dKpi.this)} active dist (${distDir} 8-wk avg ${num(dKpi.avg)}) · ${(dKpi.delta||0) >= 0 ? '+' : ''}${dKpi.delta||0} WoW`,
+            `${num(cKpi.this)} clients (${cliDir} avg ${num(cKpi.avg)}) · ${num(ndKpi.this)} new dist / ${num(ncKpi.this)} new clients onboarded this wk`,
+        ]);
+        insights(`ins-cs2-${s}`, [
+            { color: cfg.chartColor, txt: `Active dist: ${num(dKpi.this)} vs ${num(dKpi.last)} prior · 8wk avg ${num(dKpi.avg)}/wk` },
+            { color: AMBER, txt: `Active clients: ${num(cKpi.this)} vs ${num(cKpi.last)} prior · ${num(ndKpi.this)} new dist · ${num(ncKpi.this)} new clients onboarded` },
+        ]);
+
+        // ── Slide S3: Top Distributors ─────────────────────────────────────────
+        const dists  = catTop3[cfg.name] || [];
+        const catGTV = (catLW[cfg.name]  || {}).gtv_cr || 0;
+        if (dists.length) {
+            const top = dists[0];
+            setEl(`cs3-${s}-topshare`, top.pct + '%');
+            const nameEl = document.getElementById(`cs3-${s}-topname`);
+            if (nameEl) { nameEl.textContent = top.name.split(' ').slice(0,3).join(' '); nameEl.className = 'hero-badge flat'; }
+            const listEl = document.getElementById(`cs3-${s}-list`);
+            if (listEl) {
+                listEl.innerHTML = dists.map((d, i) =>
+                    `<div class="stat-item">
+                        <span class="si-lbl">#${i+1} · ${d.name.split(' ').slice(0,4).join(' ')}</span>
+                        <span class="si-val">₹${d.gtv_cr}cr · ${d.pct}% of ${cfg.name}</span>
+                    </div>`
+                ).join('');
+            }
+            const top3Sum   = dists.reduce((s, d) => s + d.gtv_cr, 0);
+            const othersGTV = Math.round((catGTV - top3Sum) * 100) / 100;
+            const hasOthers = othersGTV > 0.01;
+            const labels    = [...dists.map(d => d.name.split(' ').slice(0,3).join(' ')), ...(hasOthers ? ['Others'] : [])];
+            const data      = [...dists.map(d => d.gtv_cr), ...(hasOthers ? [othersGTV] : [])];
+            const bgs       = [...cfg.slices.slice(0, dists.length), ...(hasOthers ? [cfg.slices[3]] : [])];
+            const total     = data.reduce((t, v) => t + v, 0);
+            new Chart(document.getElementById(`chart-cs3-${s}`), {
+                type: 'bar',
+                data: { labels, datasets: [{ data, backgroundColor: bgs, borderRadius: 5, borderWidth: 0 }] },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ₹${ctx.parsed.x}cr  ·  ${((ctx.parsed.x / total) * 100).toFixed(1)}%` } },
+                    },
+                    scales: {
+                        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 8 }, callback: v => '₹' + v + 'cr' }, beginAtZero: true },
+                        y: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                    },
+                },
+            });
+            const topSum = dists.reduce((t, d) => +(t + d.pct).toFixed(1), 0);
+            setInfer(`cs3-${s}-infer`, [
+                `#1 dist (${top.name.split(' ').slice(0,2).join(' ')}) holds ${top.pct}% of ${cfg.name} GTV — ₹${top.gtv_cr}cr last week`,
+                `Top 3 combined: ${topSum}% of ${cfg.name} GTV · ${hasOthers ? Math.round((othersGTV / total) * 100) + '% spread across remaining dist' : 'full GTV coverage by top 3'}`,
+            ]);
+        } else {
+            setEl(`cs3-${s}-topshare`, 'N/A');
+            setInfer(`cs3-${s}-infer`, [`No top distributor data available for ${cfg.name} this week`]);
+        }
+        insights(`ins-cs3-${s}`, dists.length ? [
+            { color: cfg.chartColor, txt: `#1: ${dists[0].name.split(' ').slice(0,3).join(' ')} · ${dists[0].pct}% · ₹${dists[0].gtv_cr}cr` },
+            { color: AMBER, txt: dists[1] ? `#2: ${dists[1].name.split(' ').slice(0,3).join(' ')} · ${dists[1].pct}% · ₹${dists[1].gtv_cr}cr` : 'Only 1 distributor active this week' },
+        ] : [
+            { color: GREY, txt: `No distributor data for ${cfg.name}` },
         ]);
     });
 })();
