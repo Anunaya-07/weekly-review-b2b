@@ -392,7 +392,7 @@ function initNav(){
       const el8=document.getElementById(cid8);
       if(el8){
         const wkC=d.gtv_weekly_8.map(v=>v>=avg8&&v>0?bgColor:v>0?bgColor+'77':'#e2e8f0');
-        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}}});
+        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
       }
     });
   });
