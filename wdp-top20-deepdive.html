@@ -45,26 +45,40 @@
     .dots{display:flex;gap:6px;align-items:center}
     .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
     .dot-btn.active{background:#fff;transform:scale(1.35)}
-    .card-slide{flex-direction:column;background:#f0f4f8}
-    .cs-header{background:#0c1a3a;color:#fff;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-    .cs-header-title{font-size:.75rem;font-weight:700;letter-spacing:.04em}
-    .cs-header-meta{font-size:.62rem;opacity:.5}
-    .card-grid-2x2{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;padding:8px;flex:1;min-height:0}
-    .dist-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;min-height:0}
-    .dc-header{padding:7px 10px;color:#fff;display:flex;align-items:center;gap:6px;flex-shrink:0}
-    .dc-rank{background:rgba(255,255,255,.2);border-radius:4px;font-size:.62rem;font-weight:700;padding:2px 6px;white-space:nowrap}
-    .dc-name{font-size:.72rem;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .dc-active{font-size:.6rem;opacity:.75;white-space:nowrap}
-    .dc-chart{flex:1;position:relative;min-height:0;padding:3px 6px}
-    .dc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #f1f5f9;flex-shrink:0}
-    .dc-stat{padding:5px 8px;border-right:1px solid #f1f5f9}
-    .dc-stat:last-child{border-right:none}
-    .dc-sl{font-size:.52rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:1px}
-    .dc-sv{font-size:.78rem;font-weight:700;color:#1e293b}
-    .dc-rank-badge{font-size:.58rem;padding:1px 5px;border-radius:3px;white-space:nowrap;margin-left:2px}
-    .dc-rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
-    .dc-rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
-    .dc-rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
+    .dist-slide{flex-direction:row;background:#fff}
+    .ds-left{width:27%;flex-shrink:0;display:flex;flex-direction:column;padding:16px 14px 12px;color:#fff;overflow:hidden;position:relative}
+    .ds-left::before{content:'';position:absolute;bottom:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+    .ds-rank-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap}
+    .ds-rank{background:rgba(255,255,255,.22);border-radius:4px;font-size:.72rem;font-weight:800;padding:2px 7px;white-space:nowrap}
+    .ds-slide-count{font-size:.5rem;opacity:.38;margin-left:auto}
+    .ds-name{font-size:clamp(.68rem,1.05vw,.88rem);font-weight:700;line-height:1.25;margin-bottom:2px}
+    .ds-period{font-size:.52rem;opacity:.42;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .ds-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px}
+    .ds-sl{font-size:.49rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5;margin-bottom:1px}
+    .ds-sv{font-size:.8rem;font-weight:700;line-height:1.1}
+    .ds-sv-xs{font-size:.66rem;font-weight:600;line-height:1.3}
+    .ds-divider{border:none;border-top:1px solid rgba(255,255,255,.12);margin:7px 0}
+    .ds-infer{margin-top:auto;background:rgba(0,0,0,.18);border-radius:6px;padding:6px 8px;flex-shrink:0}
+    .ds-inf{font-size:.56rem;line-height:1.5;opacity:.9}
+    .ds-inf+.ds-inf{margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1)}
+    .ds-right{flex:1;display:flex;flex-direction:column;padding:10px 14px 8px;background:#fff;gap:4px;min-height:0}
+    .ds-chart-lbl{font-size:.5rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:600;flex-shrink:0}
+    .ds-top-chart{flex:1;position:relative;min-height:0}
+    .ds-bottom{display:flex;gap:8px;height:42%;flex-shrink:0}
+    .ds-bottom-chart-wrap{flex:1;display:flex;flex-direction:column;gap:2px;min-height:0}
+    .ds-bottom-chart{flex:1;position:relative;min-height:0}
+    .ds-stats-panel{width:155px;flex-shrink:0;background:#f8fafc;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+    .ds-sp-item{display:flex;flex-direction:column}
+    .ds-spl{font-size:.46rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:1px}
+    .ds-spv{font-size:.78rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ds-spv-sm{font-size:.62rem;font-weight:600;color:#475569}
+    .cons-strip{display:flex;gap:2px;margin-top:2px}
+    .cons-cell{height:8px;border-radius:2px;flex:1}
+    .rank-badge{font-size:.56rem;padding:1px 5px;border-radius:3px;white-space:nowrap}
+    .rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
+    .rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
+    .rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
+    .rank-badge.inactive{background:rgba(248,113,113,.1);color:#94a3b8}
     @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
   </style>
 </head>
@@ -242,34 +256,120 @@ document.getElementById('cover-metrics').innerHTML=[
   ]);
 })();
 
-// Card Slides
+// Individual Distributor Slides
 (function(){
   const dists=D.distributors,deckEl=document.querySelector('.deck');
-  const PER=4;
-  for(let si=0;si<Math.ceil(dists.length/PER);si++){
-    const batch=dists.slice(si*PER,(si+1)*PER);
+  dists.forEach((d,gi)=>{
+    const bgColor=PALETTE[gi%PALETTE.length];
+    const cid14='c14-'+gi, cid8='c8-'+gi;
+    // Rank badge
+    let rankHtml;
+    if(d.rank_8wk>=50){
+      rankHtml=`<span class="rank-badge inactive">⊘ inactive 8wk</span>`;
+    }else{
+      const diff=d.rank_all-d.rank_8wk;
+      rankHtml=diff>0?`<span class="rank-badge up">▲${diff} recent</span>`:diff<0?`<span class="rank-badge down">▼${Math.abs(diff)} recent</span>`:`<span class="rank-badge flat">= stable</span>`;
+    }
+    // Inference
+    const allTradeTot=d.trades_monthly.reduce((a,b)=>a+b,0);
+    const avgOrdAll=allTradeTot>0?rnd(d.gtv_total_cr*100/allTradeTot,1):0;
+    const peakGtv=Math.max(...d.gtv_monthly);
+    const peakIdx=d.gtv_monthly.indexOf(peakGtv);
+    const recentSum=d.gtv_monthly.slice(-3).reduce((a,b)=>a+b,0);
+    const prevSum=d.gtv_monthly.slice(-6,-3).reduce((a,b)=>a+b,0);
+    const trendDir=recentSum>prevSum*1.15?'↗ Accelerating':recentSum<prevSum*0.85?'↘ Slowing':'→ Steady';
+    let inf1;
+    if(d.gtv_lw_cr>0){
+      const iss=d.top_issuer_lw&&d.top_issuer_lw!=='N/A'?` · ${d.top_issuer_lw.split(' ').slice(0,3).join(' ')} ${d.top_issuer_pct_lw>0?d.top_issuer_pct_lw+'%':''}` :'';
+      inf1=`Active last week · ₹${d.gtv_lw_cr}cr · ${d.trades_lw} trade${d.trades_lw!==1?'s':''}${d.avg_order_l_lw>0?' · ₹'+d.avg_order_l_lw+'L avg':''}${iss}`;
+    }else if(d.gtv_8wk_cr>0){
+      const aw=d.gtv_weekly_8.filter(v=>v>0).length;
+      inf1=`No trades last week · ₹${d.gtv_8wk_cr}cr over ${aw}/8 recent weeks`;
+    }else{
+      const lastArr=d.gtv_monthly.map((v,i)=>({v,i})).filter(x=>x.v>0);
+      const lastMo=lastArr.length?D.month_labels[lastArr[lastArr.length-1].i]:'N/A';
+      inf1=`Inactive last 8 weeks · last active ${lastMo}`;
+    }
+    const inf2=`${trendDir} trend · Peak ${D.month_labels[peakIdx]} ₹${peakGtv}cr · All-time avg ₹${avgOrdAll>0?avgOrdAll+'L':'N/A'}/trade · ${d.active_months}/${D.n_months} months active`;
+    // Consistency strip
+    const consHtml=d.gtv_monthly.map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${D.month_labels[mi]}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
+    const rank8Disp=d.rank_8wk<50?'#'+d.rank_8wk:'Inactive';
+    const issDisp=d.top_issuer_lw&&d.top_issuer_lw!=='N/A'?d.top_issuer_lw.split(' ').slice(0,3).join(' ')+(d.top_issuer_pct_lw>0?' · '+d.top_issuer_pct_lw+'%':''):'—';
+    const wdpShare=rnd(d.gtv_total_cr/D.total_wdp_gtv_cr*100,1);
     const slideDiv=document.createElement('div');
-    slideDiv.className='slide card-slide';
-    const hdr=document.createElement('div');hdr.className='cs-header';
-    hdr.innerHTML=`<span class="cs-header-title">WDP Deep Dive · Distributor Cards #${si*PER+1}–${Math.min((si+1)*PER,dists.length)}</span><span class="cs-header-meta">${D.period_label} · HTM · Latest: ${D.latest_week}</span>`;
-    slideDiv.appendChild(hdr);
-    const grid=document.createElement('div');grid.className='card-grid-2x2';
-    batch.forEach((d,ci)=>{
-      const gi=si*PER+ci;
-      const bgColor=PALETTE[gi%PALETTE.length];
-      const cid='chart-wdp-'+gi;
-      const rankDiff=d.rank_all-d.rank_8wk;
-      const rankHtml=rankDiff>0?`<span class="dc-rank-badge up">▲${rankDiff} recent</span>`:rankDiff<0?`<span class="dc-rank-badge down">▼${Math.abs(rankDiff)} recent</span>`:`<span class="dc-rank-badge flat">= stable</span>`;
-      const card=document.createElement('div');card.className='dist-card';
-      card.innerHTML=`<div class="dc-header" style="background:${bgColor};"><span class="dc-rank">#${d.rank_all}</span><span class="dc-name">${d.name}</span><span class="dc-active">${d.active_months}/${D.n_months}mo</span>${rankHtml}</div><div class="dc-chart"><canvas id="${cid}"></canvas></div><div class="dc-stats"><div class="dc-stat"><div class="dc-sl">Total GTV</div><div class="dc-sv">₹${d.gtv_total_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">8wk GTV</div><div class="dc-sv">₹${d.gtv_8wk_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">LW GTV</div><div class="dc-sv">₹${d.gtv_lw_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">Avg Ord (LW)</div><div class="dc-sv">₹${d.avg_order_l_lw}L</div></div><div class="dc-stat"><div class="dc-sl">Clients (LW)</div><div class="dc-sv">${d.clients_lw}</div></div><div class="dc-stat"><div class="dc-sl">Top Issuer</div><div class="dc-sv" style="font-size:.65rem;">${d.top_issuer_lw||'—'}</div></div></div>`;
-      grid.appendChild(card);
-      requestAnimationFrame(()=>{
-        const el=document.getElementById(cid);if(!el)return;
-        new Chart(el,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:bgColor+'cc',borderColor:bgColor,borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:6},maxRotation:45}},y:{beginAtZero:true,grid:{color:'rgba(241,245,249,.8)'},ticks:{font:{size:6},callback:v=>v>0?'₹'+v:''}}}}});
-      });
+    slideDiv.className='slide dist-slide';
+    slideDiv.innerHTML=`
+      <div class="ds-left" style="background:${bgColor}">
+        <div class="ds-rank-row">
+          <span class="ds-rank">#${d.rank_all} of 20</span>
+          <span class="ds-slide-count">WDP ${gi+1}/20</span>
+          ${rankHtml}
+        </div>
+        <div class="ds-name">${d.name}</div>
+        <div class="ds-period">${D.period_label} · HTM · WDP</div>
+        <div class="ds-stat-grid">
+          <div><div class="ds-sl">Total GTV</div><div class="ds-sv">₹${d.gtv_total_cr}cr</div></div>
+          <div><div class="ds-sl">Share of WDP</div><div class="ds-sv">${wdpShare}%</div></div>
+          <div><div class="ds-sl">8-Week GTV</div><div class="ds-sv">₹${d.gtv_8wk_cr}cr</div></div>
+          <div><div class="ds-sl">Last Week GTV</div><div class="ds-sv">₹${d.gtv_lw_cr}cr</div></div>
+          <div><div class="ds-sl">LW Trades</div><div class="ds-sv">${d.trades_lw}</div></div>
+          <div><div class="ds-sl">Avg Order (LW)</div><div class="ds-sv">${d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':'—'}</div></div>
+          <div><div class="ds-sl">All-time Trades</div><div class="ds-sv">${allTradeTot}</div></div>
+          <div><div class="ds-sl">Avg Order (All)</div><div class="ds-sv">${avgOrdAll>0?'₹'+avgOrdAll+'L':'—'}</div></div>
+        </div>
+        <hr class="ds-divider">
+        <div style="margin-bottom:7px">
+          <div class="ds-sl">Top Issuer Last Week</div>
+          <div class="ds-sv-xs">${issDisp}</div>
+        </div>
+        <div class="ds-infer">
+          <div class="ds-inf">${inf1}</div>
+          <div class="ds-inf">${inf2}</div>
+        </div>
+      </div>
+      <div class="ds-right">
+        <div class="ds-chart-lbl">Monthly GTV · ${D.period_label} (₹cr)</div>
+        <div class="ds-top-chart"><canvas id="${cid14}"></canvas></div>
+        <div class="ds-bottom">
+          <div class="ds-bottom-chart-wrap">
+            <div class="ds-chart-lbl">Last 8 Weeks GTV (₹cr) · week of ${D.latest_week} is latest</div>
+            <div class="ds-bottom-chart"><canvas id="${cid8}"></canvas></div>
+          </div>
+          <div class="ds-stats-panel">
+            <div class="ds-sp-item">
+              <div class="ds-spl">8-Week Rank · All-time Rank</div>
+              <div class="ds-spv-sm">${rank8Disp} recent · #${d.rank_all} all-time</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Peak Month</div>
+              <div class="ds-spv-sm">${D.month_labels[peakIdx]} · ₹${peakGtv}cr</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Recent Trend</div>
+              <div class="ds-spv-sm">${trendDir}</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Monthly Activity · ${d.active_months}/${D.n_months}</div>
+              <div class="cons-strip">${consHtml}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    deckEl.appendChild(slideDiv);
+    requestAnimationFrame(()=>{
+      const avg8=rnd(d.gtv_weekly_8.reduce((a,b)=>a+b,0)/8,2);
+      const el14=document.getElementById(cid14);
+      if(el14){
+        const barC=d.gtv_monthly.map(v=>v>0?bgColor+'cc':'#e2e8f0');
+        new Chart(el14,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:barC,borderColor:d.gtv_monthly.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
+      }
+      const el8=document.getElementById(cid8);
+      if(el8){
+        const wkC=d.gtv_weekly_8.map(v=>v>=avg8&&v>0?bgColor:v>0?bgColor+'77':'#e2e8f0');
+        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
+      }
     });
-    slideDiv.appendChild(grid);deckEl.appendChild(slideDiv);
-  }
+  });
   initNav();showSlide(0);
 })();
 </script>
