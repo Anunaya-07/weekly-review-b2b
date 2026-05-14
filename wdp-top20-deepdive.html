@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WDP Top 20 · Deep Dive</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px 56px}
+    .deck-wrap{width:min(100%,1200px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
+    .deck{width:100%;height:100%}
+    .slide{display:none;width:100%;height:100%;position:absolute;inset:0}
+    .slide.active{display:flex}
+    .cover{background:linear-gradient(135deg,#0f172a 0%,#0c1a3a 55%,#1d4ed8 100%);flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:32px 40px}
+    .cover-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px}
+    .cover h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:8px}
+    .cover-sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:20px}
+    .cover-period{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:5px 18px;font-size:.76rem;color:rgba(255,255,255,.75);margin-bottom:32px}
+    .cover-metrics{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .cover-metric{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 20px;text-align:left;min-width:130px}
+    .cm-label{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:5px}
+    .cm-val{font-size:1.35rem;font-weight:700}
+    .two-col{flex-direction:row}
+    .left-panel{width:30%;flex-shrink:0;display:flex;flex-direction:column;padding:28px 22px 24px;color:#fff;position:relative;overflow:hidden}
+    .left-panel::before{content:'';position:absolute;bottom:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+    .slide-num{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.45;margin-bottom:3px}
+    .slide-ttl{font-size:clamp(.9rem,1.5vw,1.1rem);font-weight:700;line-height:1.25;margin-bottom:3px}
+    .slide-sub{font-size:.67rem;opacity:.55;margin-bottom:20px}
+    .hero-num{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+    .hero-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-bottom:8px}
+    .stat-list{display:flex;flex-direction:column;gap:0;margin-top:auto}
+    .stat-item{display:flex;justify-content:space-between;align-items:flex-end;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .si-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5}
+    .si-val{font-size:.88rem;font-weight:700}
+    .right-panel{flex:1;display:flex;flex-direction:column;background:#fff;padding:20px 24px 14px}
+    .chart-area{flex:1;position:relative;min-height:0}
+    .insight-row{margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;gap:18px;flex-wrap:wrap}
+    .ins-chip{display:flex;align-items:center;gap:5px;font-size:.67rem;color:#64748b}
+    .ins-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .nav-bar{margin-top:16px;display:flex;align-items:center;gap:14px}
+    .nav-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .nav-btn:hover{background:rgba(255,255,255,.2)}
+    .nav-btn:disabled{opacity:.25;cursor:default}
+    .dots{display:flex;gap:6px;align-items:center}
+    .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
+    .dot-btn.active{background:#fff;transform:scale(1.35)}
+    .card-slide{flex-direction:column;background:#f0f4f8}
+    .cs-header{background:#0c1a3a;color:#fff;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .cs-header-title{font-size:.75rem;font-weight:700;letter-spacing:.04em}
+    .cs-header-meta{font-size:.62rem;opacity:.5}
+    .card-grid-2x2{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;padding:8px;flex:1;min-height:0}
+    .dist-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+    .dc-header{padding:7px 10px;color:#fff;display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .dc-rank{background:rgba(255,255,255,.2);border-radius:4px;font-size:.62rem;font-weight:700;padding:2px 6px;white-space:nowrap}
+    .dc-name{font-size:.72rem;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dc-active{font-size:.6rem;opacity:.75;white-space:nowrap}
+    .dc-chart{flex:1;position:relative;min-height:0;padding:3px 6px}
+    .dc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #f1f5f9;flex-shrink:0}
+    .dc-stat{padding:5px 8px;border-right:1px solid #f1f5f9}
+    .dc-stat:last-child{border-right:none}
+    .dc-sl{font-size:.52rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:1px}
+    .dc-sv{font-size:.78rem;font-weight:700;color:#1e293b}
+    .dc-rank-badge{font-size:.58rem;padding:1px 5px;border-radius:3px;white-space:nowrap;margin-left:2px}
+    .dc-rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
+    .dc-rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
+    .dc-rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
+    @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
+  </style>
+</head>
+<body>
+<div class="deck-wrap"><div class="deck">
+  <!-- Cover -->
+  <div class="slide cover">
+    <div class="cover-eyebrow">Yubi Wealth B2B · WDP Segment</div>
+    <h1>Top 20 WDP<br>Deep Dive</h1>
+    <div class="cover-sub">Wealth Distribution Partners · Performance Analysis</div>
+    <div class="cover-period" id="cover-period">—</div>
+    <div class="cover-metrics" id="cover-metrics"></div>
+  </div>
+  <!-- Slide 1: Leaderboard -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#0c1a3a;">
+      <div class="slide-num">Slide 01</div>
+      <div class="slide-ttl">GTV Leaderboard</div>
+      <div class="slide-sub">All 20 WDPs ranked by total GTV · 14-month period</div>
+      <div class="hero-lbl">Total WDP GTV</div>
+      <div class="hero-num" id="lb-total-gtv">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">WDP % of total HTM</span><span class="si-val" id="lb-wdp-pct">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active WDPs in ranking</span><span class="si-val" id="lb-active-count">—</span></div>
+        <div class="stat-item"><span class="si-lbl">#1 dist share</span><span class="si-val" id="lb-top1-share">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Top 3 combined</span><span class="si-val" id="lb-top3-share">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Top 5 combined</span><span class="si-val" id="lb-top5-share">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-leaderboard"></canvas></div>
+      <div class="insight-row" id="ins-leaderboard"></div>
+    </div>
+  </div>
+  <!-- Slide 2: Monthly Trend -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#1e3a5f;">
+      <div class="slide-num">Slide 02</div>
+      <div class="slide-ttl">Monthly GTV Trend</div>
+      <div class="slide-sub">14-month trajectory · top contributors · seasonality</div>
+      <div class="hero-lbl">Peak month GTV</div>
+      <div class="hero-num" id="trend-peak-gtv">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Peak month</span><span class="si-val" id="trend-peak-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Latest (May-26 MTD)</span><span class="si-val" id="trend-latest-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">13-month avg</span><span class="si-val" id="trend-avg-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Months above avg</span><span class="si-val" id="trend-above-avg">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-monthly-trend"></canvas></div>
+      <div class="insight-row" id="ins-monthly-trend"></div>
+    </div>
+  </div>
+  <!-- Slide 3: Consistency -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#1e293b;">
+      <div class="slide-num">Slide 03</div>
+      <div class="slide-ttl">Consistency Tracker</div>
+      <div class="slide-sub">Active months of 14 · reliable vs bursty traders</div>
+      <div class="hero-lbl">Always-on (14/14 months)</div>
+      <div class="hero-num" id="cons-always-on">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">≥ 10 of 14 months</span><span class="si-val" id="cons-10plus">—</span></div>
+        <div class="stat-item"><span class="si-lbl">≤ 5 months (bursty)</span><span class="si-val" id="cons-bursty">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Avg active months</span><span class="si-val" id="cons-avg">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-consistency"></canvas></div>
+      <div class="insight-row" id="ins-consistency"></div>
+    </div>
+  </div>
+  <!-- Card slides inserted by JS -->
+</div></div>
+<div class="nav-bar">
+  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+</div>
+<script>
+const D = {"generated":"May 14, 2026 · 15:02","period_label":"Apr 2025 – May 2026","latest_week":"May 11–17","month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"week_labels_8":["Mar 23–29","Mar 30–Apr 5","Apr 6–12","Apr 13–19","Apr 20–26","Apr 27–May 3","May 4–10","May 11–17"],"n_months":14,"total_wdp_gtv_cr":2248.72,"total_all_gtv_cr":3018.56,"wdp_pct_of_total":74.5,"wdp_monthly_total":[158.85,227.99,236.32,166.44,131.76,195.39,168.22,122.79,187.84,135.16,145.23,144.7,110.12,117.93],"distributors":[{"rank_all":1,"rank_8wk":2,"rank_lw":99,"name":"Ambium Finserve Private Limited","gtv_total_cr":230.23,"gtv_8wk_cr":36.25,"gtv_lw_cr":0,"gtv_monthly":[15.46,22.35,33.41,0,18.59,16.91,5.12,5.14,76.45,0,0.55,9.79,13.31,13.15],"gtv_weekly_8":[0,9.79,13.31,0,0,0,13.15,0],"trades_monthly":[6,11,8,0,6,6,2,2,12,0,1,1,2,2],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":12,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":2,"rank_8wk":7,"rank_lw":99,"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_total_cr":137.31,"gtv_8wk_cr":13.42,"gtv_lw_cr":0,"gtv_monthly":[8.11,7.46,7.91,3.05,1.75,7.17,6.82,1.17,28.47,31.4,15.08,7.45,9.51,1.95],"gtv_weekly_8":[0.98,0.98,2.9,5.63,0.98,0,1.95,0],"trades_monthly":[31,21,27,14,9,16,10,2,36,21,10,6,8,2],"trades_lw":0,"clients_monthly":[2,2,2,2,2,2,2,1,3,2,2,2,1,1],"clients_lw":0,"new_clients_monthly":[2,0,0,0,0,0,0,0,2,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":14,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":3,"rank_8wk":4,"rank_lw":11,"name":"Ladderup Wealth Management","gtv_total_cr":129.62,"gtv_8wk_cr":23.64,"gtv_lw_cr":0.79,"gtv_monthly":[4.75,6.0,6.96,6.93,17.72,14.16,4.23,20.21,7.08,9.1,5.54,4.06,20.31,2.59],"gtv_weekly_8":[0.75,0,12.67,0.59,4.08,2.96,1.8,0.79],"trades_monthly":[6,14,15,13,22,28,16,83,27,36,29,22,27,18],"trades_lw":6,"clients_monthly":[0,1,0,0,0,1,1,0,1,1,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,1,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":13.17,"active_months":14,"top_issuer_lw":"Indel Money Limited","top_issuer_pct_lw":55.8},{"rank_all":4,"rank_8wk":99,"rank_lw":99,"name":"Nuvama Wealth Finance Limited","gtv_total_cr":120.09,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[0,0.3,5.11,8.68,0.98,67.4,25.68,0,11.94,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[0,1,2,1,1,14,4,0,1,0,0,0,0,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":7,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":5,"rank_8wk":49,"rank_lw":99,"name":"ZEPHYR FINANCIAL PUBLISHERS PRIVATE LIMITED","gtv_total_cr":108.22,"gtv_8wk_cr":0.2,"gtv_lw_cr":0,"gtv_monthly":[0,15.07,40.54,10.41,9.49,1.74,8.03,14.15,5.16,1.27,1.24,0.91,0,0.2],"gtv_weekly_8":[0,0,0,0,0,0,0.2,0],"trades_monthly":[0,21,47,28,23,12,14,19,7,7,8,4,0,3],"trades_lw":0,"clients_monthly":[0,2,2,1,1,1,1,1,1,1,1,1,0,1],"clients_lw":0,"new_clients_monthly":[0,2,1,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":12,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":6,"rank_8wk":12,"rank_lw":7,"name":"TRUST SECURITIES SERVICES PRIVATE LIMITED","gtv_total_cr":108.09,"gtv_8wk_cr":7.42,"gtv_lw_cr":1.95,"gtv_monthly":[25.21,26.23,6.89,14.77,0,9.34,2.96,0.3,0,0,0,14.97,4.0,3.42],"gtv_weekly_8":[0,0,0,1.08,0,2.92,1.46,1.95],"trades_monthly":[19,11,5,6,0,8,3,1,0,0,0,3,3,4],"trades_lw":2,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":97.5,"active_months":10,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.1},{"rank_all":7,"rank_8wk":9,"rank_lw":22,"name":"KALYAN CAPITAL SERVICES PRIVATE LIMITED","gtv_total_cr":86.86,"gtv_8wk_cr":11.22,"gtv_lw_cr":0.14,"gtv_monthly":[0.78,0,8.48,33.71,2.36,0,0.63,0.15,0,0,19.57,10.35,10.68,0.14],"gtv_weekly_8":[0.4,0.1,4.85,2.82,2.72,0.19,0,0.14],"trades_monthly":[2,0,6,10,7,0,3,1,0,0,8,5,8,1],"trades_lw":1,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":14.0,"active_months":10,"top_issuer_lw":"AKARA CAPITAL ADVISORS","top_issuer_pct_lw":103.4},{"rank_all":8,"rank_8wk":20,"rank_lw":99,"name":"Spark PWM Private Limited","gtv_total_cr":83.6,"gtv_8wk_cr":2.95,"gtv_lw_cr":0,"gtv_monthly":[1.93,26.88,14.89,5.68,24.23,0,0,0,0,7.05,0,2.95,0,0],"gtv_weekly_8":[2.95,0,0,0,0,0,0,0],"trades_monthly":[1,20,4,2,6,0,0,0,0,2,0,1,0,0],"trades_lw":0,"clients_monthly":[0,16,1,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,16,1,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":7,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":9,"rank_8wk":3,"rank_lw":99,"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_total_cr":82.1,"gtv_8wk_cr":32.95,"gtv_lw_cr":0,"gtv_monthly":[6.91,9.86,0,0,0,0,0,0,7.96,0,4.85,52.52,0,0],"gtv_weekly_8":[32.95,0,0,0,0,0,0,0],"trades_monthly":[1,1,0,0,0,0,0,0,2,0,1,10,0,0],"trades_lw":0,"clients_monthly":[1,1,0,0,0,0,0,0,2,0,1,5,0,0],"clients_lw":0,"new_clients_monthly":[1,1,0,0,0,0,0,0,2,0,1,4,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":10,"rank_8wk":1,"rank_lw":1,"name":"AVENDUS FINANCE PRIVATE LIMITED","gtv_total_cr":76.49,"gtv_8wk_cr":42.94,"gtv_lw_cr":42.94,"gtv_monthly":[0,13.77,8.9,0,0,2.91,7.96,0,0,0,0,0,0,42.94],"gtv_weekly_8":[0,0,0,0,0,0,0,42.94],"trades_monthly":[0,4,2,0,0,1,1,0,0,0,0,0,0,3],"trades_lw":3,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":1431.33,"active_months":5,"top_issuer_lw":"EARLYSALARY SERVICES PRIVATE","top_issuer_pct_lw":94.3},{"rank_all":11,"rank_8wk":13,"rank_lw":19,"name":"Incred Wealth and Investment Services Private Limited","gtv_total_cr":68.61,"gtv_8wk_cr":6.03,"gtv_lw_cr":0.19,"gtv_monthly":[18.86,0.2,0.35,0.39,2.72,1.98,1.68,4.4,8.03,2.77,20.41,5.83,0.49,0.5],"gtv_weekly_8":[5.04,0.2,0.1,0,0,0.19,0.3,0.19],"trades_monthly":[6,1,4,3,13,8,11,9,19,17,20,6,3,3],"trades_lw":1,"clients_monthly":[1,1,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[1,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":19.0,"active_months":14,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":102.5},{"rank_all":12,"rank_8wk":5,"rank_lw":8,"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_total_cr":64.33,"gtv_8wk_cr":16.0,"gtv_lw_cr":1.87,"gtv_monthly":[8.43,0.69,0.4,0,0,5.95,4.96,9.46,0.35,11.01,0,7.58,9.52,5.99],"gtv_weekly_8":[0.29,1.59,0.39,1.0,0.29,6.44,4.12,1.87],"trades_monthly":[12,4,3,0,0,3,1,6,2,2,0,8,16,8],"trades_lw":5,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":37.4,"active_months":11,"top_issuer_lw":"Indel Money Limited","top_issuer_pct_lw":68.0},{"rank_all":13,"rank_8wk":28,"rank_lw":99,"name":"Smest Capital Private Limited","gtv_total_cr":60.92,"gtv_8wk_cr":1.46,"gtv_lw_cr":0,"gtv_monthly":[6.01,6.77,19.67,3.25,0.76,0.77,4.05,7.83,0.47,4.19,5.55,1.1,0.49,0],"gtv_weekly_8":[0.97,0,0,0.39,0.05,0.05,0,0],"trades_monthly":[39,39,45,22,5,5,21,22,5,16,17,4,9,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":13,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":14,"rank_8wk":18,"rank_lw":99,"name":"ANGEL ONE INVESTMENT MANAGERS & ADVISORS PRIVATE LIMITED","gtv_total_cr":60.83,"gtv_8wk_cr":3.03,"gtv_lw_cr":0,"gtv_monthly":[0,3.19,4.43,2.27,1.84,3.76,1.33,1.69,3.69,1.79,32.76,1.47,1.71,0.88],"gtv_weekly_8":[0.05,0.5,0.69,0.5,0.3,0.11,0.88,0],"trades_monthly":[0,14,29,25,17,27,25,26,21,16,59,18,38,11],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":13,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":15,"rank_8wk":99,"rank_lw":99,"name":"JIRAAF ASSET MANAGEMENT PRIVATE LIMITED","gtv_total_cr":51.14,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[1.94,5.3,4.44,7.43,6.21,9.91,10.02,1.56,0.24,4.09,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[2,6,6,6,6,7,9,3,1,3,0,0,0,0],"trades_lw":0,"clients_monthly":[1,1,1,1,1,1,1,1,1,1,0,0,0,0],"clients_lw":0,"new_clients_monthly":[1,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":10,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":16,"rank_8wk":99,"rank_lw":99,"name":"LC CAPITAL INDIA PVT LTD","gtv_total_cr":44.87,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[4.96,14.78,0,10.01,2.01,2.47,0,10.65,0,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[1,3,0,2,3,1,0,1,0,0,0,0,0,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":6,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":17,"rank_8wk":40,"rank_lw":99,"name":"Sanctum Wealth Private Limited","gtv_total_cr":42.62,"gtv_8wk_cr":0.4,"gtv_lw_cr":0,"gtv_monthly":[0.9,0.36,4.69,9.44,10.87,3.37,2.01,5.37,2.4,1.0,1.66,0.15,0,0.4],"gtv_weekly_8":[0,0,0,0,0,0,0.4,0],"trades_monthly":[2,2,7,15,10,6,2,6,7,2,7,2,0,4],"trades_lw":0,"clients_monthly":[2,2,6,15,10,6,2,6,6,2,7,2,0,3],"clients_lw":0,"new_clients_monthly":[2,2,6,13,8,3,2,4,3,2,2,2,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":13,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":18,"rank_8wk":41,"rank_lw":12,"name":"Julius Baer","gtv_total_cr":38.93,"gtv_8wk_cr":0.4,"gtv_lw_cr":0.4,"gtv_monthly":[12.17,0,0,0,0.7,1.0,12.63,4.95,1.98,0,1.36,3.74,0,0.4],"gtv_weekly_8":[0,0,0,0,0,0,0,0.4],"trades_monthly":[5,0,0,0,2,1,2,1,1,0,2,3,0,2],"trades_lw":2,"clients_monthly":[0,0,0,0,0,0,1,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,1,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":20.0,"active_months":9,"top_issuer_lw":"HARI AND COMPANY","top_issuer_pct_lw":50.2},{"rank_all":19,"rank_8wk":99,"rank_lw":99,"name":"ASK Wealth Advisors Private Limited","gtv_total_cr":34.77,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[5.0,6.89,13.45,0,0,8.54,0.89,0,0,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[1,1,5,0,0,2,1,0,0,0,0,0,0,0],"trades_lw":0,"clients_monthly":[1,1,1,0,0,1,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[1,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0},{"rank_all":20,"rank_8wk":99,"rank_lw":99,"name":"TATA CAPITAL LIMITED","gtv_total_cr":30.01,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[0,0,0,0,0,0,30.01,0,0,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[0,0,0,0,0,0,4,0,0,0,0,0,0,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0}]};
+let current=0,slides,total;
+const dotsEl=document.getElementById('dots');
+function initNav(){
+  slides=document.querySelectorAll('.slide');total=slides.length;dotsEl.innerHTML='';
+  slides.forEach((_,i)=>{const b=document.createElement('button');b.className='dot-btn'+(i===0?' active':'');b.onclick=()=>{current=i;showSlide(i)};dotsEl.appendChild(b)});
+}
+function showSlide(n){
+  slides.forEach(s=>s.classList.remove('active'));slides[n].classList.add('active');
+  document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===n));
+  document.getElementById('btn-prev').disabled=(n===0);
+  document.getElementById('btn-next').disabled=(n===total-1);
+}
+function navigate(dir){current=Math.max(0,Math.min(total-1,current+dir));showSlide(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1)});
+const PALETTE=['#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#ec4899','#f43f5e','#f97316','#f59e0b','#84cc16','#10b981','#14b8a6','#06b6d4','#0284c7','#1d4ed8','#4338ca','#7c3aed','#be185d','#dc2626','#ea580c'];
+const BLUE='#3b82f6',TEAL='#14b8a6',GREEN='#10b981',AMBER='#f59e0b',VIOLET='#8b5cf6',ROSE='#f43f5e',ORANGE='#f97316',GREY='#94a3b8';
+function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function rnd(v,n=2){return Math.round(v*Math.pow(10,n))/Math.pow(10,n)}
+function insights(id,arr){const el=document.getElementById(id);if(!el)return;el.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('')}
+
+// Cover
+setEl('cover-period',D.period_label+' · HTM trades · Top 20 WDP');
+document.getElementById('cover-metrics').innerHTML=[
+  {lbl:'Total WDP GTV',val:'₹'+D.total_wdp_gtv_cr+'cr'},
+  {lbl:'% of All HTM GTV',val:D.wdp_pct_of_total+'%'},
+  {lbl:'Period',val:D.period_label},
+  {lbl:'Latest Week',val:D.latest_week},
+].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
+
+// Leaderboard
+(function(){
+  const dists=D.distributors;
+  setEl('lb-total-gtv','₹'+D.total_wdp_gtv_cr+'cr');
+  setEl('lb-wdp-pct',D.wdp_pct_of_total+'%');
+  setEl('lb-active-count',dists.length+' WDPs');
+  const top1pct=rnd(dists[0].gtv_total_cr/D.total_wdp_gtv_cr*100,1);
+  const top3pct=rnd((dists[0].gtv_total_cr+dists[1].gtv_total_cr+dists[2].gtv_total_cr)/D.total_wdp_gtv_cr*100,1);
+  const top5pct=rnd(dists.slice(0,5).reduce((s,d)=>s+d.gtv_total_cr,0)/D.total_wdp_gtv_cr*100,1);
+  setEl('lb-top1-share',top1pct+'%');setEl('lb-top3-share',top3pct+'%');setEl('lb-top5-share',top5pct+'%');
+  new Chart(document.getElementById('chart-leaderboard'),{
+    type:'bar',
+    data:{labels:dists.map(d=>d.name.split(' ').slice(0,3).join(' ')),datasets:[{label:'Total GTV (₹cr)',data:dists.map(d=>d.gtv_total_cr),backgroundColor:PALETTE,borderRadius:4,borderWidth:0}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.x}cr · ${rnd(ctx.parsed.x/D.total_wdp_gtv_cr*100,1)}% of WDP`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
+  });
+  insights('ins-leaderboard',[
+    {color:BLUE,txt:`#1 ${dists[0].name.split(' ').slice(0,3).join(' ')} · ₹${dists[0].gtv_total_cr}cr (${top1pct}% of WDP total)`},
+    {color:TEAL,txt:`Top 5 account for ${top5pct}% of total WDP GTV · ${D.period_label}`},
+  ]);
+})();
+
+// Monthly Trend
+(function(){
+  const mo=D.wdp_monthly_total;
+  const peak=Math.max(...mo);const peakIdx=mo.indexOf(peak);
+  const exLast=mo.slice(0,-1);
+  const avg=rnd(exLast.reduce((a,b)=>a+b,0)/exLast.length,2);
+  const aboveAvg=exLast.filter(v=>v>=avg).length;
+  setEl('trend-peak-gtv','₹'+peak+'cr');setEl('trend-peak-mo',D.month_labels[peakIdx]);
+  setEl('trend-latest-mo','₹'+mo[mo.length-1]+'cr');setEl('trend-avg-mo','₹'+avg+'cr');setEl('trend-above-avg',aboveAvg+'/13');
+  const top5=D.distributors.slice(0,5);
+  const othersMo=D.month_labels.map((_,i)=>{const s=top5.reduce((a,d)=>a+(d.gtv_monthly[i]||0),0);return rnd(Math.max(0,(mo[i]||0)-s),2)});
+  const colors5=[BLUE,TEAL,GREEN,VIOLET,AMBER];
+  const datasets=top5.map((d,i)=>({label:d.name.split(' ').slice(0,3).join(' '),data:d.gtv_monthly,backgroundColor:colors5[i],stack:'s',borderRadius:2,borderWidth:0}));
+  datasets.push({label:'Others',data:othersMo,backgroundColor:'#cbd5e1',stack:'s',borderRadius:2,borderWidth:0});
+  new Chart(document.getElementById('chart-monthly-trend'),{
+    type:'bar',data:{labels:D.month_labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:5}}},scales:{x:{stacked:true,grid:{color:'#f8fafc'},ticks:{font:{size:8}}},y:{stacked:true,beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'}}}}
+  });
+  insights('ins-monthly-trend',[
+    {color:BLUE,txt:`Peak: ${D.month_labels[peakIdx]} at ₹${peak}cr · 13-month avg: ₹${avg}cr/month`},
+    {color:TEAL,txt:`May-26 MTD: ₹${mo[mo.length-1]}cr (partial month) · ${aboveAvg}/13 months above avg`},
+  ]);
+})();
+
+// Consistency
+(function(){
+  const dists=D.distributors,N=D.n_months;
+  const alwaysOn=dists.filter(d=>d.active_months===N).length;
+  const tenPlus=dists.filter(d=>d.active_months>=10).length;
+  const bursty=dists.filter(d=>d.active_months<=5).length;
+  const avg=rnd(dists.reduce((s,d)=>s+d.active_months,0)/dists.length,1);
+  setEl('cons-always-on',alwaysOn+' WDPs');setEl('cons-10plus',tenPlus+' WDPs');setEl('cons-bursty',bursty+' WDPs');setEl('cons-avg',avg+'/'+N+' months');
+  const labels=dists.map(d=>d.name.split(' ').slice(0,3).join(' '));
+  const actMo=dists.map(d=>d.active_months);
+  const colors=actMo.map(v=>v===N?GREEN:v>=10?BLUE:v>=7?AMBER:v>=4?ORANGE:ROSE);
+  new Chart(document.getElementById('chart-consistency'),{
+    type:'bar',data:{labels,datasets:[{label:'Active Months (of '+N+')',data:actMo,backgroundColor:colors,borderRadius:4,borderWidth:0}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}/${N} months active`}}},scales:{x:{min:0,max:N,grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>v+'/'+N}},y:{grid:{display:false},ticks:{font:{size:8}}}}}
+  });
+  insights('ins-consistency',[
+    {color:GREEN,txt:`${alwaysOn} WDPs traded every single month — core reliable base`},
+    {color:ROSE,txt:`${bursty} WDPs active ≤5 months — high-GTV bursty players, likely large bulk trades`},
+  ]);
+})();
+
+// Card Slides
+(function(){
+  const dists=D.distributors,deckEl=document.querySelector('.deck');
+  const PER=4;
+  for(let si=0;si<Math.ceil(dists.length/PER);si++){
+    const batch=dists.slice(si*PER,(si+1)*PER);
+    const slideDiv=document.createElement('div');
+    slideDiv.className='slide card-slide';
+    const hdr=document.createElement('div');hdr.className='cs-header';
+    hdr.innerHTML=`<span class="cs-header-title">WDP Deep Dive · Distributor Cards #${si*PER+1}–${Math.min((si+1)*PER,dists.length)}</span><span class="cs-header-meta">${D.period_label} · HTM · Latest: ${D.latest_week}</span>`;
+    slideDiv.appendChild(hdr);
+    const grid=document.createElement('div');grid.className='card-grid-2x2';
+    batch.forEach((d,ci)=>{
+      const gi=si*PER+ci;
+      const bgColor=PALETTE[gi%PALETTE.length];
+      const cid='chart-wdp-'+gi;
+      const rankDiff=d.rank_all-d.rank_8wk;
+      const rankHtml=rankDiff>0?`<span class="dc-rank-badge up">▲${rankDiff} recent</span>`:rankDiff<0?`<span class="dc-rank-badge down">▼${Math.abs(rankDiff)} recent</span>`:`<span class="dc-rank-badge flat">= stable</span>`;
+      const card=document.createElement('div');card.className='dist-card';
+      card.innerHTML=`<div class="dc-header" style="background:${bgColor};"><span class="dc-rank">#${d.rank_all}</span><span class="dc-name">${d.name}</span><span class="dc-active">${d.active_months}/${D.n_months}mo</span>${rankHtml}</div><div class="dc-chart"><canvas id="${cid}"></canvas></div><div class="dc-stats"><div class="dc-stat"><div class="dc-sl">Total GTV</div><div class="dc-sv">₹${d.gtv_total_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">8wk GTV</div><div class="dc-sv">₹${d.gtv_8wk_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">LW GTV</div><div class="dc-sv">₹${d.gtv_lw_cr}cr</div></div><div class="dc-stat"><div class="dc-sl">Avg Ord (LW)</div><div class="dc-sv">₹${d.avg_order_l_lw}L</div></div><div class="dc-stat"><div class="dc-sl">Clients (LW)</div><div class="dc-sv">${d.clients_lw}</div></div><div class="dc-stat"><div class="dc-sl">Top Issuer</div><div class="dc-sv" style="font-size:.65rem;">${d.top_issuer_lw||'—'}</div></div></div>`;
+      grid.appendChild(card);
+      requestAnimationFrame(()=>{
+        const el=document.getElementById(cid);if(!el)return;
+        new Chart(el,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:bgColor+'cc',borderColor:bgColor,borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:6},maxRotation:45}},y:{beginAtZero:true,grid:{color:'rgba(241,245,249,.8)'},ticks:{font:{size:6},callback:v=>v>0?'₹'+v:''}}}}});
+      });
+    });
+    slideDiv.appendChild(grid);deckEl.appendChild(slideDiv);
+  }
+  initNav();showSlide(0);
+})();
+</script>
+</body>
+</html>
