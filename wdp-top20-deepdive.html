@@ -293,7 +293,7 @@ document.getElementById('cover-metrics').innerHTML=[
     }
     const inf2=`${trendDir} trend · Peak ${D.month_labels[peakIdx]} ₹${peakGtv}cr · All-time avg ₹${avgOrdAll>0?avgOrdAll+'L':'N/A'}/trade · ${d.active_months}/${D.n_months} months active`;
     const top3Iss=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3);
-    const inf3html=top3Iss.length?`<div class="ds-inf"><div style="opacity:.6;font-size:.54rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Top issuers · since Apr-25</div>`+top3Iss.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:4px;line-height:1.65;font-size:.6rem"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap">₹${tot}cr · ${pct}%</span></div>`;}).join('')+'</div>':'';
+    const issTop3Html=top3Iss.length?`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuers · Since Apr-25</div>`+top3Iss.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">₹${tot}cr · ${pct}%</span></div>`;}).join('')+'</div>':'';
     const yb=d.yield_buckets||{};const ybEntries=Object.entries(yb).filter(([k,v])=>v.pct>0);const inf4html=ybEntries.length?`<div class="ds-inf"><div style="opacity:.6;font-size:.54rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Yield mix</div>`+ybEntries.map(([k,v])=>`<div style="display:flex;justify-content:space-between;gap:4px;line-height:1.65;font-size:.6rem"><span>${k}</span><span style="opacity:.85;white-space:nowrap">₹${v.gtv_cr}cr · ${v.pct}%</span></div>`).join('')+'</div>':'';
     // Consistency strip
     const consHtml=d.gtv_monthly.map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${D.month_labels[mi]}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
@@ -325,22 +325,10 @@ document.getElementById('cover-metrics').innerHTML=[
           <div><div class="ds-sl">Avg Order (All)</div><div class="ds-sv">${avgOrdAll>0?'₹'+avgOrdAll+'L':'—'}</div></div>
         </div>
         <hr class="ds-divider">
-        <div style="margin-bottom:3px">
-          <div class="ds-sl">Top Issuer · Last Week</div>
-          <div class="ds-sv-xs">${issLWDisp}</div>
-        </div>
-        <div style="margin-bottom:3px">
-          <div class="ds-sl">Top Issuer · Last 8 Weeks</div>
-          <div class="ds-sv-xs">${iss8Disp}</div>
-        </div>
-        <div style="margin-bottom:6px">
-          <div class="ds-sl">Top Issuer · Since APR-25</div>
-          <div class="ds-sv-xs">${issAllDisp}</div>
-        </div>
+        ${issTop3Html}
         <div class="ds-infer">
           <div class="ds-inf">${inf1}</div>
           <div class="ds-inf">${inf2}</div>
-          ${inf3html}
           ${inf4html}
         </div>
       </div>
