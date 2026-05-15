@@ -272,18 +272,40 @@
   </div>
 </div></div>
   <!-- ═══════════════════════════════════════════════════════ MF SECTION ══ -->
-  <!-- ═══════════════════════════════════════════════════════════ MF SECTION ══ -->
-
-  <!-- Slide MF-0 · Mutual Funds Cover -->
+  <!-- Slide MF-0 · Section Divider Cover -->
   <div class="slide cover" style="background:linear-gradient(135deg,#0c4a6e 0%,#0e7490 55%,#06b6d4 100%);">
-    <div class="cover-eyebrow">Yubi Wealth B2B · IFA Segment</div>
-    <h1>Mutual Fund<br>Activity Deep-Dive</h1>
-    <div class="cover-sub">IFA-Sourced Purchases · Apr – May 2026</div>
-    <div class="cover-period" id="mf-cov-period">—</div>
-    <div class="cover-metrics" id="mf-cov-metrics"></div>
+    <div class="cover-inner">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span style="background:#0e7490;color:#fff;font-size:.52rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:20px;">MUTUAL FUNDS</span>
+        <span style="background:rgba(255,255,255,.1);color:#94a3b8;font-size:.52rem;padding:3px 10px;border-radius:20px;">IFA Segment Only</span>
+      </div>
+      <div class="cover-title" style="font-size:2.1rem;line-height:1.1;">Mutual Fund<br>Activity Deep-Dive</div>
+      <div class="cover-sub" style="margin-top:8px;color:#94a3b8;">IFA-Sourced Purchases · Apr – May 2026</div>
+      <div class="cover-chips" style="margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;">
+        <div class="chip"><span id="mf-cov-amt">—</span><span class="chip-lbl">Total Investment</span></div>
+        <div class="chip"><span id="mf-cov-txns">—</span><span class="chip-lbl">Transactions</span></div>
+        <div class="chip"><span id="mf-cov-partners">—</span><span class="chip-lbl">IFA Partners</span></div>
+        <div class="chip"><span id="mf-cov-clients">—</span><span class="chip-lbl">Unique Clients</span></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:12px;">
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#22d3ee;" id="mf-cov-sip-txns">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIP Installments</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#f59e0b;" id="mf-cov-lump-txns">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">Lumpsum Purchases</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#a78bfa;" id="mf-cov-sif-pct">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIF by Value</div>
+        </div>
+      </div>
+      <div class="cover-note" id="mf-cov-note" style="margin-top:14px;font-size:.52rem;color:#64748b;line-height:1.5;"></div>
+    </div>
   </div>
 
-  <!-- Slide MF-1 · Weekly Investment Activity -->
+  <!-- Slide MF-1 · Weekly Activity -->
   <div class="slide two-col">
     <div class="left-panel" style="background:#0e7490;">
       <div class="slide-num">MF · Slide 01</div>
@@ -291,23 +313,26 @@
       <div class="slide-sub">IFA-sourced MF purchases · 8-week view</div>
       <div class="hero-lbl">Last week investment</div>
       <div class="hero-num" id="mf-s1-lw-amt">—</div>
-      <div class="hero-badge flat" id="mf-s1-badge">—</div>
       <div class="stat-list">
         <div class="stat-item"><span class="si-lbl">Prior week</span><span class="si-val" id="mf-s1-pw-amt">—</span></div>
-        <div class="stat-item"><span class="si-lbl">LW transactions / prior</span><span class="si-val" id="mf-s1-txns">—</span></div>
-        <div class="stat-item"><span class="si-lbl">LW clients / prior</span><span class="si-val" id="mf-s1-cli">—</span></div>
-        <div class="stat-item"><span class="si-lbl">SIP txns / Lumpsum txns</span><span class="si-val" id="mf-s1-sip-lump">—</span></div>
-        <div class="stat-item"><span class="si-lbl">8-week total investment</span><span class="si-val" id="mf-s1-total">—</span></div>
-        <div class="takeaway-box" id="tw-mf-s1"></div>
+        <div class="stat-item"><span class="si-lbl">LW transactions</span><span class="si-val" id="mf-s1-lw-txns">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week txns</span><span class="si-val" id="mf-s1-pw-txns">—</span></div>
+        <div class="stat-item"><span class="si-lbl">LW unique clients</span><span class="si-val" id="mf-s1-lw-cli">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week clients</span><span class="si-val" id="mf-s1-pw-cli">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week total</span><span class="si-val" id="mf-s1-total">—</span></div>
       </div>
+      <div class="takeaway-box" id="tw-mf-s1"></div>
     </div>
-    <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-mf-s1"></canvas></div>
+    <div class="right-panel" style="flex-direction:column;padding:14px 16px 10px;gap:6px;">
+      <div style="font-size:.53rem;font-weight:600;color:#374151;letter-spacing:.05em;">WEEKLY INVESTMENT (₹L) · SIP vs LUMPSUM</div>
+      <div class="chart-area">
+        <canvas id="chart-mf-s1"></canvas>
+      </div>
       <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s1"></div></div>
     </div>
   </div>
 
-  <!-- Slide MF-2 · Category & Fund Mix -->
+  <!-- Slide MF-2 · Category & Fund Breakdown -->
   <div class="slide two-col">
     <div class="left-panel" style="background:#0c4a6e;">
       <div class="slide-num">MF · Slide 02</div>
@@ -318,26 +343,26 @@
       <div class="stat-list" id="mf-s2-cat-list"></div>
       <div class="takeaway-box" id="tw-mf-s2"></div>
     </div>
-    <div class="right-panel" style="flex-direction:column;padding:12px 16px 8px;gap:0;">
-      <div style="font-size:.53rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#0c4a6e;margin-bottom:4px;flex-shrink:0;">Top Funds by Investment Value (₹L)</div>
-      <div style="flex:0 0 50%;position:relative;min-height:0;">
+    <div class="right-panel" style="flex-direction:column;padding:14px 16px 10px;gap:0;">
+      <div style="font-size:.53rem;font-weight:600;color:#374151;letter-spacing:.05em;flex-shrink:0;">TOP FUNDS BY INVESTMENT VALUE (₹L)</div>
+      <div style="flex:0 0 50%;position:relative;min-height:0;margin-top:4px;">
         <canvas id="chart-mf-s2"></canvas>
       </div>
-      <div style="font-size:.49rem;text-transform:uppercase;letter-spacing:.1em;color:#0c4a6e;font-weight:700;padding:4px 0 2px;border-top:2px solid #e0f2fe;margin-top:5px;flex-shrink:0;">All Categories · Detail</div>
+      <div style="font-size:.49rem;font-weight:600;color:#64748b;letter-spacing:.05em;margin-top:6px;flex-shrink:0;">ALL CATEGORIES · DETAIL</div>
       <div style="flex:1;overflow:auto;min-height:0;">
-        <table style="font-size:.65rem;">
+        <table style="font-size:.63rem;width:100%;border-collapse:collapse;">
           <thead>
             <tr>
-              <th>Category</th>
-              <th class="num">Txns</th>
-              <th class="num">Amount (₹L)</th>
-              <th class="num">Share</th>
+              <th style="text-align:left;padding:4px 6px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Category</th>
+              <th style="text-align:right;padding:4px 6px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Txns</th>
+              <th style="text-align:right;padding:4px 6px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Amount (₹L)</th>
+              <th style="text-align:right;padding:4px 6px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Share</th>
             </tr>
           </thead>
           <tbody id="mf-cat-tbody"></tbody>
         </table>
       </div>
-      <div class="insight-box" style="flex-shrink:0;margin-top:3px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s2"></div></div>
+      <div class="insight-box" style="flex-shrink:0;margin-top:4px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s2"></div></div>
     </div>
   </div>
 
@@ -355,25 +380,25 @@
         <div class="stat-item"><span class="si-lbl">Most clients served</span><span class="si-val" id="mf-s3-cli-name">—</span></div>
         <div class="stat-item"><span class="si-lbl">SIF partners (≥₹10L)</span><span class="si-val" id="mf-s3-sif-count">—</span></div>
         <div class="stat-item"><span class="si-lbl">Consistent SIP partners</span><span class="si-val" id="mf-s3-sip-only">—</span></div>
-        <div class="takeaway-box" id="tw-mf-s3"></div>
       </div>
+      <div class="takeaway-box" id="tw-mf-s3"></div>
     </div>
     <div class="right-panel" style="flex-direction:column;padding:12px 16px 8px;gap:0;">
-      <div style="font-size:.53rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#0c4a6e;margin-bottom:4px;flex-shrink:0;">Top 10 IFA Partners · Investment Value (₹L) · ⊕ = SIF</div>
-      <div style="flex:0 0 46%;position:relative;min-height:0;">
+      <div style="font-size:.53rem;font-weight:600;color:#374151;letter-spacing:.05em;flex-shrink:0;">TOP 10 IFA PARTNERS · INVESTMENT VALUE (₹L) · ⊕ = SIF</div>
+      <div style="flex:0 0 46%;position:relative;min-height:0;margin-top:4px;">
         <canvas id="chart-mf-s3"></canvas>
       </div>
-      <div style="font-size:.49rem;text-transform:uppercase;letter-spacing:.1em;color:#0c4a6e;font-weight:700;padding:4px 0 2px;border-top:2px solid #e0f2fe;margin-top:5px;flex-shrink:0;">Partner Detail</div>
+      <div style="font-size:.49rem;font-weight:600;color:#64748b;letter-spacing:.05em;margin-top:5px;flex-shrink:0;">PARTNER DETAIL TABLE</div>
       <div style="flex:1;overflow:auto;min-height:0;">
-        <table style="font-size:.65rem;">
+        <table style="font-size:.63rem;width:100%;border-collapse:collapse;">
           <thead>
             <tr>
-              <th style="width:18px;">#</th>
-              <th>Partner</th>
-              <th class="num">₹L</th>
-              <th class="num">Txns</th>
-              <th class="num">Clients</th>
-              <th class="num" style="min-width:68px;">Activity</th>
+              <th style="text-align:left;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">#</th>
+              <th style="text-align:left;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Partner</th>
+              <th style="text-align:right;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">₹L</th>
+              <th style="text-align:right;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Txns</th>
+              <th style="text-align:right;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Clients</th>
+              <th style="text-align:right;padding:3px 5px;color:#6b7280;font-weight:600;border-bottom:1px solid #e2e8f0;">Active Wks</th>
             </tr>
           </thead>
           <tbody id="mf-partner-tbody"></tbody>
@@ -696,145 +721,177 @@ function initNav(){
 
 
 // ══════════════════════════════════════════════════════════════ MF SLIDES ══
-//══════════════════════════════════════════════════════════════ MF SLIDES ══
 const MF = D.mf;
+const CYAN = '#22d3ee';
 
 // MF Cover
 (function(){
-  setEl('mf-cov-period','Apr – May 2026 · IFA Channel Only');
-  document.getElementById('mf-cov-metrics').innerHTML=[
-    {lbl:'Total Investment',val:'₹'+MF.total_amt_l+'L'},
-    {lbl:'Transactions',val:MF.total_txns},
-    {lbl:'IFA Partners',val:MF.unique_partners},
-    {lbl:'Unique Clients',val:MF.unique_clients},
-  ].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
+  const sifAmt = MF.categories.filter(c => c.name.includes('SIF')).reduce((s,c) => s+c.amount_l, 0);
+  const sifPct = Math.round(sifAmt / MF.total_amt_l * 100);
+  setEl('mf-cov-amt', '₹' + MF.total_amt_l + 'L');
+  setEl('mf-cov-txns', MF.total_txns);
+  setEl('mf-cov-partners', MF.unique_partners);
+  setEl('mf-cov-clients', MF.unique_clients);
+  setEl('mf-cov-sip-txns', MF.sip_txns + ' txns');
+  setEl('mf-cov-lump-txns', MF.lump_txns + ' txns');
+  setEl('mf-cov-sif-pct', sifPct + '%');
+  setEl('mf-cov-note', 'Bonds data covers 8 weeks (Mar 23 – May 17, 2026). MF data covers Apr – May 2026 only (first MF transactions via IFA channel). Column AK “Partner” identifies IFA-sourced transactions.');
 })();
 
-// MF Slide 1 – Weekly Investment Activity
+// MF Slide 1 – Weekly Activity
 (function(){
-  const lw=MF.lw_amt_l,pw=MF.pw_amt_l;
-  const del=+(lw-pw).toFixed(2);
-  setEl('mf-s1-lw-amt','₹'+lw+'L');
-  badge(document.getElementById('mf-s1-badge'),del,'L');
-  setEl('mf-s1-pw-amt','₹'+pw+'L');
-  setEl('mf-s1-txns',MF.lw_txns+' / '+MF.pw_txns);
-  setEl('mf-s1-cli',MF.lw_clients+' / '+MF.pw_clients);
-  setEl('mf-s1-sip-lump',MF.sip_txns+' SIP / '+MF.lump_txns+' lump');
-  setEl('mf-s1-total','₹'+MF.total_amt_l+'L');
-  const lumpD=MF.weekly_amt_l.map((t,i)=>{if(!t)return 0;const s=MF.weekly_sip[i]+MF.weekly_lump[i];return s?+(t*MF.weekly_lump[i]/s).toFixed(2):0;});
-  const sipD=MF.weekly_amt_l.map((t,i)=>{if(!t)return 0;const s=MF.weekly_sip[i]+MF.weekly_lump[i];return s?+(t*MF.weekly_sip[i]/s).toFixed(2):0;});
-  const el=document.getElementById('chart-mf-s1');
-  if(el) new Chart(el,{type:'bar',data:{labels:D.week_labels_8,datasets:[
-    {label:'Lumpsum (₹L)',data:lumpD,backgroundColor:AMBER+'cc',borderColor:AMBER,borderWidth:1,borderRadius:3,stack:'s'},
-    {label:'SIP (₹L)',data:sipD,backgroundColor:TEAL+'cc',borderColor:TEAL,borderWidth:1,borderRadius:3,stack:'s'},
-  ]},options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:6}}},
-    scales:{x:{stacked:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},maxRotation:30}},
-      y:{stacked:true,beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?'₹'+v+'L':''}}}
-  }});
-  const sign=del>=0?'+':'−';
-  takeaways('tw-mf-s1',[
-    'May 4–10 peak week: ₹'+MF.weekly_amt_l[6]+'L across '+MF.weekly_txns[6]+' transactions',
-    'Last week (May 11–17): ₹'+lw+'L — '+sign+'₹'+Math.abs(del)+'L vs prior week',
-    MF.sip_txns+' SIPs (₹'+MF.sip_amt_l+'L) vs '+MF.lump_txns+' lumpsum (₹'+MF.lump_amt_l+'L) — lumpsums dominate by value',
+  const lw = MF.lw_amt_l, pw = MF.pw_amt_l;
+  const del = +(lw - pw).toFixed(2);
+  const sign = del >= 0 ? '+' : '';
+  setEl('mf-s1-lw-amt', '₹' + lw + 'L');
+  setEl('mf-s1-pw-amt', '₹' + pw + 'L');
+  setEl('mf-s1-lw-txns', MF.lw_txns);
+  setEl('mf-s1-pw-txns', MF.pw_txns);
+  setEl('mf-s1-lw-cli', MF.lw_clients);
+  setEl('mf-s1-pw-cli', MF.pw_clients);
+  setEl('mf-s1-total', '₹' + MF.total_amt_l + 'L');
+
+  takeaways('tw-mf-s1', [
+    'May 4–10 was peak week: ₹' + MF.weekly_amt_l[6] + 'L across ' + MF.weekly_txns[6] + ' transactions',
+    'Last week (May 11–17): ₹' + lw + 'L — ' + sign + '₹' + Math.abs(del) + 'L vs prior week',
+    MF.sip_txns + ' SIPs (₹' + MF.sip_amt_l + 'L) vs ' + MF.lump_txns + ' lumpsum (₹' + MF.lump_amt_l + 'L) — lumpsums dominate by value',
   ]);
-  insights('ins-mf-s1',[
-    {color:AMBER,txt:'Lumpsum purchases: ₹'+MF.lump_amt_l+'L ('+Math.round(MF.lump_amt_l/MF.total_amt_l*100)+'% of total) — SIF one-time investments drove the May 4–10 spike.'},
-    {color:TEAL, txt:'SIP count ('+MF.sip_txns+' installments, ₹'+MF.sip_amt_l+'L) shows steady recurring activity across '+MF.unique_partners+' IFA partners.'},
+  insights('ins-mf-s1', [
+    {color: '#f59e0b', txt: 'Lumpsum purchases account for ₹' + MF.lump_amt_l + 'L (' + Math.round(MF.lump_amt_l/MF.total_amt_l*100) + '%) of total — SIF one-time investments drove the May 4–10 spike.'},
+    {color: '#22d3ee', txt: 'SIP count (' + MF.sip_txns + ' installments, ₹' + MF.sip_amt_l + 'L) shows steady recurring activity from ' + MF.unique_partners + ' IFA partners.'},
   ]);
+
+  const el = document.getElementById('chart-mf-s1');
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: D.week_labels_8,
+      datasets: [
+        {label: 'Lumpsum (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
+          if (!tot) return 0;
+          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
+          return t ? +(tot * MF.weekly_lump[i] / t).toFixed(2) : 0;
+        }), backgroundColor: AMBER+'cc', borderColor: AMBER, borderWidth: 1, borderRadius: 3, stack: 's'},
+        {label: 'SIP (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
+          if (!tot) return 0;
+          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
+          return t ? +(tot * MF.weekly_sip[i] / t).toFixed(2) : 0;
+        }), backgroundColor: TEAL+'cc', borderColor: TEAL, borderWidth: 1, borderRadius: 3, stack: 's'},
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {labels: {font: {size: 9}}},
+        tooltip: {callbacks: {label: ctx => ctx.dataset.label + ': ₹' + ctx.parsed.y + 'L'}}},
+      scales: {
+        x: {ticks: {font: {size: 8}, maxRotation: 30}, grid: {color: '#f0fdf4'}},
+        y: {stacked: true, beginAtZero: true, ticks: {font: {size: 8}, callback: v => v>0?'₹'+v+'L':''}, grid: {color: '#f0fdf4'}}
+      }
+    }
+  });
 })();
 
 // MF Slide 2 – Category & Fund Breakdown
 (function(){
-  const sifAmt=MF.categories.filter(c=>c.name.includes('SIF')).reduce((s,c)=>s+c.amount_l,0);
-  const sifPct=Math.round(sifAmt/MF.total_amt_l*100);
-  setEl('mf-s2-sif-pct',sifPct+'%');
-  const CC={'SIF Equity':TEAL,'SIF Hybrid':VIOLET,'Equity':AMBER,'Other':EMERALD,'Hybrid':ROSE,'Gold':LIME};
-  document.getElementById('mf-s2-cat-list').innerHTML=MF.categories.map(c=>
-    '<div class="stat-item"><span class="si-lbl">'+c.name+'</span>'+
-    '<span class="si-val">₹'+c.amount_l+'L <span style="opacity:.55;font-size:.75em;">('+c.pct+'%)</span></span></div>'
+  const sifAmt = MF.categories.filter(c => c.name.includes('SIF')).reduce((s,c) => s + c.amount_l, 0);
+  const sifPct = Math.round(sifAmt / MF.total_amt_l * 100);
+  setEl('mf-s2-sif-pct', sifPct + '%');
+
+  const catColors = {'SIF Equity': '#22d3ee', 'SIF Hybrid': '#a78bfa', 'Equity': '#f59e0b', 'Other': '#4ade80', 'Hybrid': '#f87171', 'Gold': '#fbbf24'};
+  const catListEl = document.getElementById('mf-s2-cat-list');
+  catListEl.innerHTML = MF.categories.map(c =>
+    '<div class="stat-item"><span class="si-lbl" style="color:' + (catColors[c.name]||'#e2e8f0') + ';">' + c.name + '</span>' +
+    '<span class="si-val">₹' + c.amount_l + 'L <span style="color:#64748b;font-size:.6em;">(' + c.pct + '%)</span></span></div>'
   ).join('');
-  document.getElementById('mf-cat-tbody').innerHTML=MF.categories.map(c=>'<tr>'+
-    '<td class="name-cell" style="color:'+(CC[c.name]||'#1e293b')+';font-weight:700;">'+c.name+'</td>'+
-    '<td class="num">'+c.txns+'</td>'+
-    '<td class="num">₹'+c.amount_l+'</td>'+
-    '<td class="num"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">'+
-      '<div style="width:44px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">'+
-        '<div style="width:'+c.pct+'%;height:100%;background:'+(CC[c.name]||'#94a3b8')+';border-radius:2px;"></div>'+
-      '</div><span style="font-size:.6rem;color:#64748b;">'+c.pct+'%</span></div></td></tr>'
-  ).join('');
-  const topN=MF.top_funds.slice(0,8);
-  const isSIF=f=>f.name.includes('SIF')||f.name.includes('WSIF');
-  const fundBg=topN.map(f=>isSIF(f)?TEAL+'cc':AMBER+'cc');
-  const fundBr=topN.map(f=>isSIF(f)?TEAL:AMBER);
-  const el=document.getElementById('chart-mf-s2');
-  if(el) new Chart(el,{type:'bar',data:{labels:topN.map(f=>f.name),datasets:[{
-    label:'Investment (₹L)',data:topN.map(f=>f.amount_l),backgroundColor:fundBg,borderColor:fundBr,borderWidth:1,borderRadius:4,borderSkipped:false
-  }]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.x+'L · '+topN[ctx.dataIndex].txns+' txns'}}},
-    scales:{x:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>'₹'+v+'L'}},
-      y:{grid:{display:false},ticks:{font:{size:8}}}}
-  }});
-  takeaways('tw-mf-s2',[
-    'SIF products: ₹'+sifAmt.toFixed(0)+'L ('+sifPct+'%) — Specialized Investment Funds, ₹10L minimum',
-    'Regular equity MF: ₹'+MF.categories.find(c=>c.name==='Equity').amount_l+'L across '+MF.categories.find(c=>c.name==='Equity').txns+' transactions',
+
+  const tbody = document.getElementById('mf-cat-tbody');
+  tbody.innerHTML = MF.categories.map(c => '<tr>' +
+    '<td style="padding:4px 6px;color:' + (catColors[c.name]||'#374151') + ';">' + c.name + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;color:#6b7280;">' + c.txns + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;color:#374151;font-weight:600;">₹' + c.amount_l + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">' +
+    '<div style="width:40px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;"><div style="width:' + c.pct + '%;height:100%;background:' + (catColors[c.name]||'#94a3b8') + ';border-radius:2px;"></div></div>' +
+    '<span style="font-size:.6rem;color:#6b7280;">' + c.pct + '%</span></div></td>' +
+  '</tr>').join('');
+
+  const topN = MF.top_funds.slice(0, 8);
+  const fundBg = topN.map(f => (f.name.includes('SIF') || f.name.includes('WSIF')) ? 'rgba(34,211,238,.8)' : 'rgba(245,158,11,.75)');
+  new Chart(document.getElementById('chart-mf-s2'), {
+    type: 'bar',
+    data: {labels: topN.map(f => f.name), datasets: [{label: 'Investment (₹L)', data: topN.map(f => f.amount_l), backgroundColor: fundBg, borderRadius: 4, borderSkipped: false}]},
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: ctx => '₹' + ctx.parsed.x + 'L · ' + topN[ctx.dataIndex].txns + ' txns'}}},
+      scales: {
+        x: {ticks: {font: {size: 8}, callback: v => '₹' + v + 'L'}, grid: {color: '#f0fdf4'}},
+        y: {ticks: {font: {size: 8}}, grid: {display: false}}
+      }
+    }
+  });
+
+  takeaways('tw-mf-s2', [
+    'SIF products: ₹' + sifAmt.toFixed(0) + 'L (' + sifPct + '%) — Specialized Investment Funds with ₹10L minimum',
+    'Regular equity MF: ₹' + MF.categories.find(c => c.name === 'Equity').amount_l + 'L across ' + MF.categories.find(c => c.name === 'Equity').txns + ' SIP/lumpsum transactions',
     'WSIF MF alone: ₹40L — 4 lumpsum SIF purchases by single partner S. K. Goyal',
   ]);
-  insights('ins-mf-s2',[
-    {color:TEAL, txt:'SIF (Specialized Investment Funds) account for '+sifPct+'% of IFA MF value — high-ticket lumpsum placements (₹10L minimum per investment).'},
-    {color:AMBER,txt:'Regular equity MF (46 txns, mostly SIPs) shows consistent retail-level IFA engagement — a separate cohort from SIF ticket buyers.'},
+  insights('ins-mf-s2', [
+    {color: '#22d3ee', txt: 'SIF (Specialized Investment Funds) account for ' + sifPct + '% of IFA MF value — driven by high-ticket lumpsum placements (₹10L minimum per investment).'},
+    {color: '#f59e0b', txt: 'Regular equity MF activity (46 txns, mostly SIPs) reflects consistent retail-level IFA engagement — separate from the SIF ticket buyers.'},
   ]);
 })();
 
 // MF Slide 3 – Top IFA Partners
 (function(){
-  const p=MF.top_partners;
-  const topP=p[0];
-  const mostActive=p.reduce((a,b)=>b.txns>a.txns?b:a);
-  const mostCli=p.reduce((a,b)=>b.clients>a.clients?b:a);
-  const sifCount=p.filter(x=>x.sif).length;
-  const multiWk=p.filter(x=>!x.sif&&x.active_weeks>=2);
-  setEl('mf-s3-top-amt','₹'+topP.amount_l+'L');
-  setEl('mf-s3-top-name',topP.short);
-  setEl('mf-s3-active-name',mostActive.short+' ('+mostActive.txns+' txns)');
-  setEl('mf-s3-cli-name',mostCli.short+' ('+mostCli.clients+' clients)');
-  setEl('mf-s3-sif-count',sifCount+' of '+p.length+' partners');
-  setEl('mf-s3-sip-only',multiWk.length+' partners (≥2 wks active)');
-  const isSIF2=x=>x.sif;
-  const el=document.getElementById('chart-mf-s3');
-  if(el) new Chart(el,{type:'bar',data:{labels:p.map(x=>x.short+(x.sif?' ⊕':'')),datasets:[{
-    label:'Investment (₹L)',data:p.map(x=>x.amount_l),
-    backgroundColor:p.map(x=>isSIF2(x)?TEAL+'cc':EMERALD+'cc'),
-    borderColor:p.map(x=>isSIF2(x)?TEAL:EMERALD),borderWidth:1,borderRadius:4,borderSkipped:false
-  }]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.x+'L · '+p[ctx.dataIndex].txns+' txns · '+p[ctx.dataIndex].clients+' clients'}}},
-    scales:{x:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>'₹'+v+'L'}},
-      y:{grid:{display:false},ticks:{font:{size:8}}}}
-  }});
-  document.getElementById('mf-partner-tbody').innerHTML=p.map((x,i)=>{
-    const pct=Math.round(x.active_weeks/8*100);
-    const bc=isSIF2(x)?TEAL:EMERALD;
-    const actBar='<div style="display:flex;align-items:center;gap:4px;">'+
-      '<div style="width:38px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">'+
-        '<div style="width:'+pct+'%;height:100%;background:'+bc+';border-radius:2px;"></div>'+
-      '</div><span style="font-size:.6rem;color:'+bc+';font-weight:700;">'+x.active_weeks+'/8</span></div>';
-    const sifTag=x.sif?'<span class="inst-badge" style="background:#e0f2fe;color:#0c4a6e;">SIF</span>':'';
-    return '<tr>'+
-      '<td class="rank-cell" style="padding:5px 7px;color:'+bc+';">'+(i+1)+'</td>'+
-      '<td class="name-cell" style="padding:5px 7px;max-width:150px;">'+x.short+sifTag+'</td>'+
-      '<td class="num" style="padding:5px 7px;font-weight:700;">₹'+x.amount_l+'</td>'+
-      '<td class="num" style="padding:5px 7px;">'+x.txns+'</td>'+
-      '<td class="num" style="padding:5px 7px;">'+x.clients+'</td>'+
-      '<td class="num" style="padding:5px 7px;">'+actBar+'</td></tr>';
-  }).join('');
-  takeaways('tw-mf-s3',[
-    'Top 4 partners are SIF buyers: '+p.filter(x=>x.sif).map(x=>x.short).join(', '),
+  const p = MF.top_partners;
+  const topP = p[0];
+  const mostActive = p.reduce((a, b) => b.txns > a.txns ? b : a);
+  const mostCli = p.reduce((a, b) => b.clients > a.clients ? b : a);
+  const sifCount = p.filter(x => x.sif).length;
+  const multiWk = p.filter(x => !x.sif && x.active_weeks >= 2);
+
+  setEl('mf-s3-top-amt', '₹' + topP.amount_l + 'L');
+  setEl('mf-s3-top-name', topP.short);
+  setEl('mf-s3-active-name', mostActive.short + ' (' + mostActive.txns + ' txns)');
+  setEl('mf-s3-cli-name', mostCli.short + ' (' + mostCli.clients + ' clients)');
+  setEl('mf-s3-sif-count', sifCount);
+  setEl('mf-s3-sip-only', multiWk.length + ' partners (≥2 wks)');
+
+  new Chart(document.getElementById('chart-mf-s3'), {
+    type: 'bar',
+    data: {
+      labels: p.map(x => x.short + (x.sif ? ' ⊕' : '')),
+      datasets: [{label: 'Investment (₹L)', data: p.map(x => x.amount_l),
+        backgroundColor: p.map(x => x.sif ? 'rgba(34,211,238,.8)' : 'rgba(74,222,128,.75)'),
+        borderRadius: 4, borderSkipped: false}]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: ctx => '₹' + ctx.parsed.x + 'L · ' + p[ctx.dataIndex].txns + ' txns · ' + p[ctx.dataIndex].clients + ' clients'}}},
+      scales: {
+        x: {ticks: {font: {size: 8}, callback: v => '₹' + v + 'L'}, grid: {color: '#f0fdf4'}},
+        y: {ticks: {font: {size: 8}}, grid: {display: false}}
+      }
+    }
+  });
+
+  const tbody = document.getElementById('mf-partner-tbody');
+  tbody.innerHTML = p.map((x, i) => '<tr style="border-bottom:1px solid #e2e8f0;">' +
+    '<td style="padding:3px 5px;color:#6b7280;">' + (i+1) + '</td>' +
+    '<td style="padding:3px 5px;color:' + (x.sif ? '#0891b2' : '#374151') + ';">' + x.short + (x.sif ? ' <span style="color:#f59e0b;font-size:.55em;font-weight:700;">SIF</span>' : '') + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;font-weight:600;color:#374151;">₹' + x.amount_l + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#6b7280;">' + x.txns + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#6b7280;">' + x.clients + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#6b7280;">' + x.active_weeks + '/8</td>' +
+  '</tr>').join('');
+
+  takeaways('tw-mf-s3', [
+    'Top 4 partners are SIF buyers: ' + p.filter(x => x.sif).map(x => x.short).join(', '),
     'Vriksham Financial Solutions — most clients (7 clients, 16 SIP txns over 3 weeks)',
-    multiWk.length+' non-SIF IFAs active 2+ weeks — consistent SIP pipeline',
+    multiWk.length + ' non-SIF IFAs active for 2+ weeks — consistent SIP pipeline',
   ]);
-  insights('ins-mf-s3',[
-    {color:TEAL,   txt:'Top 4 IFA partners placed SIF lumpsum investments (≥₹10L each). S. K. Goyal alone: ₹40L. SIF activity is concentrated and episodic.'},
-    {color:EMERALD,txt:'Non-SIF IFAs (Gulshan Kalra, Vriksham FS, Naveen Reddy) show multi-week SIP patterns. Vriksham leads client reach: 7 clients across 3 active weeks.'},
+  insights('ins-mf-s3', [
+    {color: '#22d3ee', txt: 'Top 4 IFA partners placed SIF lumpsum investments (≥₹10L each). S. K. Goyal alone: ₹40L. SIF activity is concentrated and episodic.'},
+    {color: '#4ade80', txt: 'Non-SIF IFAs (Gulshan Kalra, Vriksham FS, Naveen Reddy) show multi-week SIP patterns. Vriksham leads client reach at 7 clients across 3 active weeks.'},
   ]);
 })();
 
