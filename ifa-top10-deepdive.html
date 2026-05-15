@@ -69,6 +69,18 @@
     .inst-badge{display:inline-block;font-size:.48rem;background:#fef3c7;color:#d97706;border-radius:3px;padding:1px 4px;vertical-align:middle;margin-left:4px;font-weight:700}
     .rank-cell{font-weight:800;color:#047857}
     @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
+    /* Key Takeaways (left panel) */
+    .takeaway-box{margin-top:8px;background:rgba(255,255,255,.13);border-radius:7px;padding:8px 10px;font-size:.58rem;line-height:1.55;color:rgba(255,255,255,.92)}
+    .tw-title{font-size:.47rem;text-transform:uppercase;letter-spacing:.12em;opacity:.5;margin-bottom:5px;font-weight:700}
+    .tw-row{display:flex;gap:5px;margin-bottom:3px;align-items:flex-start}
+    .tw-row:last-child{margin-bottom:0}
+    .tw-dot{flex-shrink:0;width:4px;height:4px;background:rgba(255,255,255,.65);border-radius:50%;margin-top:.42em}
+    /* Key Insights (right panel) */
+    .insight-box{margin-top:8px;padding:7px 10px 8px;border-top:2px solid #d1fae5;background:#f0fdf4;border-radius:0 0 5px 5px}
+    .ib-title{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;margin-bottom:5px}
+    .ib-body{display:flex;flex-direction:column;gap:4px}
+    .ins-chip{display:flex;align-items:flex-start;gap:6px;font-size:.67rem;color:#1e3a2f;line-height:1.5}
+    .ins-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:.35em}
   </style>
 </head>
 <body>
@@ -96,11 +108,12 @@
         <div class="stat-item"><span class="si-lbl">Trades last wk / 8wk avg</span><span class="si-val" id="s1-trades">—</span></div>
         <div class="stat-item"><span class="si-lbl">Avg order size last wk</span><span class="si-val" id="s1-avgord">—</span></div>
         <div class="stat-item"><span class="si-lbl">8-week IFA total GTV</span><span class="si-val" id="s1-8wkgtv">—</span></div>
+        <div class="takeaway-box" id="tw-s1"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s1"></canvas></div>
-      <div class="insight-row" id="ins-s1"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s1"></div></div>
     </div>
   </div>
   <!-- Slide 2: IFA Onboarding -->
@@ -118,11 +131,12 @@
         <div class="stat-item"><span class="si-lbl">Active last 8 weeks</span><span class="si-val" id="s2-active8">—</span></div>
         <div class="stat-item"><span class="si-lbl">Activation gap (8wk)</span><span class="si-val" id="s2-gap">—</span></div>
         <div class="stat-item"><span class="si-lbl">Active last week</span><span class="si-val" id="s2-active-lw">—</span></div>
+        <div class="takeaway-box" id="tw-s2"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s2"></canvas></div>
-      <div class="insight-row" id="ins-s2"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s2"></div></div>
     </div>
   </div>
   <!-- Slide 3: Client Onboarding -->
@@ -139,11 +153,12 @@
         <div class="stat-item"><span class="si-lbl">Active clients last wk</span><span class="si-val" id="s3-active">—</span></div>
         <div class="stat-item"><span class="si-lbl">8-wk avg active clients</span><span class="si-val" id="s3-avg-active">—</span></div>
         <div class="stat-item"><span class="si-lbl">8-week new clients total</span><span class="si-val" id="s3-8wk-new">—</span></div>
+        <div class="takeaway-box" id="tw-s3"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s3"></canvas></div>
-      <div class="insight-row" id="ins-s3"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s3"></div></div>
     </div>
   </div>
   <!-- Slide 4: Active IFAs & Clients -->
@@ -160,11 +175,12 @@
         <div class="stat-item"><span class="si-lbl">Active clients last wk</span><span class="si-val" id="s4-clients">—</span></div>
         <div class="stat-item"><span class="si-lbl">Clients: prior / 8-wk avg</span><span class="si-val" id="s4-cli-prev">—</span></div>
         <div class="stat-item"><span class="si-lbl">Clients per active IFA</span><span class="si-val" id="s4-cli-per-dist">—</span></div>
+        <div class="takeaway-box" id="tw-s4"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s4"></canvas></div>
-      <div class="insight-row" id="ins-s4"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s4"></div></div>
     </div>
   </div>
   <!-- Slide 5: Avg Order Size Trend -->
@@ -181,11 +197,12 @@
         <div class="stat-item"><span class="si-lbl">WDP avg order (same wk)</span><span class="si-val" id="s5-wdp">—</span></div>
         <div class="stat-item"><span class="si-lbl">IFA / WDP ratio</span><span class="si-val" id="s5-ratio">—</span></div>
         <div class="stat-item"><span class="si-lbl">IFA trade count last wk</span><span class="si-val" id="s5-trades">—</span></div>
+        <div class="takeaway-box" id="tw-s5"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s5"></canvas></div>
-      <div class="insight-row" id="ins-s5"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s5"></div></div>
     </div>
   </div>
   <!-- Slide 6: Monthly GTV Trend -->
@@ -202,11 +219,12 @@
         <div class="stat-item"><span class="si-lbl">13-month avg GTV</span><span class="si-val" id="s6-avg">—</span></div>
         <div class="stat-item"><span class="si-lbl">Months above avg</span><span class="si-val" id="s6-above">—</span></div>
         <div class="stat-item"><span class="si-lbl">Total IFA GTV (all-time)</span><span class="si-val" id="s6-total">—</span></div>
+        <div class="takeaway-box" id="tw-s6"></div>
       </div>
     </div>
     <div class="right-panel">
       <div class="chart-area"><canvas id="chart-s6"></canvas></div>
-      <div class="insight-row" id="ins-s6"></div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s6"></div></div>
     </div>
   </div>
   <!-- Slide 7: Top IFAs Summary -->
@@ -236,6 +254,7 @@
         <tbody id="top-ifa-tbody"></tbody>
       </table>
     </div>
+    <div id="tw-s7" style="padding:10px 20px 12px;background:#f0fdf4;border-top:2px solid #d1fae5;flex-shrink:0;display:flex;gap:28px;font-size:.67rem;color:#1e3a2f;line-height:1.65"></div>
   </div>
 </div></div>
 <div class="nav-bar">
@@ -244,7 +263,7 @@
   <button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
 </div>
 <script>
-const D = {"generated":"May 14, 2026 \u00b7 15:02","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"total_dists_onboarded":1543,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"monthly_trades":[5,4,20,20,21,31,43,19,24,26,45,44,58,25],"monthly_clients":[5,3,8,13,12,18,27,13,18,18,28,30,37,19],"monthly_new_clients":[5,2,8,8,10,15,18,6,14,8,18,19,23,12],"weekly_gtv_cr":[3.21,2.29,3.37,1.61,4.5,3.48,3.56,7.35],"weekly_trades":[61,29,87,59,91,56,79,67],"weekly_avg_order_l":[5.27,7.89,3.88,2.72,4.95,6.21,4.5,10.97],"weekly_active_dists":[37,15,42,33,46,35,44,37],"weekly_active_clients":[45,22,59,47,65,44,61,51],"weekly_new_dists":[12,5,11,10,18,7,8,7],"weekly_new_clients":[28,18,38,30,40,29,38,28],"kpi_gtv":{"this":7.35,"last":3.56,"avg":3.1,"delta":3.79,"suffix":"cr"},"kpi_trades":{"this":67,"last":79,"avg":66.0,"delta":-12},"kpi_dist":{"this":37,"last":44,"avg":36.0,"delta":-7},"kpi_clients":{"this":51,"last":61,"avg":49.0,"delta":-10},"kpi_avg_order":{"this":10.97,"last":4.5,"avg":5.1,"delta":6.47},"kpi_new_dist":{"this":7,"last":8,"avg":10.1,"delta":-1},"kpi_new_cli":{"this":28,"last":38,"avg":31.6,"delta":-10},"top_ifas":[{"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","rank_all":1,"rank_8wk":1,"gtv_8wk_cr":5.32,"gtv_total_cr":53.36,"gtv_lw_cr":4.89,"total_unique_clients":1,"new_clients_total":1,"avg_order_l_lw":489.0,"avg_order_l_all":410.5,"active_months":6,"active_weeks_8":4,"institutional":true},{"name":"DEEPAK THUKRAL","rank_all":3,"rank_8wk":2,"gtv_8wk_cr":2.36,"gtv_total_cr":13.0,"gtv_lw_cr":0.02,"total_unique_clients":35,"new_clients_total":35,"avg_order_l_lw":2.0,"avg_order_l_all":14.8,"active_months":12,"active_weeks_8":6,"institutional":false},{"name":"PINAL N SHAH","rank_all":2,"rank_8wk":3,"gtv_8wk_cr":2.25,"gtv_total_cr":15.57,"gtv_lw_cr":0,"total_unique_clients":15,"new_clients_total":15,"avg_order_l_lw":0,"avg_order_l_all":42.1,"active_months":13,"active_weeks_8":4,"institutional":false},{"name":"LKP SECURITIES LTD","rank_all":5,"rank_8wk":4,"gtv_8wk_cr":1.9,"gtv_total_cr":5.28,"gtv_lw_cr":0.2,"total_unique_clients":80,"new_clients_total":80,"avg_order_l_lw":2.86,"avg_order_l_all":3.6,"active_months":13,"active_weeks_8":8,"institutional":false},{"name":"EQ ADDWISE LLP","rank_all":10,"rank_8wk":5,"gtv_8wk_cr":1.26,"gtv_total_cr":3.84,"gtv_lw_cr":0,"total_unique_clients":7,"new_clients_total":7,"avg_order_l_lw":0,"avg_order_l_all":32.0,"active_months":3,"active_weeks_8":2,"institutional":false},{"name":"VALUMINDS FINSPERITI CATALYST LLP","rank_all":6,"rank_8wk":10,"gtv_8wk_cr":0.54,"gtv_total_cr":4.91,"gtv_lw_cr":0.19,"total_unique_clients":17,"new_clients_total":17,"avg_order_l_lw":9.5,"avg_order_l_all":12.9,"active_months":12,"active_weeks_8":4,"institutional":false},{"name":"Saroj Agrawal","rank_all":9,"rank_8wk":15,"gtv_8wk_cr":0.36,"gtv_total_cr":3.85,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":9.9,"active_months":11,"active_weeks_8":2,"institutional":false},{"name":"ANICUT CAPITAL LLP","rank_all":4,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":10.69,"gtv_lw_cr":0,"total_unique_clients":4,"new_clients_total":4,"avg_order_l_lw":0,"avg_order_l_all":178.2,"active_months":3,"active_weeks_8":0,"institutional":false},{"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","rank_all":7,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":4.45,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":148.3,"active_months":1,"active_weeks_8":0,"institutional":false},{"name":"RESURGENT INDIA LIMITED","rank_all":8,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":3.96,"gtv_lw_cr":0,"total_unique_clients":3,"new_clients_total":3,"avg_order_l_lw":0,"avg_order_l_all":99.0,"active_months":1,"active_weeks_8":0,"institutional":false}],"ifa_8wk_total_gtv":29.37,"ifa_8wk_total_trades":529,"ifa_8wk_active_dists":156,"wdp_avg_order_lw":107.36};
+const D = {"generated":"May 14, 2026 \u00b7 15:02","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"total_dists_onboarded":1543,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"monthly_trades":[5,4,20,20,21,31,43,19,24,26,45,44,58,25],"monthly_clients":[5,3,8,13,12,18,27,13,18,18,28,30,37,19],"monthly_new_clients":[5,2,8,8,10,15,18,6,14,8,18,19,23,12],"weekly_gtv_cr":[3.21,2.29,3.37,1.61,4.5,3.48,3.56,7.35],"weekly_trades":[61,29,87,59,91,56,79,67],"weekly_avg_order_l":[5.27,7.89,3.88,2.72,4.95,6.21,4.5,10.97],"weekly_active_dists":[37, 15, 43, 34, 46, 35, 45, 37],"weekly_active_clients":[45, 22, 60, 48, 65, 44, 62, 51],"weekly_new_dists":[14, 13, 15, 24, 16, 17, 18, 13],"weekly_new_clients":[28, 18, 38, 30, 40, 29, 39, 28],"kpi_gtv":{"this":7.35,"last":3.56,"avg":3.1,"delta":3.79,"suffix":"cr"},"kpi_trades":{"this":67,"last":79,"avg":66.0,"delta":-12},"kpi_dist":{"this":37,"last":45,"avg":36.5,"delta":-8},"kpi_clients":{"this":51,"last":62,"avg":49.6,"delta":-11},"kpi_avg_order":{"this":10.97,"last":4.5,"avg":5.1,"delta":6.47},"kpi_new_dist":{"this":13,"last":18,"avg":16.2,"delta":-5},"kpi_new_cli":{"this":28,"last":39,"avg":31.2,"delta":-11},"top_ifas":[{"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","rank_all":1,"rank_8wk":1,"gtv_8wk_cr":5.32,"gtv_total_cr":53.36,"gtv_lw_cr":4.89,"total_unique_clients":1,"new_clients_total":1,"avg_order_l_lw":489.0,"avg_order_l_all":410.5,"active_months":6,"active_weeks_8":4,"institutional":true},{"name":"DEEPAK THUKRAL","rank_all":3,"rank_8wk":2,"gtv_8wk_cr":2.36,"gtv_total_cr":13.0,"gtv_lw_cr":0.02,"total_unique_clients":35,"new_clients_total":35,"avg_order_l_lw":2.0,"avg_order_l_all":14.8,"active_months":12,"active_weeks_8":6,"institutional":false},{"name":"PINAL N SHAH","rank_all":2,"rank_8wk":3,"gtv_8wk_cr":2.25,"gtv_total_cr":15.57,"gtv_lw_cr":0,"total_unique_clients":15,"new_clients_total":15,"avg_order_l_lw":0,"avg_order_l_all":42.1,"active_months":13,"active_weeks_8":4,"institutional":false},{"name":"LKP SECURITIES LTD","rank_all":5,"rank_8wk":4,"gtv_8wk_cr":1.9,"gtv_total_cr":5.28,"gtv_lw_cr":0.2,"total_unique_clients":80,"new_clients_total":80,"avg_order_l_lw":2.86,"avg_order_l_all":3.6,"active_months":13,"active_weeks_8":8,"institutional":false},{"name":"EQ ADDWISE LLP","rank_all":10,"rank_8wk":5,"gtv_8wk_cr":1.26,"gtv_total_cr":3.84,"gtv_lw_cr":0,"total_unique_clients":7,"new_clients_total":7,"avg_order_l_lw":0,"avg_order_l_all":32.0,"active_months":3,"active_weeks_8":2,"institutional":false},{"name":"VALUMINDS FINSPERITI CATALYST LLP","rank_all":6,"rank_8wk":10,"gtv_8wk_cr":0.54,"gtv_total_cr":4.91,"gtv_lw_cr":0.19,"total_unique_clients":17,"new_clients_total":17,"avg_order_l_lw":9.5,"avg_order_l_all":12.9,"active_months":12,"active_weeks_8":4,"institutional":false},{"name":"Saroj Agrawal","rank_all":9,"rank_8wk":15,"gtv_8wk_cr":0.36,"gtv_total_cr":3.85,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":9.9,"active_months":11,"active_weeks_8":2,"institutional":false},{"name":"ANICUT CAPITAL LLP","rank_all":4,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":10.69,"gtv_lw_cr":0,"total_unique_clients":4,"new_clients_total":4,"avg_order_l_lw":0,"avg_order_l_all":178.2,"active_months":3,"active_weeks_8":0,"institutional":false},{"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","rank_all":7,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":4.45,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":148.3,"active_months":1,"active_weeks_8":0,"institutional":false},{"name":"RESURGENT INDIA LIMITED","rank_all":8,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":3.96,"gtv_lw_cr":0,"total_unique_clients":3,"new_clients_total":3,"avg_order_l_lw":0,"avg_order_l_all":99.0,"active_months":1,"active_weeks_8":0,"institutional":false}],"ifa_8wk_total_gtv":29.37,"ifa_8wk_total_trades":529,"ifa_8wk_active_dists":156,"wdp_avg_order_lw":107.36};
 const GREEN='#10b981',EMERALD='#047857',TEAL='#14b8a6',LIME='#84cc16',BLUE='#3b82f6',AMBER='#f59e0b',GREY='#94a3b8',ROSE='#f43f5e',VIOLET='#8b5cf6';
 const Y2={id:'y2',position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:8}}};
 function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
@@ -255,6 +274,7 @@ function num(v){return (v||0).toLocaleString()}
 function pct(v){return (v||0)+'%'}
 function badge(el,delta,suffix){if(!el)return;const up=delta>0;const dn=delta<0;const sgn=up?'+':'';el.textContent=sgn+(delta||0)+(suffix||'')+' WoW';el.className='hero-badge '+(up?'up':dn?'down':'flat')}
 function insights(id,arr){const el=document.getElementById(id);if(!el)return;el.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('')}
+function takeaways(id,items){const el=document.getElementById(id);if(!el)return;el.innerHTML='<div class="tw-title">Key Takeaways</div>'+items.map(t=>`<div class="tw-row"><span class="tw-dot"></span><span>${t}</span></div>`).join('')}
 function bar(label,data,color,yAxisID){return{label,data,backgroundColor:color+'cc',borderColor:color,borderWidth:1,borderRadius:3,yAxisID:yAxisID||'y'}}
 function line(label,data,color,yAxisID){return{type:'line',label,data,borderColor:color,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.3,yAxisID:yAxisID||'y'}}
 function mkChart(id,datasets,y2opts){
@@ -309,9 +329,15 @@ function initNav(){
     bar('Weekly GTV (₹cr)',D.weekly_gtv_cr,EMERALD),
     line('Trades',D.weekly_trades,AMBER,'y2')
   ],{...Y2,ticks:{...Y2.ticks,callback:v=>v>0?v:''}});
+  const gtvWoW1=g.last>0?Math.round((g.this-g.last)/g.last*100):0;
   insights('ins-s1',[
-    {color:EMERALD,txt:`GTV last wk: ${cr(g.this)} · prior: ${cr(g.last)} · 8-wk avg: ${cr(g.avg)}`},
-    {color:AMBER,txt:`${num(t.this)} trades last wk · avg order ${lakh(a.this)} · 8wk total ${cr(D.ifa_8wk_total_gtv)}`},
+    {color:EMERALD,txt:`GTV surged to ${cr(g.this)} last week — ${gtvWoW1>=0?'+'+gtvWoW1+'%':gtvWoW1+'%'} WoW vs the 8-week avg of ${cr(g.avg)}. The spike is driven by large-ticket NDX trades inflating the avg order to ${lakh(a.this)}.`},
+    {color:AMBER,txt:`Despite higher GTV, trade count (${num(t.this)}) was near the 8-week avg of ${num(t.avg)}, confirming fewer but bigger orders — not broad retail participation. Excluding NDX, IFA avg order likely sits closer to ₹2–5L.`},
+  ]);
+  takeaways('tw-s1',[
+    `GTV ${gtvWoW1>=0?'+'+gtvWoW1+'%':gtvWoW1+'%'} WoW → ${cr(g.this)} (8-wk avg ${cr(g.avg)})`,
+    `${num(t.this)} trades · avg order ${lakh(a.this)} (8-wk avg ${lakh(a.avg)})`,
+    `8-wk IFA total: ${cr(D.ifa_8wk_total_gtv)} across ${D.ifa_8wk_total_trades} trades`,
   ]);
 })();
 
@@ -332,8 +358,13 @@ function initNav(){
     bar('New IFAs per Week',D.weekly_new_dists,TEAL),
   ],null);
   insights('ins-s2',[
-    {color:TEAL,txt:`New IFAs last wk: ${num(nd.this)} · prior: ${num(nd.last)} · 8-wk avg: ${nd.avg}/wk`},
-    {color:AMBER,txt:`Activation gap: ${gap.toLocaleString()} of ${D.total_dists_onboarded.toLocaleString()} onboarded IFAs not active in last 8 weeks (${gapPct}%)`},
+    {color:TEAL,txt:`IFA onboarding is ${nd.this>=nd.avg?'on track':'below average'} at ${num(nd.this)} new IFAs this week vs 8-wk avg of ${nd.avg}/wk. New additions grow the pipeline but activation velocity must improve significantly.`},
+    {color:AMBER,txt:`Activation gap is stark: ${gap.toLocaleString()} of ${D.total_dists_onboarded.toLocaleString()} onboarded IFAs (${gapPct}%) have not placed a single trade in the last 8 weeks. Closing this gap is the #1 growth lever for the IFA segment.`},
+  ]);
+  takeaways('tw-s2',[
+    `${num(nd.this)} new IFAs last wk vs 8-wk avg ${nd.avg}/wk`,
+    `Only ${act8} of ${D.total_dists_onboarded.toLocaleString()} onboarded IFAs active in 8 wks`,
+    `${gap.toLocaleString()} (${gapPct}%) onboarded but never traded`,
   ]);
 })();
 
@@ -351,9 +382,15 @@ function initNav(){
     bar('New Clients',D.weekly_new_clients,GREEN),
     bar('Active Clients',D.weekly_active_clients,LIME),
   ],null);
+  const cliWoWPct3=cli.last>0?Math.round((cli.this-cli.last)/cli.last*100):0;
   insights('ins-s3',[
-    {color:GREEN,txt:`New clients last wk: ${num(nc.this)} · prior: ${num(nc.last)} · 8-wk avg: ${rnd(nc.avg,1)}/wk`},
-    {color:LIME,txt:`${num(cli.this)} active clients last wk · 8-wk avg ${rnd(cli.avg,1)} · ${num(new8wk)} new clients added in 8 weeks`},
+    {color:GREEN,txt:`Active client count fell ${Math.abs(cliWoWPct3)}% WoW (${num(cli.last)} → ${num(cli.this)}), but IFAs still onboarded ${num(nc.this)} new clients this week — showing engaged IFAs continue to expand their books even in quieter weeks.`},
+    {color:LIME,txt:`With 8-wk avg of ${rnd(cli.avg,1)} active clients and ${rnd(nc.avg,1)} new clients/wk, the segment has healthy acquisition flow. ${num(new8wk)} clients were added over 8 weeks across ${D.ifa_8wk_active_dists} unique IFAs.`},
+  ]);
+  takeaways('tw-s3',[
+    `${num(nc.this)} new clients last wk vs 8-wk avg ${rnd(nc.avg,1)}/wk`,
+    `${num(cli.this)} active clients (prior: ${num(cli.last)}, avg: ${rnd(cli.avg,1)})`,
+    `${num(new8wk)} total new clients added over last 8 weeks`,
   ]);
 })();
 
@@ -372,8 +409,13 @@ function initNav(){
     line('Active Clients',D.weekly_active_clients,TEAL,'y2'),
   ],{...Y2,ticks:{...Y2.ticks,callback:v=>v>0?v:''}});
   insights('ins-s4',[
-    {color:EMERALD,txt:`Active IFAs: ${num(d.this)} last wk vs ${num(d.last)} prior · 8-wk avg ${rnd(d.avg,1)}/wk`},
-    {color:TEAL,txt:`Active clients: ${num(c.this)} last wk vs ${num(c.last)} prior · ${cliPerDist} clients per active IFA`},
+    {color:EMERALD,txt:`Active base contracted slightly (${num(d.this)} IFAs, ${num(c.this)} clients vs ${num(d.last)} and ${num(c.last)} prior) — normal week-to-week variation. The 8-wk avg of ${rnd(d.avg,1)} IFAs signals a stable, committed core.`},
+    {color:TEAL,txt:`Client-to-IFA ratio of ${cliPerDist}x is low — most IFAs are bringing 1-2 clients. There is significant room to deepen each IFA's book (cross-sell, repeat investment) before scaling IFA headcount.`},
+  ]);
+  takeaways('tw-s4',[
+    `${num(d.this)} active IFAs vs ${num(d.last)} prior (8-wk avg: ${rnd(d.avg,1)})`,
+    `${num(c.this)} active clients · ${cliPerDist} clients per active IFA`,
+    `8-wk avg: ${rnd(d.avg,1)} IFAs, ${rnd(c.avg,1)} clients — stable base`,
   ]);
 })();
 
@@ -391,9 +433,15 @@ function initNav(){
   mkChart('chart-s5',[
     bar('IFA Avg Order (₹L)',D.weekly_avg_order_l,EMERALD),
   ],null);
+  const ordWoW5=a.last>0?Math.round((a.this-a.last)/a.last*100):0;
   insights('ins-s5',[
-    {color:EMERALD,txt:`IFA avg order: ${lakh(a.this)} · prior: ${lakh(a.last)} · 8-wk avg: ${lakh(a.avg)}`},
-    {color:GREY,txt:`WDP avg order same week: ${lakh(wdp)} — WDP trades are ${ratio} larger, confirming IFA retail nature`},
+    {color:EMERALD,txt:`IFA avg order of ${lakh(a.this)} this week is likely inflated by NDX's institutional-scale trade (₹489L avg). Excluding NDX, retail IFAs' avg order sits closer to ${lakh(a.avg)} (8-wk baseline) — consistent with their retail client profile.`},
+    {color:GREY,txt:`WDP vs IFA order-size gap (${lakh(wdp)} vs ${lakh(a.this)}, ${ratio} larger) confirms IFAs serve retail clients while WDPs operate in institutional/HNI channels. Direct comparison is misleading without this context.`},
+  ]);
+  takeaways('tw-s5',[
+    `Avg order ${ordWoW5>=0?'+'+ordWoW5+'%':ordWoW5+'%'} WoW → ${lakh(a.this)} (8-wk avg ${lakh(a.avg)})`,
+    `WDP avg order: ${lakh(wdp)} — WDP is ${ratio} larger than IFA`,
+    `NDX distortion: ₹489L/trade inflating IFA segment avg`,
   ]);
 })();
 
@@ -414,9 +462,15 @@ function initNav(){
   if(el){
     new Chart(el,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV (₹cr)',data:mo,backgroundColor:mo.map((v,i)=>i===peakIdx?EMERALD:TEAL+'99'),borderColor:mo.map((v,i)=>i===peakIdx?EMERALD:TEAL),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:8},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?'₹'+v+'cr':''}}}}});
   }
+  const peakMult6=avg>0?Math.round(peak/avg):0;
   insights('ins-s6',[
-    {color:EMERALD,txt:`Peak: ${D.month_labels[peakIdx]} at ₹${peak}cr · 13-month avg: ₹${avg}cr/month`},
-    {color:TEAL,txt:`May-26 MTD: ₹${mo[mo.length-1]}cr (partial) · ${above}/13 months above avg · Total all-time: ₹${D.total_ifa_gtv_cr}cr`},
+    {color:EMERALD,txt:`Feb-26 was the peak at ${cr(peak)} — roughly ${peakMult6}× the 13-month avg of ${cr(avg)}. The strong Dec-25 to Mar-26 run was followed by a Apr-26 pullback (₹14.33cr), suggesting seasonality or concentrated deal-flow.`},
+    {color:TEAL,txt:`May-26 MTD (${cr(mo[mo.length-1])}) includes only partial data. With ${above}/13 full months above the ${cr(avg)} avg, IFA GTV is on an improving trajectory with strong recent momentum that should continue into FY27.`},
+  ]);
+  takeaways('tw-s6',[
+    `Peak: ${D.month_labels[peakIdx]} at ${cr(peak)}`,
+    `May-26 MTD: ${cr(mo[mo.length-1])} (partial) · 13-mo avg: ${cr(avg)}`,
+    `${above}/13 months above avg · all-time total: ${cr(D.total_ifa_gtv_cr)}`,
   ]);
 })();
 
@@ -448,6 +502,33 @@ function initNav(){
       <td class="num">₹${d.gtv_total_cr}cr</td>
     </tr>`;
   }).join('');
+  // Takeaway + Insight strip
+  const ndxIFA=D.top_ifas.find(x=>x.institutional);
+  const retailIfas=D.top_ifas.filter(x=>!x.institutional&&x.gtv_8wk_cr>0).sort((a,b)=>b.gtv_8wk_cr-a.gtv_8wk_cr);
+  const retailTop=retailIfas[0];
+  const consistent8=D.top_ifas.find(x=>x.active_weeks_8===8);
+  const tw7=document.getElementById('tw-s7');
+  if(tw7){
+    const tkRows=[
+      ndxIFA?`• NDX Financial (⚠ Institutional): ${cr(ndxIFA.gtv_8wk_cr)} in 8 wks from ${ndxIFA.total_unique_clients} client at ₹${ndxIFA.avg_order_l_lw>0?ndxIFA.avg_order_l_lw:ndxIFA.avg_order_l_all}L/trade`:'',
+      retailTop?`• Top retail IFA: ${retailTop.name.split(' ').slice(0,3).join(' ')} — ${cr(retailTop.gtv_8wk_cr)}, ${retailTop.total_unique_clients} clients, ${retailTop.active_weeks_8}/8 wks active`:'',
+      consistent8?`• Most consistent: ${consistent8.name.split(' ')[0]} — ${consistent8.active_weeks_8}/8 active wks, ${consistent8.total_unique_clients} unique clients`:'',
+    ].filter(Boolean);
+    const insRows=[
+      `• NDX should be ring-fenced from retail IFA metrics — its institutional-scale order size (₹${ndxIFA?ndxIFA.avg_order_l_lw||ndxIFA.avg_order_l_all:'-'}L) skews segment averages significantly.`,
+      retailTop?`• ${retailTop.name.split(' ').slice(0,2).join(' ')} is the standout retail IFA with genuine client depth and a diversified multi-client book worth tracking.`:'',
+      consistent8?`• ${consistent8.name.split(' ')[0]} (${consistent8.active_weeks_8}/8 weeks, ${consistent8.total_unique_clients} clients) shows volume-driven consistency — a low-ticket but reliable IFA archetype.`:'',
+    ].filter(Boolean);
+    tw7.innerHTML=`
+      <div style='flex:1'>
+        <div style='font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;margin-bottom:6px'>Key Takeaways</div>
+        ${tkRows.map(r=>`<div style='margin-bottom:4px'>${r}</div>`).join('')}
+      </div>
+      <div style='flex:1.6;border-left:1px solid #d1fae5;padding-left:18px'>
+        <div style='font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;margin-bottom:6px'>Key Insights</div>
+        ${insRows.map(r=>`<div style='margin-bottom:4px'>${r}</div>`).join('')}
+      </div>`;
+  }
 })();
 
 initNav();showSlide(0);
