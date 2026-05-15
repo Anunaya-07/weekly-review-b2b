@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IFA Top 10 · Deep Dive</title>
+  <title>IFA Segment · Deep Dive</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -29,6 +29,10 @@
     .slide-sub{font-size:.67rem;opacity:.55;margin-bottom:20px}
     .hero-num{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
     .hero-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-bottom:8px}
+    .hero-badge{display:inline-block;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px}
+    .hero-badge.up{background:rgba(74,222,128,.2);color:#4ade80}
+    .hero-badge.down{background:rgba(248,113,113,.2);color:#f87171}
+    .hero-badge.flat{background:rgba(148,163,184,.15);color:#94a3b8}
     .stat-list{display:flex;flex-direction:column;gap:0;margin-top:auto}
     .stat-item{display:flex;justify-content:space-between;align-items:flex-end;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
     .si-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5}
@@ -45,43 +49,25 @@
     .dots{display:flex;gap:6px;align-items:center}
     .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
     .dot-btn.active{background:#fff;transform:scale(1.35)}
-    /* IFA Individual Distributor Slides */
-    .dist-slide{flex-direction:row;background:#fff}
-    .ds-left{width:27%;flex-shrink:0;display:flex;flex-direction:column;padding:16px 14px 12px;color:#fff;overflow:hidden;position:relative}
-    .ds-left::before{content:'';position:absolute;bottom:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
-    .ds-rank-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap}
-    .ds-rank{background:rgba(255,255,255,.22);border-radius:4px;font-size:.72rem;font-weight:800;padding:2px 7px;white-space:nowrap}
-    .ds-slide-count{font-size:.5rem;opacity:.38;margin-left:auto}
-    .ds-name{font-size:clamp(.68rem,1.05vw,.88rem);font-weight:700;line-height:1.25;margin-bottom:2px}
-    .ds-period{font-size:.52rem;opacity:.42;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-    .ds-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px}
-    .ds-sl{font-size:.49rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5;margin-bottom:1px}
-    .ds-sv{font-size:.8rem;font-weight:700;line-height:1.1}
-    .ds-sv-xs{font-size:.66rem;font-weight:600;line-height:1.3}
-    .ds-divider{border:none;border-top:1px solid rgba(255,255,255,.12);margin:7px 0}
-    .ds-infer{margin-top:8px;background:rgba(0,0,0,.18);border-radius:6px;padding:6px 8px;flex-shrink:0}
-    .ds-inf{font-size:.62rem;line-height:1.55;opacity:.9}
-    .ds-inf+.ds-inf{margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1)}
-    .ds-right{flex:1;display:flex;flex-direction:column;padding:10px 14px 8px;background:#fff;gap:4px;min-height:0}
-    .ds-chart-lbl{font-size:.5rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:600;flex-shrink:0}
-    .ds-top-dual{display:flex;gap:8px;flex:1;min-height:0}
-    .ds-top-half{flex:1;display:flex;flex-direction:column;gap:2px;min-height:0}
-    .ds-top-chart{flex:1;position:relative;min-height:0}
-    .ds-bottom{display:flex;gap:8px;height:42%;flex-shrink:0}
-    .ds-bottom-chart-wrap{flex:1;display:flex;flex-direction:column;gap:2px;min-height:0}
-    .ds-bottom-chart{flex:1;position:relative;min-height:0}
-    .ds-stats-panel{width:155px;flex-shrink:0;background:#f0fdf4;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
-    .ds-sp-item{display:flex;flex-direction:column}
-    .ds-spl{font-size:.46rem;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin-bottom:1px}
-    .ds-spv{font-size:.78rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ds-spv-sm{font-size:.62rem;font-weight:600;color:#374151}
-    .cons-strip{display:flex;gap:2px;margin-top:2px}
-    .cons-cell{height:8px;border-radius:2px;flex:1}
-    .rank-badge{font-size:.56rem;padding:1px 5px;border-radius:3px;white-space:nowrap}
-    .rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
-    .rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
-    .rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
-    .rank-badge.inactive{background:rgba(248,113,113,.1);color:#94a3b8}
+    /* Top IFAs table slide */
+    .tbl-slide{flex-direction:column;background:#fff}
+    .tbl-header{background:linear-gradient(135deg,#022c22,#065f46);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .tbl-h-left{display:flex;flex-direction:column}
+    .tbl-h-title{font-size:1rem;font-weight:800;letter-spacing:-.02em}
+    .tbl-h-sub{font-size:.62rem;opacity:.55;margin-top:2px}
+    .tbl-h-meta{display:flex;gap:20px}
+    .tbl-h-chip{font-size:.62rem;background:rgba(255,255,255,.12);border-radius:6px;padding:4px 10px;white-space:nowrap}
+    .tbl-body{flex:1;overflow:auto;padding:8px 16px 12px}
+    table{width:100%;border-collapse:collapse;font-size:.72rem}
+    thead th{background:#f0fdf4;color:#065f46;font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;padding:7px 10px;text-align:left;border-bottom:2px solid #d1fae5;white-space:nowrap;position:sticky;top:0}
+    thead th.num{text-align:right}
+    tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s}
+    tbody tr:hover{background:#f0fdf4}
+    tbody td{padding:7px 10px;color:#1e293b;white-space:nowrap}
+    tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+    tbody td.name-cell{max-width:200px;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+    .inst-badge{display:inline-block;font-size:.48rem;background:#fef3c7;color:#d97706;border-radius:3px;padding:1px 4px;vertical-align:middle;margin-left:4px;font-weight:700}
+    .rank-cell{font-weight:800;color:#047857}
     @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
   </style>
 </head>
@@ -90,328 +76,381 @@
   <!-- Cover -->
   <div class="slide cover">
     <div class="cover-eyebrow">Yubi Wealth B2B · IFA Segment</div>
-    <h1>Top 10 IFA<br>Deep Dive</h1>
-    <div class="cover-sub">Independent Financial Advisors · Client Acquisition & Performance</div>
+    <h1>IFA Segment<br>Deep Dive</h1>
+    <div class="cover-sub">Independent Financial Advisors · Performance & Engagement</div>
     <div class="cover-period" id="cover-period">—</div>
     <div class="cover-metrics" id="cover-metrics"></div>
   </div>
-  <!-- Slide 1: Rankings + Client Metrics -->
-  <div class="slide two-col">
-    <div class="left-panel" style="background:#065f46;">
-      <div class="slide-num">Slide 01</div>
-      <div class="slide-ttl">Rankings + Client Metrics</div>
-      <div class="slide-sub">All 10 IFAs ranked by total GTV · 14-month period</div>
-      <div class="hero-lbl">Total IFA GTV</div>
-      <div class="hero-num" id="lb-total-gtv">—</div>
-      <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">IFA % of total HTM</span><span class="si-val" id="lb-ifa-pct">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Total unique clients</span><span class="si-val" id="lb-total-cli">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Total new clients acquired</span><span class="si-val" id="lb-new-cli">—</span></div>
-        <div class="stat-item"><span class="si-lbl">#1 IFA share of IFA GTV</span><span class="si-val" id="lb-top1-share">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Top 3 combined</span><span class="si-val" id="lb-top3-share">—</span></div>
-      </div>
-    </div>
-    <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-leaderboard"></canvas></div>
-      <div class="insight-row" id="ins-leaderboard"></div>
-    </div>
-  </div>
-  <!-- Slide 2: Client Acquisition Trend -->
+  <!-- Slide 1: GTV & Trade Volume -->
   <div class="slide two-col">
     <div class="left-panel" style="background:#047857;">
-      <div class="slide-num">Slide 02</div>
-      <div class="slide-ttl">Client Acquisition Trend</div>
-      <div class="slide-sub">New clients per IFA · monthly · who is growing their book?</div>
-      <div class="hero-lbl">Total new clients acquired</div>
-      <div class="hero-num" id="acq-total-new">—</div>
+      <div class="slide-num">Slide 01</div>
+      <div class="slide-ttl">GTV & Trade Volume</div>
+      <div class="slide-sub">Weekly GTV + trades · 8-week rolling window</div>
+      <div class="hero-lbl">IFA GTV last week</div>
+      <div class="hero-num" id="s1-gtv">—</div>
+      <div class="hero-badge flat" id="s1-gtv-badge">—</div>
       <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Peak acquisition month</span><span class="si-val" id="acq-peak-mo">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Peak month new clients</span><span class="si-val" id="acq-peak-cnt">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Top acquirer (all-time)</span><span class="si-val" id="acq-top-name">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Top acquirer count</span><span class="si-val" id="acq-top-cnt">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Last 8wk new clients</span><span class="si-val" id="acq-8wk-cnt">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week GTV</span><span class="si-val" id="s1-prev">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week avg GTV</span><span class="si-val" id="s1-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Trades last wk / 8wk avg</span><span class="si-val" id="s1-trades">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Avg order size last wk</span><span class="si-val" id="s1-avgord">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week IFA total GTV</span><span class="si-val" id="s1-8wkgtv">—</span></div>
       </div>
     </div>
     <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-acquisition"></canvas></div>
-      <div class="insight-row" id="ins-acquisition"></div>
+      <div class="chart-area"><canvas id="chart-s1"></canvas></div>
+      <div class="insight-row" id="ins-s1"></div>
     </div>
   </div>
-  <!-- Slide 3: Avg Order Size -->
+  <!-- Slide 2: IFA Onboarding -->
   <div class="slide two-col">
-    <div class="left-panel" style="background:#0d9488;">
-      <div class="slide-num">Slide 03</div>
-      <div class="slide-ttl">Avg Order Size</div>
-      <div class="slide-sub">All-time avg order in ₹L · retail vs semi-HNI mix</div>
-      <div class="hero-lbl">Highest avg order (₹L)</div>
-      <div class="hero-num" id="ord-max">—</div>
+    <div class="left-panel" style="background:#065f46;">
+      <div class="slide-num">Slide 02</div>
+      <div class="slide-ttl">IFA Onboarding Pipeline</div>
+      <div class="slide-sub">New IFAs joining per week · activation gap</div>
+      <div class="hero-lbl">New IFAs last week</div>
+      <div class="hero-num" id="s2-new">—</div>
+      <div class="hero-badge flat" id="s2-badge">—</div>
       <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Top avg IFA</span><span class="si-val" id="ord-top-name">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Median avg order</span><span class="si-val" id="ord-median">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Lowest avg order</span><span class="si-val" id="ord-min">—</span></div>
-        <div class="stat-item"><span class="si-lbl">IFAs under ₹20L avg</span><span class="si-val" id="ord-retail-cnt">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week / 8-wk avg</span><span class="si-val" id="s2-prev-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Total IFAs onboarded</span><span class="si-val" id="s2-total">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active last 8 weeks</span><span class="si-val" id="s2-active8">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Activation gap (8wk)</span><span class="si-val" id="s2-gap">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active last week</span><span class="si-val" id="s2-active-lw">—</span></div>
       </div>
     </div>
     <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-avgorder"></canvas></div>
-      <div class="insight-row" id="ins-avgorder"></div>
+      <div class="chart-area"><canvas id="chart-s2"></canvas></div>
+      <div class="insight-row" id="ins-s2"></div>
     </div>
   </div>
-  <!-- Card slides inserted by JS -->
+  <!-- Slide 3: Client Onboarding -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#047857;">
+      <div class="slide-num">Slide 03</div>
+      <div class="slide-ttl">Client Onboarding</div>
+      <div class="slide-sub">New clients added per week · IFA book growth</div>
+      <div class="hero-lbl">New clients last week</div>
+      <div class="hero-num" id="s3-new">—</div>
+      <div class="hero-badge flat" id="s3-badge">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Prior week / 8-wk avg</span><span class="si-val" id="s3-prev-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active clients last wk</span><span class="si-val" id="s3-active">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-wk avg active clients</span><span class="si-val" id="s3-avg-active">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week new clients total</span><span class="si-val" id="s3-8wk-new">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-s3"></canvas></div>
+      <div class="insight-row" id="ins-s3"></div>
+    </div>
+  </div>
+  <!-- Slide 4: Active IFAs & Clients -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#065f46;">
+      <div class="slide-num">Slide 04</div>
+      <div class="slide-ttl">Active IFAs & Client Engagement</div>
+      <div class="slide-sub">Weekly active counts · 8-week engagement pattern</div>
+      <div class="hero-lbl">Active IFAs last week</div>
+      <div class="hero-num" id="s4-dist">—</div>
+      <div class="hero-badge flat" id="s4-dist-badge">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Prior week / 8-wk avg</span><span class="si-val" id="s4-prev-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active clients last wk</span><span class="si-val" id="s4-clients">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Clients: prior / 8-wk avg</span><span class="si-val" id="s4-cli-prev">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Clients per active IFA</span><span class="si-val" id="s4-cli-per-dist">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-s4"></canvas></div>
+      <div class="insight-row" id="ins-s4"></div>
+    </div>
+  </div>
+  <!-- Slide 5: Avg Order Size Trend -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#047857;">
+      <div class="slide-num">Slide 05</div>
+      <div class="slide-ttl">Avg Order Size</div>
+      <div class="slide-sub">IFA avg order vs WDP · retail nature of IFA trades</div>
+      <div class="hero-lbl">IFA avg order last week</div>
+      <div class="hero-num" id="s5-ord">—</div>
+      <div class="hero-badge flat" id="s5-badge">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Prior week / 8-wk avg</span><span class="si-val" id="s5-prev-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">WDP avg order (same wk)</span><span class="si-val" id="s5-wdp">—</span></div>
+        <div class="stat-item"><span class="si-lbl">IFA / WDP ratio</span><span class="si-val" id="s5-ratio">—</span></div>
+        <div class="stat-item"><span class="si-lbl">IFA trade count last wk</span><span class="si-val" id="s5-trades">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-s5"></canvas></div>
+      <div class="insight-row" id="ins-s5"></div>
+    </div>
+  </div>
+  <!-- Slide 6: Monthly GTV Trend -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#065f46;">
+      <div class="slide-num">Slide 06</div>
+      <div class="slide-ttl">Monthly GTV Trend</div>
+      <div class="slide-sub">IFA segment GTV · 14-month view</div>
+      <div class="hero-lbl">Peak Month GTV</div>
+      <div class="hero-num" id="s6-peak">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Peak month</span><span class="si-val" id="s6-peak-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">May-26 MTD</span><span class="si-val" id="s6-mtd">—</span></div>
+        <div class="stat-item"><span class="si-lbl">13-month avg GTV</span><span class="si-val" id="s6-avg">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Months above avg</span><span class="si-val" id="s6-above">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Total IFA GTV (all-time)</span><span class="si-val" id="s6-total">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-s6"></canvas></div>
+      <div class="insight-row" id="ins-s6"></div>
+    </div>
+  </div>
+  <!-- Slide 7: Top IFAs Summary -->
+  <div class="slide tbl-slide">
+    <div class="tbl-header">
+      <div class="tbl-h-left">
+        <div class="tbl-h-title">Top IFAs · Performance Summary</div>
+        <div class="tbl-h-sub">Ranked by 8-week GTV · <span id="tbl-period">—</span></div>
+      </div>
+      <div class="tbl-h-meta" id="tbl-meta"></div>
+    </div>
+    <div class="tbl-body">
+      <table>
+        <thead>
+          <tr>
+            <th>8wk Rank</th>
+            <th>IFA Name</th>
+            <th class="num">8wk GTV</th>
+            <th class="num">LW GTV</th>
+            <th class="num">Unique Clients</th>
+            <th class="num">New Clients</th>
+            <th class="num">Avg Order ₹L</th>
+            <th class="num">Active Wks/8</th>
+            <th class="num">All-time GTV</th>
+          </tr>
+        </thead>
+        <tbody id="top-ifa-tbody"></tbody>
+      </table>
+    </div>
+  </div>
 </div></div>
 <div class="nav-bar">
-  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
+  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">&#8592;</button>
   <div class="dots" id="dots"></div>
-  <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+  <button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
 </div>
 <script>
-const D = {"generated":"May 14, 2026 · 15:02","period_label":"Apr 2025 – May 2026","latest_week":"May 11–17","month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"week_labels_8":["Mar 23–29","Mar 30–Apr 5","Apr 6–12","Apr 13–19","Apr 20–26","Apr 27–May 3","May 4–10","May 11–17"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"distributors":[{"rank_all":1,"rank_8wk":1,"rank_lw":1,"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","gtv_total_cr":53.36,"gtv_8wk_cr":5.32,"gtv_lw_cr":4.89,"gtv_monthly":[0,0,9.91,0,0,0,0,10.08,12.87,0,15.18,0,0.24,5.08],"gtv_weekly_8":[0,0,0.15,0,0,0.1,0.2,4.89],"trades_monthly":[0,0,2,0,0,0,0,3,2,0,2,0,2,2],"trades_lw":1,"clients_monthly":[0,0,0,0,0,0,0,1,1,0,1,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,0,1,0,0,0,0,0,0],"new_clients_lw":0,"total_unique_clients":1,"avg_order_l_lw":489.0,"active_months":6,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":91.8,"top_issuer_alltime":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_alltime":37.4,"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED LIMITED","gtv_cr":4.89,"pct":100.0}],"issuers_8wk":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED LIMITED","gtv_cr":4.89,"pct":91.8},{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.24,"pct":4.6},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE","gtv_cr":0.2,"pct":3.7}]},{"rank_all":2,"rank_8wk":3,"rank_lw":99,"name":"PINAL N SHAH","gtv_total_cr":15.57,"gtv_8wk_cr":2.25,"gtv_lw_cr":0,"gtv_monthly":[1.04,0.4,0.5,1.3,0.08,2.11,4.18,0.25,0,2.59,0.1,0.76,1.95,0.3],"gtv_weekly_8":[0,0,0.5,0,0.65,0.81,0.3,0],"trades_monthly":[2,1,1,4,1,4,9,2,0,5,1,2,4,1],"trades_lw":0,"clients_monthly":[2,1,1,3,1,3,8,2,0,2,1,2,3,1],"clients_lw":0,"new_clients_monthly":[2,1,1,1,0,2,6,2,0,0,0,0,0,0],"new_clients_lw":0,"total_unique_clients":15,"avg_order_l_lw":0,"active_months":13,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":28.8,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":24.0,"issuers_lw":[],"issuers_8wk":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED LIMITED","gtv_cr":0.65,"pct":28.8},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":0.61,"pct":26.9},{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV LIMITED","gtv_cr":0.5,"pct":22.2}]},{"rank_all":3,"rank_8wk":2,"rank_lw":25,"name":"DEEPAK THUKRAL","gtv_total_cr":13.0,"gtv_8wk_cr":2.36,"gtv_lw_cr":0.02,"gtv_monthly":[0,0,1.14,0.42,2.05,0.09,0.86,0.55,0.17,1.49,1.22,2.81,1.25,0.95],"gtv_weekly_8":[0.16,0,0.02,0.21,0,1.02,0.93,0.02],"trades_monthly":[0,0,14,4,12,3,8,2,2,8,9,13,9,4],"trades_lw":1,"clients_monthly":[0,0,4,3,6,3,4,2,2,6,6,8,4,4],"clients_lw":1,"new_clients_monthly":[0,0,4,3,6,2,2,1,1,4,4,3,2,3],"new_clients_lw":0,"total_unique_clients":35,"avg_order_l_lw":2.0,"active_months":12,"top_issuer_lw":"KEERTANA FINSERV LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"Kanakadurga Finance Limited","top_issuer_pct_8wk":33.7,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":31.6,"issuers_lw":[{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.02,"pct":100.0}],"issuers_8wk":[{"name":"Kanakadurga Finance Limited","short_name":"Kanakadurga Finance Limited","gtv_cr":0.79,"pct":33.7},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.75,"pct":31.8},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED LIMITED","gtv_cr":0.3,"pct":12.8}]},{"rank_all":4,"rank_8wk":99,"rank_lw":99,"name":"ANICUT CAPITAL LLP","gtv_total_cr":10.69,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[0,0,0,0,0,9.94,0,0,0,0.3,0,0.44,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[0,0,0,0,0,2,0,0,0,2,0,2,0,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,1,0,0,0,1,0,2,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,1,0,0,0,1,0,2,0,0],"new_clients_lw":0,"total_unique_clients":4,"avg_order_l_lw":0,"active_months":3,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":48.2,"issuers_lw":[],"issuers_8wk":[]},{"rank_all":5,"rank_8wk":4,"rank_lw":4,"name":"LKP SECURITIES LTD","gtv_total_cr":5.28,"gtv_8wk_cr":1.9,"gtv_lw_cr":0.2,"gtv_monthly":[0,0.02,0.2,0.01,0.15,0.28,0.51,0.57,0.31,0.4,0.56,0.46,1.33,0.48],"gtv_weekly_8":[0.09,0.15,0.64,0.1,0.33,0.11,0.27,0.2],"trades_monthly":[0,2,2,1,3,11,8,7,17,7,20,17,34,16],"trades_lw":7,"clients_monthly":[0,1,2,1,2,8,6,5,13,5,12,12,24,12],"clients_lw":4,"new_clients_monthly":[0,1,2,0,2,8,5,2,12,2,10,9,18,9],"new_clients_lw":0,"total_unique_clients":80,"avg_order_l_lw":2.86,"active_months":13,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":90.2,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":41.4,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":21.4,"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.18,"pct":90.2},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.02,"pct":9.8}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.79,"pct":41.4},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.35,"pct":18.5},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV PRIVATE","gtv_cr":0.3,"pct":15.7}]},{"rank_all":6,"rank_8wk":10,"rank_lw":5,"name":"VALUMINDS FINSPERITI CATALYST LLP","gtv_total_cr":4.91,"gtv_8wk_cr":0.54,"gtv_lw_cr":0.19,"gtv_monthly":[0.16,0.1,0,0.05,0.55,0.03,0.43,0.65,0.5,0.23,1.68,0,0.35,0.19],"gtv_weekly_8":[0,0.1,0.05,0,0.2,0,0,0.19],"trades_monthly":[3,1,0,1,2,1,7,2,1,3,9,0,6,2],"trades_lw":2,"clients_monthly":[3,1,0,1,2,1,6,2,1,3,7,0,4,2],"clients_lw":2,"new_clients_monthly":[3,0,0,0,2,1,3,0,1,1,4,0,2,0],"new_clients_lw":0,"total_unique_clients":17,"avg_order_l_lw":9.5,"active_months":12,"top_issuer_lw":"KEERTANA FINSERV LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"KEERTANA FINSERV LIMITED","top_issuer_pct_8wk":34.9,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":46.1,"issuers_lw":[{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.19,"pct":100.0}],"issuers_8wk":[{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.19,"pct":34.9},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":0.15,"pct":27.9},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":0.1,"pct":18.6}]},{"rank_all":7,"rank_8wk":99,"rank_lw":99,"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","gtv_total_cr":4.45,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[0,0,0,0,0,0,4.45,0,0,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[0,0,0,0,0,0,3,0,0,0,0,0,0,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,0,2,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,0,2,0,0,0,0,0,0,0],"new_clients_lw":0,"total_unique_clients":2,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":100.0,"issuers_lw":[],"issuers_8wk":[]},{"rank_all":8,"rank_8wk":99,"rank_lw":99,"name":"RESURGENT INDIA LIMITED","gtv_total_cr":3.96,"gtv_8wk_cr":0,"gtv_lw_cr":0,"gtv_monthly":[0,0,0,3.96,0,0,0,0,0,0,0,0,0,0],"gtv_weekly_8":[0,0,0,0,0,0,0,0],"trades_monthly":[0,0,0,4,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"clients_monthly":[0,0,0,3,0,0,0,0,0,0,0,0,0,0],"clients_lw":0,"new_clients_monthly":[0,0,0,3,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"total_unique_clients":3,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0,"top_issuer_alltime":"SATIN FINSERV LIMITED","top_issuer_pct_alltime":50.5,"issuers_lw":[],"issuers_8wk":[]},{"rank_all":9,"rank_8wk":15,"rank_lw":99,"name":"Saroj Agrawal","gtv_total_cr":3.85,"gtv_8wk_cr":0.36,"gtv_lw_cr":0,"gtv_monthly":[0,0,0.03,0.68,0.21,0.48,0.92,0.29,0.19,0.19,0.49,0.2,0.17,0],"gtv_weekly_8":[0.2,0,0,0,0.17,0,0,0],"trades_monthly":[0,0,1,6,3,9,8,3,2,1,4,1,1,0],"trades_lw":0,"clients_monthly":[0,0,1,2,1,1,1,1,1,1,1,1,1,0],"clients_lw":0,"new_clients_monthly":[0,0,1,1,0,0,0,0,0,0,0,0,0,0],"new_clients_lw":0,"total_unique_clients":2,"avg_order_l_lw":0,"active_months":11,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":53.8,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":63.6,"issuers_lw":[],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.2,"pct":53.8},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA LIMITED","gtv_cr":0.17,"pct":46.2}]},{"rank_all":10,"rank_8wk":5,"rank_lw":99,"name":"EQ ADDWISE LLP","gtv_total_cr":3.84,"gtv_8wk_cr":1.26,"gtv_lw_cr":0,"gtv_monthly":[0,0,0,0,0,0.98,0,0,0,0,0,2.6,0.25,0],"gtv_weekly_8":[1.01,0,0,0.25,0,0,0,0],"trades_monthly":[0,0,0,0,0,1,0,0,0,0,0,9,2,0],"trades_lw":0,"clients_monthly":[0,0,0,0,0,1,0,0,0,0,0,5,1,0],"clients_lw":0,"new_clients_monthly":[0,0,0,0,0,1,0,0,0,0,0,5,1,0],"new_clients_lw":0,"total_unique_clients":7,"avg_order_l_lw":0,"active_months":3,"top_issuer_lw":"N/A","top_issuer_pct_lw":0,"top_issuer_8wk":"CREDILA FINANCIAL SERVICES LIMITED","top_issuer_pct_8wk":80.1,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":27.3,"issuers_lw":[],"issuers_8wk":[{"name":"CREDILA FINANCIAL SERVICES LIMITED","short_name":"CREDILA FINANCIAL SERVICES","gtv_cr":1.01,"pct":80.1},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.15,"pct":11.9},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":0.1,"pct":8.0}]}]};
-
-let current=0,slides,total;
-const dotsEl=document.getElementById('dots');
-function initNav(){
-  slides=document.querySelectorAll('.slide');total=slides.length;dotsEl.innerHTML='';
-  slides.forEach((_,i)=>{const b=document.createElement('button');b.className='dot-btn'+(i===0?' active':'');b.onclick=()=>{current=i;showSlide(i)};dotsEl.appendChild(b)});
-}
-function showSlide(n){
-  slides.forEach(s=>s.classList.remove('active'));slides[n].classList.add('active');
-  document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===n));
-  document.getElementById('btn-prev').disabled=(n===0);
-  document.getElementById('btn-next').disabled=(n===total-1);
-}
-function navigate(dir){current=Math.max(0,Math.min(total-1,current+dir));showSlide(current)}
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1)});
-
-const PALETTE=['#10b981','#059669','#0d9488','#0891b2','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#ec4899'];
-const GREEN='#10b981',TEAL='#0d9488',BLUE='#3b82f6',CYAN='#0891b2',VIOLET='#6366f1',AMBER='#f59e0b',ROSE='#f43f5e',ORANGE='#f97316',GREY='#94a3b8',EMERALD='#059669';
-
+const D = {"generated":"May 14, 2026 \u00b7 15:02","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"total_dists_onboarded":1543,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"monthly_trades":[5,4,20,20,21,31,43,19,24,26,45,44,58,25],"monthly_clients":[5,3,8,13,12,18,27,13,18,18,28,30,37,19],"monthly_new_clients":[5,2,8,8,10,15,18,6,14,8,18,19,23,12],"weekly_gtv_cr":[3.21,2.29,3.37,1.61,4.5,3.48,3.56,7.35],"weekly_trades":[61,29,87,59,91,56,79,67],"weekly_avg_order_l":[5.27,7.89,3.88,2.72,4.95,6.21,4.5,10.97],"weekly_active_dists":[37,15,42,33,46,35,44,37],"weekly_active_clients":[45,22,59,47,65,44,61,51],"weekly_new_dists":[12,5,11,10,18,7,8,7],"weekly_new_clients":[28,18,38,30,40,29,38,28],"kpi_gtv":{"this":7.35,"last":3.56,"avg":3.1,"delta":3.79,"suffix":"cr"},"kpi_trades":{"this":67,"last":79,"avg":66.0,"delta":-12},"kpi_dist":{"this":37,"last":44,"avg":36.0,"delta":-7},"kpi_clients":{"this":51,"last":61,"avg":49.0,"delta":-10},"kpi_avg_order":{"this":10.97,"last":4.5,"avg":5.1,"delta":6.47},"kpi_new_dist":{"this":7,"last":8,"avg":10.1,"delta":-1},"kpi_new_cli":{"this":28,"last":38,"avg":31.6,"delta":-10},"top_ifas":[{"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","rank_all":1,"rank_8wk":1,"gtv_8wk_cr":5.32,"gtv_total_cr":53.36,"gtv_lw_cr":4.89,"total_unique_clients":1,"new_clients_total":1,"avg_order_l_lw":489.0,"avg_order_l_all":410.5,"active_months":6,"active_weeks_8":4,"institutional":true},{"name":"DEEPAK THUKRAL","rank_all":3,"rank_8wk":2,"gtv_8wk_cr":2.36,"gtv_total_cr":13.0,"gtv_lw_cr":0.02,"total_unique_clients":35,"new_clients_total":35,"avg_order_l_lw":2.0,"avg_order_l_all":14.8,"active_months":12,"active_weeks_8":6,"institutional":false},{"name":"PINAL N SHAH","rank_all":2,"rank_8wk":3,"gtv_8wk_cr":2.25,"gtv_total_cr":15.57,"gtv_lw_cr":0,"total_unique_clients":15,"new_clients_total":15,"avg_order_l_lw":0,"avg_order_l_all":42.1,"active_months":13,"active_weeks_8":4,"institutional":false},{"name":"LKP SECURITIES LTD","rank_all":5,"rank_8wk":4,"gtv_8wk_cr":1.9,"gtv_total_cr":5.28,"gtv_lw_cr":0.2,"total_unique_clients":80,"new_clients_total":80,"avg_order_l_lw":2.86,"avg_order_l_all":3.6,"active_months":13,"active_weeks_8":8,"institutional":false},{"name":"EQ ADDWISE LLP","rank_all":10,"rank_8wk":5,"gtv_8wk_cr":1.26,"gtv_total_cr":3.84,"gtv_lw_cr":0,"total_unique_clients":7,"new_clients_total":7,"avg_order_l_lw":0,"avg_order_l_all":32.0,"active_months":3,"active_weeks_8":2,"institutional":false},{"name":"VALUMINDS FINSPERITI CATALYST LLP","rank_all":6,"rank_8wk":10,"gtv_8wk_cr":0.54,"gtv_total_cr":4.91,"gtv_lw_cr":0.19,"total_unique_clients":17,"new_clients_total":17,"avg_order_l_lw":9.5,"avg_order_l_all":12.9,"active_months":12,"active_weeks_8":4,"institutional":false},{"name":"Saroj Agrawal","rank_all":9,"rank_8wk":15,"gtv_8wk_cr":0.36,"gtv_total_cr":3.85,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":9.9,"active_months":11,"active_weeks_8":2,"institutional":false},{"name":"ANICUT CAPITAL LLP","rank_all":4,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":10.69,"gtv_lw_cr":0,"total_unique_clients":4,"new_clients_total":4,"avg_order_l_lw":0,"avg_order_l_all":178.2,"active_months":3,"active_weeks_8":0,"institutional":false},{"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","rank_all":7,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":4.45,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":148.3,"active_months":1,"active_weeks_8":0,"institutional":false},{"name":"RESURGENT INDIA LIMITED","rank_all":8,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":3.96,"gtv_lw_cr":0,"total_unique_clients":3,"new_clients_total":3,"avg_order_l_lw":0,"avg_order_l_all":99.0,"active_months":1,"active_weeks_8":0,"institutional":false}],"ifa_8wk_total_gtv":29.37,"ifa_8wk_total_trades":529,"ifa_8wk_active_dists":156,"wdp_avg_order_lw":107.36};
+const GREEN='#10b981',EMERALD='#047857',TEAL='#14b8a6',LIME='#84cc16',BLUE='#3b82f6',AMBER='#f59e0b',GREY='#94a3b8',ROSE='#f43f5e',VIOLET='#8b5cf6';
+const Y2={id:'y2',position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:8}}};
 function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
 function rnd(v,n=2){return Math.round(v*Math.pow(10,n))/Math.pow(10,n)}
+function cr(v){return '₹'+(v||0)+'cr'}
+function lakh(v){return '₹'+(v||0)+'L'}
+function num(v){return (v||0).toLocaleString()}
+function pct(v){return (v||0)+'%'}
+function badge(el,delta,suffix){if(!el)return;const up=delta>0;const dn=delta<0;const sgn=up?'+':'';el.textContent=sgn+(delta||0)+(suffix||'')+' WoW';el.className='hero-badge '+(up?'up':dn?'down':'flat')}
 function insights(id,arr){const el=document.getElementById(id);if(!el)return;el.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('')}
-
-// Compute derived stats
-D.distributors.forEach(d=>{
-  const totalTrades=d.trades_monthly.reduce((a,b)=>a+b,0);
-  d.avg_order_l_alltime=totalTrades>0?rnd(d.gtv_total_cr*100/totalTrades,1):0;
-  d.new_clients_total=d.new_clients_monthly.reduce((a,b)=>a+b,0);
-});
+function bar(label,data,color,yAxisID){return{label,data,backgroundColor:color+'cc',borderColor:color,borderWidth:1,borderRadius:3,yAxisID:yAxisID||'y'}}
+function line(label,data,color,yAxisID){return{type:'line',label,data,borderColor:color,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.3,yAxisID:yAxisID||'y'}}
+function mkChart(id,datasets,y2opts){
+  const el=document.getElementById(id);if(!el)return;
+  const scales={x:{grid:{color:'#f0fdf4'},ticks:{font:{size:8},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?v:''}}};
+  if(y2opts)scales.y2=y2opts;
+  new Chart(el,{type:'bar',data:{labels:D.week_labels_8,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:6}}},scales}});
+}
+let cur=0;
+function showSlide(n){
+  const slides=document.querySelectorAll('.slide');
+  slides.forEach((s,i)=>s.classList.toggle('active',i===n));
+  cur=n;
+  document.getElementById('btn-prev').disabled=n===0;
+  document.getElementById('btn-next').disabled=n===slides.length-1;
+  document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+function navigate(dir){
+  const slides=document.querySelectorAll('.slide');
+  const next=Math.max(0,Math.min(slides.length-1,cur+dir));
+  showSlide(next);
+}
+function initNav(){
+  const slides=document.querySelectorAll('.slide');
+  const dots=document.getElementById('dots');
+  dots.innerHTML=Array.from(slides).map((_,i)=>`<button class="dot-btn" onclick="showSlide(${i})" title="Slide ${i+1}"></button>`).join('');
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);else if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1);});
+}
 
 // Cover
-setEl('cover-period',D.period_label+' · HTM trades · Top 10 IFA');
-const totalCli=D.distributors.reduce((s,d)=>s+d.total_unique_clients,0);
-const totalNewCli=D.distributors.reduce((s,d)=>s+d.new_clients_total,0);
-document.getElementById('cover-metrics').innerHTML=[
-  {lbl:'Total IFA GTV',val:'₹'+D.total_ifa_gtv_cr+'cr'},
-  {lbl:'% of All HTM GTV',val:D.ifa_pct_of_total+'%'},
-  {lbl:'Total Unique Clients',val:totalCli},
-  {lbl:'New Clients Acquired',val:totalNewCli},
-].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
-
-// Slide 01: Rankings
 (function(){
-  const dists=D.distributors;
-  setEl('lb-total-gtv','₹'+D.total_ifa_gtv_cr+'cr');
-  setEl('lb-ifa-pct',D.ifa_pct_of_total+'%');
-  setEl('lb-total-cli',totalCli+' clients');
-  setEl('lb-new-cli',totalNewCli+' clients');
-  const top1pct=rnd(dists[0].gtv_total_cr/D.total_ifa_gtv_cr*100,1);
-  const top3pct=rnd((dists[0].gtv_total_cr+dists[1].gtv_total_cr+dists[2].gtv_total_cr)/D.total_ifa_gtv_cr*100,1);
-  setEl('lb-top1-share',top1pct+'%');setEl('lb-top3-share',top3pct+'%');
-  new Chart(document.getElementById('chart-leaderboard'),{
-    type:'bar',
-    data:{labels:dists.map(d=>d.name.split(' ').slice(0,3).join(' ')),datasets:[
-      {label:'Total GTV (₹cr)',data:dists.map(d=>d.gtv_total_cr),backgroundColor:PALETTE,borderRadius:4,borderWidth:0},
-    ]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.x}cr · ${rnd(ctx.parsed.x/D.total_ifa_gtv_cr*100,1)}% of IFA · ${dists[ctx.dataIndex].total_unique_clients} unique clients`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
-  });
-  insights('ins-leaderboard',[
-    {color:GREEN,txt:`#1 ${dists[0].name.split(' ').slice(0,3).join(' ')} · ₹${dists[0].gtv_total_cr}cr (${top1pct}% of IFA total) · ${dists[0].total_unique_clients} unique client(s)`},
-    {color:TEAL,txt:`Top 3 account for ${top3pct}% of total IFA GTV · ${totalCli} unique clients across all 10 IFAs`},
+  setEl('cover-period',D.period_label);
+  document.getElementById('cover-metrics').innerHTML=[
+    {lbl:'Total IFA GTV',val:'₹'+D.total_ifa_gtv_cr+'cr'},
+    {lbl:'IFA Share of HTM',val:D.ifa_pct_of_total+'%'},
+    {lbl:'8-Week GTV',val:'₹'+D.ifa_8wk_total_gtv+'cr'},
+    {lbl:'IFAs Onboarded',val:D.total_dists_onboarded.toLocaleString()},
+  ].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
+})();
+
+// Slide 1: GTV & Trade Volume
+(function(){
+  const g=D.kpi_gtv,t=D.kpi_trades,a=D.kpi_avg_order;
+  setEl('s1-gtv',cr(g.this));
+  badge(document.getElementById('s1-gtv-badge'),rnd(g.delta,2),'cr');
+  setEl('s1-prev',cr(g.last));
+  setEl('s1-avg',cr(g.avg));
+  setEl('s1-trades',num(t.this)+' / avg '+num(t.avg));
+  setEl('s1-avgord',lakh(a.this));
+  setEl('s1-8wkgtv',cr(D.ifa_8wk_total_gtv));
+  mkChart('chart-s1',[
+    bar('Weekly GTV (₹cr)',D.weekly_gtv_cr,EMERALD),
+    line('Trades',D.weekly_trades,AMBER,'y2')
+  ],{...Y2,ticks:{...Y2.ticks,callback:v=>v>0?v:''}});
+  insights('ins-s1',[
+    {color:EMERALD,txt:`GTV last wk: ${cr(g.this)} · prior: ${cr(g.last)} · 8-wk avg: ${cr(g.avg)}`},
+    {color:AMBER,txt:`${num(t.this)} trades last wk · avg order ${lakh(a.this)} · 8wk total ${cr(D.ifa_8wk_total_gtv)}`},
   ]);
 })();
 
-// Slide 02: Client Acquisition Trend
+// Slide 2: IFA Onboarding
 (function(){
-  const dists=D.distributors;
-  const newByMonth=D.month_labels.map((_,mi)=>dists.reduce((s,d)=>s+(d.new_clients_monthly[mi]||0),0));
-  const peakIdx=newByMonth.indexOf(Math.max(...newByMonth));
-  const last8wkNew=dists.reduce((s,d)=>{const wk=d.new_clients_monthly.slice(-2);return s+wk.reduce((a,b)=>a+b,0)},0);
-  const topAcq=dists.reduce((best,d)=>d.new_clients_total>best.new_clients_total?d:best,dists[0]);
-  setEl('acq-total-new',totalNewCli+' clients');
-  setEl('acq-peak-mo',D.month_labels[peakIdx]);
-  setEl('acq-peak-cnt',newByMonth[peakIdx]+' new clients');
-  setEl('acq-top-name',topAcq.name.split(' ').slice(0,2).join(' '));
-  setEl('acq-top-cnt',topAcq.new_clients_total+' clients');
-  setEl('acq-8wk-cnt',last8wkNew+' clients');
-  const colors10=[GREEN,EMERALD,TEAL,CYAN,BLUE,VIOLET,AMBER,ORANGE,ROSE,'#a855f7'];
-  const datasets=dists.map((d,i)=>({label:d.name.split(' ').slice(0,2).join(' '),data:d.new_clients_monthly,backgroundColor:colors10[i],stack:'s',borderRadius:2,borderWidth:0}));
-  new Chart(document.getElementById('chart-acquisition'),{
-    type:'bar',data:{labels:D.month_labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:7},boxWidth:8,padding:4}}},scales:{x:{stacked:true,grid:{color:'#f8fafc'},ticks:{font:{size:8}}},y:{stacked:true,beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:8},callback:v=>v>0?v:''}}}}
-  });
-  insights('ins-acquisition',[
-    {color:GREEN,txt:`Peak: ${D.month_labels[peakIdx]} · ${newByMonth[peakIdx]} new clients added in a single month`},
-    {color:TEAL,txt:`${topAcq.name.split(' ').slice(0,3).join(' ')} is top acquirer with ${topAcq.new_clients_total} new clients all-time`},
+  const nd=D.kpi_new_dist;
+  const act8=D.ifa_8wk_active_dists;
+  const gap=D.total_dists_onboarded-act8;
+  const gapPct=Math.round(gap/D.total_dists_onboarded*100);
+  setEl('s2-new',num(nd.this));
+  badge(document.getElementById('s2-badge'),nd.delta,'');
+  setEl('s2-prev-avg',num(nd.last)+' / avg '+nd.avg+'/wk');
+  setEl('s2-total',D.total_dists_onboarded.toLocaleString());
+  setEl('s2-active8',act8+' IFAs');
+  setEl('s2-gap',gap.toLocaleString()+' ('+gapPct+'%)');
+  setEl('s2-active-lw',D.kpi_dist.this+' IFAs');
+  mkChart('chart-s2',[
+    bar('New IFAs per Week',D.weekly_new_dists,TEAL),
+  ],null);
+  insights('ins-s2',[
+    {color:TEAL,txt:`New IFAs last wk: ${num(nd.this)} · prior: ${num(nd.last)} · 8-wk avg: ${nd.avg}/wk`},
+    {color:AMBER,txt:`Activation gap: ${gap.toLocaleString()} of ${D.total_dists_onboarded.toLocaleString()} onboarded IFAs not active in last 8 weeks (${gapPct}%)`},
   ]);
 })();
 
-// Slide 03: Avg Order Size
+// Slide 3: Client Onboarding
 (function(){
-  const dists=[...D.distributors].sort((a,b)=>b.avg_order_l_alltime-a.avg_order_l_alltime);
-  const avgs=dists.map(d=>d.avg_order_l_alltime);
-  const sorted=[...avgs].filter(v=>v>0).sort((a,b)=>a-b);
-  const median=sorted.length?sorted[Math.floor(sorted.length/2)]:0;
-  const retailCnt=dists.filter(d=>d.avg_order_l_alltime>0&&d.avg_order_l_alltime<20).length;
-  setEl('ord-max','₹'+dists[0].avg_order_l_alltime+'L');
-  setEl('ord-top-name',dists[0].name.split(' ').slice(0,3).join(' '));
-  setEl('ord-median','₹'+median+'L');
-  setEl('ord-min','₹'+(sorted[0]||0)+'L');
-  setEl('ord-retail-cnt',retailCnt+' IFAs');
-  const colors=dists.map(d=>d.avg_order_l_alltime>100?VIOLET:d.avg_order_l_alltime>20?CYAN:d.avg_order_l_alltime>5?TEAL:GREEN);
-  new Chart(document.getElementById('chart-avgorder'),{
-    type:'bar',
-    data:{labels:dists.map(d=>d.name.split(' ').slice(0,3).join(' ')),datasets:[{label:'Avg Order (₹L)',data:avgs,backgroundColor:colors,borderRadius:4,borderWidth:0}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const d=dists[ctx.dataIndex];return ` ₹${ctx.parsed.x}L · ${d.total_unique_clients} unique clients · ${d.new_clients_total} new`}}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>'₹'+v+'L'},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
-  });
-  insights('ins-avgorder',[
-    {color:VIOLET,txt:`${dists[0].name.split(' ').slice(0,3).join(' ')} — institutional-scale avg ₹${dists[0].avg_order_l_alltime}L · very few large trades`},
-    {color:GREEN,txt:`${retailCnt} IFAs avg under ₹20L — true retail IFA pattern with high trade frequency`},
+  const nc=D.kpi_new_cli,cli=D.kpi_clients;
+  const new8wk=D.weekly_new_clients.reduce((a,b)=>a+b,0);
+  setEl('s3-new',num(nc.this));
+  badge(document.getElementById('s3-badge'),nc.delta,'');
+  setEl('s3-prev-avg',num(nc.last)+' / avg '+rnd(nc.avg,1)+'/wk');
+  setEl('s3-active',num(cli.this)+' clients');
+  setEl('s3-avg-active',rnd(cli.avg,1)+' clients/wk');
+  setEl('s3-8wk-new',num(new8wk)+' clients');
+  mkChart('chart-s3',[
+    bar('New Clients',D.weekly_new_clients,GREEN),
+    bar('Active Clients',D.weekly_active_clients,LIME),
+  ],null);
+  insights('ins-s3',[
+    {color:GREEN,txt:`New clients last wk: ${num(nc.this)} · prior: ${num(nc.last)} · 8-wk avg: ${rnd(nc.avg,1)}/wk`},
+    {color:LIME,txt:`${num(cli.this)} active clients last wk · 8-wk avg ${rnd(cli.avg,1)} · ${num(new8wk)} new clients added in 8 weeks`},
   ]);
 })();
 
-// Individual Distributor Slides
+// Slide 4: Active IFAs & Clients
 (function(){
-  const dists=D.distributors,deckEl=document.querySelector('.deck');
-  dists.forEach((d,gi)=>{
-    const bgColor=PALETTE[gi%PALETTE.length];
-    const cid14g='c14g-'+gi, cid14c='c14c-'+gi, cid8='c8i-'+gi;
-    // Rank badge
-    let rankHtml;
-    if(d.rank_8wk>=50){
-      rankHtml=`<span class="rank-badge inactive">⊘ inactive 8wk</span>`;
-    }else{
-      const diff=d.rank_all-d.rank_8wk;
-      rankHtml=diff>0?`<span class="rank-badge up">▲${diff} recent</span>`:diff<0?`<span class="rank-badge down">▼${Math.abs(diff)} recent</span>`:`<span class="rank-badge flat">= stable</span>`;
-    }
-    // Computed fields
-    const newCliTotal=d.new_clients_monthly.reduce((a,b)=>a+b,0);
-    const allTradeTot=d.trades_monthly.reduce((a,b)=>a+b,0);
-    const avgOrdAll=allTradeTot>0?rnd(d.gtv_total_cr*100/allTradeTot,2):0;
-    const peakGtv=Math.max(...d.gtv_monthly);
-    const peakIdx=d.gtv_monthly.indexOf(peakGtv);
-    const recentSum=d.gtv_monthly.slice(-3).reduce((a,b)=>a+b,0);
-    const prevSum=d.gtv_monthly.slice(-6,-3).reduce((a,b)=>a+b,0);
-    const trendDir=recentSum>prevSum*1.15?'↗ Accelerating':recentSum<prevSum*0.85?'↘ Slowing':'→ Steady';
-    const peakCliMo=d.clients_monthly.indexOf(Math.max(...d.clients_monthly));
-    // Inference
-    let inf1;
-    if(d.gtv_lw_cr>0){
-      inf1=`Active last week · ₹${d.gtv_lw_cr}cr · ${d.trades_lw} trade${d.trades_lw!==1?'s':''}${d.clients_lw>0?' · '+d.clients_lw+' client'+(d.clients_lw!==1?'s':''):''}${d.avg_order_l_lw>0?' · ₹'+d.avg_order_l_lw+'L avg':''}`;
-    }else if(d.gtv_8wk_cr>0){
-      const aw=d.gtv_weekly_8.filter(v=>v>0).length;
-      inf1=`No trades last week · ₹${d.gtv_8wk_cr}cr across ${aw}/8 recent weeks · ${d.total_unique_clients} total unique client${d.total_unique_clients!==1?'s':''}`;
-    }else{
-      const lastArr=d.gtv_monthly.map((v,i)=>({v,i})).filter(x=>x.v>0);
-      const lastMo=lastArr.length?D.month_labels[lastArr[lastArr.length-1].i]:'N/A';
-      inf1=`Inactive last 8 weeks · last active ${lastMo} · ${d.total_unique_clients} total unique client${d.total_unique_clients!==1?'s':''}`;
-    }
-    const inf2=`${trendDir} GTV trend · Peak ${D.month_labels[peakIdx]} ₹${peakGtv}cr · All-time avg ₹${avgOrdAll>0?avgOrdAll+'L':'N/A'}/trade · ${newCliTotal} new clients added`;
-    // Consistency strip
-    const consHtml=d.gtv_monthly.map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#d1fae5'};opacity:${v>0?1:0.4}" title="${D.month_labels[mi]}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
-    const rank8Disp=d.rank_8wk<50?'#'+d.rank_8wk:'Inactive';
-    const fmtIss=(n,p)=>n&&n!=='N/A'?n.split(' ').slice(0,3).join(' ')+(p>0?' · '+p+'%':''):'—';
-    const issLWDisp=fmtIss(d.top_issuer_lw,d.top_issuer_pct_lw);
-    const iss8Disp=fmtIss(d.top_issuer_8wk,d.top_issuer_pct_8wk);
-    const issAllDisp=fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime);
-    const fmtTop3=(arr,fallback)=>arr&&arr.length?arr.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${i+1}. ${x.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">₹${x.gtv_cr}cr · ${x.pct}%</span></div>`).join(''):`<div class="ds-sv-xs">${fallback}</div>`;
-    const ifaShare=rnd(d.gtv_total_cr/D.total_ifa_gtv_cr*100,1);
-    const slideDiv=document.createElement('div');
-    slideDiv.className='slide dist-slide';
-    slideDiv.innerHTML=`
-      <div class="ds-left" style="background:${bgColor}">
-        <div class="ds-rank-row">
-          <span class="ds-rank">#${d.rank_all} of 10</span>
-          <span class="ds-slide-count">IFA ${gi+1}/10</span>
-          ${rankHtml}
-        </div>
-        <div class="ds-name">${d.name}</div>
-        <div class="ds-period">${D.period_label} · HTM · IFA</div>
-        <div class="ds-stat-grid">
-          <div><div class="ds-sl">GTV Since 1 APR 2025</div><div class="ds-sv">₹${d.gtv_total_cr}cr</div></div>
-          <div><div class="ds-sl">Share of IFA</div><div class="ds-sv">${ifaShare}%</div></div>
-          <div><div class="ds-sl">8-Week GTV</div><div class="ds-sv">₹${d.gtv_8wk_cr}cr</div></div>
-          <div><div class="ds-sl">Last Week GTV</div><div class="ds-sv">₹${d.gtv_lw_cr}cr</div></div>
-          <div><div class="ds-sl">LW Trades</div><div class="ds-sv">${d.trades_lw}</div></div>
-          <div><div class="ds-sl">LW Clients</div><div class="ds-sv">${d.clients_lw}</div></div>
-          <div><div class="ds-sl">Unique Clients</div><div class="ds-sv">${d.total_unique_clients}</div></div>
-          <div><div class="ds-sl">New Clients (all)</div><div class="ds-sv">${newCliTotal}</div></div>
-        </div>
-        <hr class="ds-divider">
-        <div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last Week</div>${fmtTop3(d.issuers_lw,issLWDisp)}</div>
-        <div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last 8 Weeks</div>${fmtTop3(d.issuers_8wk,iss8Disp)}</div>
-        <div style="margin-bottom:6px"><div class="ds-sl">Top Issuer · Since APR-25</div><div class="ds-sv-xs">${issAllDisp}</div></div>
-        <div class="ds-infer">
-          <div class="ds-inf">${inf1}</div>
-          <div class="ds-inf">${inf2}</div>
-        </div>
-      </div>
-      <div class="ds-right">
-        <div class="ds-top-dual">
-          <div class="ds-top-half">
-            <div class="ds-chart-lbl">Monthly GTV (₹cr) · ${D.period_label}</div>
-            <div class="ds-top-chart"><canvas id="${cid14g}"></canvas></div>
-          </div>
-          <div class="ds-top-half">
-            <div class="ds-chart-lbl">Monthly Clients · ${D.period_label}</div>
-            <div class="ds-top-chart"><canvas id="${cid14c}"></canvas></div>
-          </div>
-        </div>
-        <div class="ds-bottom">
-          <div class="ds-bottom-chart-wrap">
-            <div class="ds-chart-lbl">Last 8 Weeks GTV (₹cr) · latest: ${D.latest_week}</div>
-            <div class="ds-bottom-chart"><canvas id="${cid8}"></canvas></div>
-          </div>
-          <div class="ds-stats-panel">
-            <div class="ds-sp-item">
-              <div class="ds-spl">8wk Rank · All-time Rank</div>
-              <div class="ds-spv-sm">${rank8Disp} · #${d.rank_all} all-time</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Peak Month (GTV)</div>
-              <div class="ds-spv-sm">${D.month_labels[peakIdx]} · ₹${peakGtv}cr</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Peak Month (Clients)</div>
-              <div class="ds-spv-sm">${D.month_labels[peakCliMo]} · ${d.clients_monthly[peakCliMo]} clients</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Monthly Activity · ${d.active_months}/${D.n_months}</div>
-              <div class="cons-strip">${consHtml}</div>
-            </div>
-          </div>
-        </div>
-      </div>`;
-    deckEl.appendChild(slideDiv);
-    requestAnimationFrame(()=>{
-      const avg8=rnd(d.gtv_weekly_8.reduce((a,b)=>a+b,0)/8,2);
-      const el14g=document.getElementById(cid14g);
-      if(el14g){
-        const barC=d.gtv_monthly.map(v=>v>0?bgColor+'cc':'#d1fae5');
-        new Chart(el14g,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:barC,borderColor:d.gtv_monthly.map(v=>v>0?bgColor:'#a7f3d0'),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:6.5},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:6.5},callback:v=>v>0?'₹'+v+'cr':''}}}}});
-      }
-      const el14c=document.getElementById(cid14c);
-      if(el14c){
-        new Chart(el14c,{type:'line',data:{labels:D.month_labels,datasets:[{label:'Clients',data:d.clients_monthly,borderColor:bgColor,backgroundColor:bgColor+'20',fill:true,tension:.35,pointRadius:2.5,pointHoverRadius:4,borderWidth:1.8},{label:'New Clients',data:d.new_clients_monthly,borderColor:bgColor+'99',backgroundColor:'transparent',fill:false,tension:.35,pointRadius:2,borderWidth:1.2,borderDash:[3,3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='Clients'?` ${ctx.parsed.y} clients`:` ${ctx.parsed.y} new`}}},scales:{x:{grid:{display:false},ticks:{font:{size:6.5},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:6.5},callback:v=>v>0?v:''}}}}});
-      }
-      const el8=document.getElementById(cid8);
-      if(el8){
-        const wkC=d.gtv_weekly_8.map(v=>v>=avg8&&v>0?bgColor:v>0?bgColor+'77':'#d1fae5');
-        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#a7f3d0'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
-      }
-    });
-  });
-  initNav();showSlide(0);
+  const d=D.kpi_dist,c=D.kpi_clients;
+  const cliPerDist=d.this>0?rnd(c.this/d.this,1):0;
+  setEl('s4-dist',num(d.this));
+  badge(document.getElementById('s4-dist-badge'),d.delta,'');
+  setEl('s4-prev-avg',num(d.last)+' / avg '+rnd(d.avg,1)+'/wk');
+  setEl('s4-clients',num(c.this)+' clients');
+  setEl('s4-cli-prev',num(c.last)+' / avg '+rnd(c.avg,1));
+  setEl('s4-cli-per-dist',cliPerDist+' clients/IFA');
+  mkChart('chart-s4',[
+    bar('Active IFAs',D.weekly_active_dists,EMERALD),
+    line('Active Clients',D.weekly_active_clients,TEAL,'y2'),
+  ],{...Y2,ticks:{...Y2.ticks,callback:v=>v>0?v:''}});
+  insights('ins-s4',[
+    {color:EMERALD,txt:`Active IFAs: ${num(d.this)} last wk vs ${num(d.last)} prior · 8-wk avg ${rnd(d.avg,1)}/wk`},
+    {color:TEAL,txt:`Active clients: ${num(c.this)} last wk vs ${num(c.last)} prior · ${cliPerDist} clients per active IFA`},
+  ]);
 })();
+
+// Slide 5: Avg Order Size
+(function(){
+  const a=D.kpi_avg_order;
+  const wdp=D.wdp_avg_order_lw;
+  const ratio=wdp>0?Math.round(wdp/a.this)+'×':'-';
+  setEl('s5-ord',lakh(a.this));
+  badge(document.getElementById('s5-badge'),rnd(a.delta,2),'L');
+  setEl('s5-prev-avg',lakh(a.last)+' / avg '+lakh(a.avg));
+  setEl('s5-wdp',lakh(wdp));
+  setEl('s5-ratio','WDP is '+ratio+' larger');
+  setEl('s5-trades',num(D.kpi_trades.this)+' trades');
+  mkChart('chart-s5',[
+    bar('IFA Avg Order (₹L)',D.weekly_avg_order_l,EMERALD),
+  ],null);
+  insights('ins-s5',[
+    {color:EMERALD,txt:`IFA avg order: ${lakh(a.this)} · prior: ${lakh(a.last)} · 8-wk avg: ${lakh(a.avg)}`},
+    {color:GREY,txt:`WDP avg order same week: ${lakh(wdp)} — WDP trades are ${ratio} larger, confirming IFA retail nature`},
+  ]);
+})();
+
+// Slide 6: Monthly GTV Trend
+(function(){
+  const mo=D.ifa_monthly_total;
+  const peak=Math.max(...mo);const peakIdx=mo.indexOf(peak);
+  const excl=mo.slice(0,-1);
+  const avg=rnd(excl.reduce((a,b)=>a+b,0)/excl.length,2);
+  const above=excl.filter(v=>v>=avg).length;
+  setEl('s6-peak',cr(peak));
+  setEl('s6-peak-mo',D.month_labels[peakIdx]);
+  setEl('s6-mtd',cr(mo[mo.length-1]));
+  setEl('s6-avg',cr(avg));
+  setEl('s6-above',above+'/13');
+  setEl('s6-total',cr(D.total_ifa_gtv_cr));
+  const el=document.getElementById('chart-s6');
+  if(el){
+    new Chart(el,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV (₹cr)',data:mo,backgroundColor:mo.map((v,i)=>i===peakIdx?EMERALD:TEAL+'99'),borderColor:mo.map((v,i)=>i===peakIdx?EMERALD:TEAL),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:8},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?'₹'+v+'cr':''}}}}});
+  }
+  insights('ins-s6',[
+    {color:EMERALD,txt:`Peak: ${D.month_labels[peakIdx]} at ₹${peak}cr · 13-month avg: ₹${avg}cr/month`},
+    {color:TEAL,txt:`May-26 MTD: ₹${mo[mo.length-1]}cr (partial) · ${above}/13 months above avg · Total all-time: ₹${D.total_ifa_gtv_cr}cr`},
+  ]);
+})();
+
+// Slide 7: Top IFAs Summary
+(function(){
+  setEl('tbl-period',D.period_label);
+  const meta=[
+    {lbl:'IFAs shown',val:'10'},
+    {lbl:'8wk total GTV',val:'₹'+D.ifa_8wk_total_gtv+'cr'},
+    {lbl:'IFAs onboarded',val:D.total_dists_onboarded.toLocaleString()},
+  ];
+  document.getElementById('tbl-meta').innerHTML=meta.map(m=>`<div class="tbl-h-chip">${m.lbl}: <strong>${m.val}</strong></div>`).join('');
+  const sorted=[...D.top_ifas].sort((a,b)=>b.gtv_8wk_cr-a.gtv_8wk_cr);
+  let rank=1;
+  document.getElementById('top-ifa-tbody').innerHTML=sorted.map(d=>{
+    const r=d.gtv_8wk_cr>0?rank++:'-';
+    const shortName=d.name.length>28?d.name.slice(0,26)+'…':d.name;
+    const instBadge=d.institutional?'<span class="inst-badge">⚠ Institutional</span>':'';
+    const avgOrd=d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':d.gtv_total_cr>0&&d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':'—';
+    return `<tr>
+      <td class="rank-cell">${r}</td>
+      <td class="name-cell">${shortName}${instBadge}</td>
+      <td class="num">${d.gtv_8wk_cr>0?'₹'+d.gtv_8wk_cr+'cr':'—'}</td>
+      <td class="num">${d.gtv_lw_cr>0?'₹'+d.gtv_lw_cr+'cr':'—'}</td>
+      <td class="num">${d.total_unique_clients}</td>
+      <td class="num">${d.new_clients_total}</td>
+      <td class="num">${d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':'—'}</td>
+      <td class="num">${d.active_weeks_8}/8</td>
+      <td class="num">₹${d.gtv_total_cr}cr</td>
+    </tr>`;
+  }).join('');
+})();
+
+initNav();showSlide(0);
 </script>
 </body>
 </html>
