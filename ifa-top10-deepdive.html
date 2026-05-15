@@ -228,33 +228,47 @@
     </div>
   </div>
   <!-- Slide 7: Top IFAs Summary -->
-  <div class="slide tbl-slide">
-    <div class="tbl-header">
-      <div class="tbl-h-left">
-        <div class="tbl-h-title">Top IFAs · Performance Summary</div>
-        <div class="tbl-h-sub">Ranked by 8-week GTV · <span id="tbl-period">—</span></div>
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#065f46;">
+      <div class="slide-num">Slide 07</div>
+      <div class="slide-ttl">Top IFAs · Performance</div>
+      <div class="slide-sub">Ranked by 8-week cumulative GTV</div>
+      <div class="hero-lbl">IFAs active in 8-week window</div>
+      <div class="hero-num" id="s7-active-count">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">8wk segment GTV</span><span class="si-val" id="s7-seg-gtv">—</span></div>
+        <div class="stat-item"><span class="si-lbl">NDX share of 8wk GTV</span><span class="si-val" id="s7-ndx-share">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Top retail IFA (8wk)</span><span class="si-val" id="s7-top-retail">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Clients served (top 10)</span><span class="si-val" id="s7-total-cli">—</span></div>
+        <div class="stat-item"><span class="si-lbl">IFAs inactive in 8wk</span><span class="si-val" id="s7-inactive">—</span></div>
+        <div class="takeaway-box" id="tw-s7"></div>
       </div>
-      <div class="tbl-h-meta" id="tbl-meta"></div>
     </div>
-    <div class="tbl-body">
-      <table>
-        <thead>
-          <tr>
-            <th>8wk Rank</th>
-            <th>IFA Name</th>
-            <th class="num">8wk GTV</th>
-            <th class="num">LW GTV</th>
-            <th class="num">Unique Clients</th>
-            <th class="num">New Clients</th>
-            <th class="num">Avg Order ₹L</th>
-            <th class="num">Active Wks/8</th>
-            <th class="num">All-time GTV</th>
-          </tr>
-        </thead>
-        <tbody id="top-ifa-tbody"></tbody>
-      </table>
+    <div class="right-panel" style="flex-direction:column;padding:12px 16px 8px;gap:0;">
+      <div style="font-size:.53rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#047857;margin-bottom:4px;flex-shrink:0;">8-Week GTV Ranking (₹cr) &nbsp;·&nbsp; <span style="color:#d97706;">⚠ = Institutional</span></div>
+      <div style="flex:0 0 44%;position:relative;min-height:0;">
+        <canvas id="chart-s7"></canvas>
+      </div>
+      <div style="font-size:.49rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;padding:4px 0 2px;border-top:2px solid #d1fae5;margin-top:5px;flex-shrink:0;">All 10 IFAs · Detail</div>
+      <div style="flex:1;overflow:auto;min-height:0;">
+        <table style="font-size:.65rem;">
+          <thead>
+            <tr>
+              <th style="width:18px;">#</th>
+              <th>IFA Name</th>
+              <th class="num">8wk GTV</th>
+              <th class="num">LW GTV</th>
+              <th class="num">Clients</th>
+              <th class="num">Avg Ord</th>
+              <th class="num" style="min-width:74px;">Consistency</th>
+              <th class="num">All-time</th>
+            </tr>
+          </thead>
+          <tbody id="top-ifa-tbody"></tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="flex-shrink:0;margin-top:3px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s7"></div></div>
     </div>
-    <div id="tw-s7" style="padding:10px 20px 12px;background:#f0fdf4;border-top:2px solid #d1fae5;flex-shrink:0;display:flex;gap:28px;font-size:.67rem;color:#1e3a2f;line-height:1.65"></div>
   </div>
 </div></div>
 <div class="nav-bar">
@@ -476,59 +490,95 @@ function initNav(){
 
 // Slide 7: Top IFAs Summary
 (function(){
-  setEl('tbl-period',D.period_label);
-  const meta=[
-    {lbl:'IFAs shown',val:'10'},
-    {lbl:'8wk total GTV',val:'₹'+D.ifa_8wk_total_gtv+'cr'},
-    {lbl:'IFAs onboarded',val:D.total_dists_onboarded.toLocaleString()},
-  ];
-  document.getElementById('tbl-meta').innerHTML=meta.map(m=>`<div class="tbl-h-chip">${m.lbl}: <strong>${m.val}</strong></div>`).join('');
   const sorted=[...D.top_ifas].sort((a,b)=>b.gtv_8wk_cr-a.gtv_8wk_cr);
-  let rank=1;
-  document.getElementById('top-ifa-tbody').innerHTML=sorted.map(d=>{
-    const r=d.gtv_8wk_cr>0?rank++:'-';
-    const shortName=d.name.length>28?d.name.slice(0,26)+'…':d.name;
-    const instBadge=d.institutional?'<span class="inst-badge">⚠ Institutional</span>':'';
-    const avgOrd=d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':d.gtv_total_cr>0&&d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':'—';
-    return `<tr>
-      <td class="rank-cell">${r}</td>
-      <td class="name-cell">${shortName}${instBadge}</td>
-      <td class="num">${d.gtv_8wk_cr>0?'₹'+d.gtv_8wk_cr+'cr':'—'}</td>
-      <td class="num">${d.gtv_lw_cr>0?'₹'+d.gtv_lw_cr+'cr':'—'}</td>
-      <td class="num">${d.total_unique_clients}</td>
-      <td class="num">${d.new_clients_total}</td>
-      <td class="num">${d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':'—'}</td>
-      <td class="num">${d.active_weeks_8}/8</td>
-      <td class="num">₹${d.gtv_total_cr}cr</td>
-    </tr>`;
-  }).join('');
-  // Takeaway + Insight strip
+  const active=sorted.filter(x=>x.gtv_8wk_cr>0);
+  const inactive=sorted.filter(x=>x.gtv_8wk_cr===0);
   const ndxIFA=D.top_ifas.find(x=>x.institutional);
-  const retailIfas=D.top_ifas.filter(x=>!x.institutional&&x.gtv_8wk_cr>0).sort((a,b)=>b.gtv_8wk_cr-a.gtv_8wk_cr);
+  const retailIfas=active.filter(x=>!x.institutional);
   const retailTop=retailIfas[0];
   const consistent8=D.top_ifas.find(x=>x.active_weeks_8===8);
-  const tw7=document.getElementById('tw-s7');
-  if(tw7){
-    const tkRows=[
-      ndxIFA?`• NDX Financial (⚠ Institutional): ${cr(ndxIFA.gtv_8wk_cr)} in 8 wks from ${ndxIFA.total_unique_clients} client at ₹${ndxIFA.avg_order_l_lw>0?ndxIFA.avg_order_l_lw:ndxIFA.avg_order_l_all}L/trade`:'',
-      retailTop?`• Top retail IFA: ${retailTop.name.split(' ').slice(0,3).join(' ')} — ${cr(retailTop.gtv_8wk_cr)}, ${retailTop.total_unique_clients} clients, ${retailTop.active_weeks_8}/8 wks active`:'',
-      consistent8?`• Most consistent: ${consistent8.name.split(' ')[0]} — ${consistent8.active_weeks_8}/8 active wks, ${consistent8.total_unique_clients} unique clients`:'',
-    ].filter(Boolean);
-    const insRows=[
-      `• NDX should be ring-fenced from retail IFA metrics — its institutional-scale order size (₹${ndxIFA?ndxIFA.avg_order_l_lw||ndxIFA.avg_order_l_all:'-'}L) skews segment averages significantly.`,
-      retailTop?`• ${retailTop.name.split(' ').slice(0,2).join(' ')} is the standout retail IFA with genuine client depth and a diversified multi-client book worth tracking.`:'',
-      consistent8?`• ${consistent8.name.split(' ')[0]} (${consistent8.active_weeks_8}/8 weeks, ${consistent8.total_unique_clients} clients) shows volume-driven consistency — a low-ticket but reliable IFA archetype.`:'',
-    ].filter(Boolean);
-    tw7.innerHTML=`
-      <div style='flex:1'>
-        <div style='font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;margin-bottom:6px'>Key Takeaways</div>
-        ${tkRows.map(r=>`<div style='margin-bottom:4px'>${r}</div>`).join('')}
-      </div>
-      <div style='flex:1.6;border-left:1px solid #d1fae5;padding-left:18px'>
-        <div style='font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#047857;font-weight:700;margin-bottom:6px'>Key Insights</div>
-        ${insRows.map(r=>`<div style='margin-bottom:4px'>${r}</div>`).join('')}
-      </div>`;
+  const totalClients=D.top_ifas.reduce((s,x)=>s+(x.total_unique_clients||0),0);
+  const ndxShare=ndxIFA&&D.ifa_8wk_total_gtv>0?Math.round(ndxIFA.gtv_8wk_cr/D.ifa_8wk_total_gtv*100):0;
+
+  // Left panel
+  setEl('s7-active-count',active.length);
+  setEl('s7-seg-gtv',cr(D.ifa_8wk_total_gtv));
+  setEl('s7-ndx-share',ndxShare+'% of segment GTV ⚠');
+  setEl('s7-top-retail',retailTop?retailTop.name.split(' ').slice(0,3).join(' ')+' · '+cr(retailTop.gtv_8wk_cr):'—');
+  setEl('s7-total-cli',totalClients+' unique clients');
+  setEl('s7-inactive',inactive.length+' of 10 IFAs');
+
+  // Horizontal bar chart — active IFAs only, sorted by GTV desc
+  const chartLabels=active.map(x=>{
+    const n=x.name.length>22?x.name.slice(0,20)+'…':x.name;
+    return x.institutional?'⚠ '+n:n;
+  });
+  const chartData=active.map(x=>x.gtv_8wk_cr);
+  const chartBg=active.map(x=>x.institutional?AMBER+'cc':EMERALD+'cc');
+  const chartBorder=active.map(x=>x.institutional?AMBER:EMERALD);
+  const el7=document.getElementById('chart-s7');
+  if(el7){
+    new Chart(el7,{
+      type:'bar',
+      data:{labels:chartLabels,datasets:[{
+        label:'8wk GTV (₹cr)',data:chartData,
+        backgroundColor:chartBg,borderColor:chartBorder,
+        borderWidth:1,borderRadius:4,borderSkipped:false,
+      }]},
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{
+            label:ctx=>{
+              const d=active[ctx.dataIndex];
+              return [` ₹${ctx.parsed.x}cr`,`  Clients: ${d.total_unique_clients}`,`  Avg order: ₹${d.avg_order_l_lw||d.avg_order_l_all}L`,`  Active: ${d.active_weeks_8}/8 wks`];
+            }
+          }}
+        },
+        scales:{
+          x:{beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?'₹'+v+'cr':''},border:{display:false}},
+          y:{grid:{display:false},ticks:{font:{size:8},color:ctx=>active[ctx.index]&&active[ctx.index].institutional?'#d97706':'#374151'},border:{display:false}}
+        }
+      }
+    });
   }
+
+  // Compact table — active rows first, then inactive (greyed)
+  let rank=1;
+  document.getElementById('top-ifa-tbody').innerHTML=[...active,...inactive].map(d=>{
+    const isAct=d.gtv_8wk_cr>0;
+    const r=isAct?rank++:'-';
+    const shortName=d.name.length>26?d.name.slice(0,24)+'…':d.name;
+    const instBadge=d.institutional?'<span class="inst-badge">⚠</span>':'';
+    const avgOrd=d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':d.avg_order_l_all>0?'₹'+d.avg_order_l_all+'L':'—';
+    const pct=Math.round(d.active_weeks_8/8*100);
+    const barCol=isAct?(d.institutional?'#f59e0b':'#10b981'):'#94a3b8';
+    const actBar=`<div style="display:flex;align-items:center;gap:4px;"><div style="width:38px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${barCol};border-radius:2px;"></div></div><span style="font-size:.6rem;color:${barCol};font-weight:700;">${d.active_weeks_8}/8</span></div>`;
+    const rowStyle=isAct?'':'opacity:.45;';
+    const gtvStyle=d.institutional?'color:#d97706;font-weight:700;':'';
+    return `<tr style="${rowStyle}">
+      <td class="rank-cell" style="color:${isAct?(d.institutional?'#d97706':'#047857'):'#94a3b8'};padding:5px 7px;">${r}</td>
+      <td class="name-cell" style="padding:5px 7px;max-width:160px;">${shortName}${instBadge}</td>
+      <td class="num" style="${gtvStyle}padding:5px 7px;">${isAct?'₹'+d.gtv_8wk_cr+'cr':'—'}</td>
+      <td class="num" style="padding:5px 7px;">${d.gtv_lw_cr>0?'₹'+d.gtv_lw_cr+'cr':'—'}</td>
+      <td class="num" style="padding:5px 7px;">${d.total_unique_clients}</td>
+      <td class="num" style="padding:5px 7px;">${avgOrd}</td>
+      <td class="num" style="padding:5px 7px;">${actBar}</td>
+      <td class="num" style="padding:5px 7px;color:#64748b;">₹${d.gtv_total_cr}cr</td>
+    </tr>`;
+  }).join('');
+
+  // Takeaways + Insights
+  takeaways('tw-s7',[
+    ndxIFA?`NDX ⚠ institutional: ${cr(ndxIFA.gtv_8wk_cr)} (${ndxShare}% of 8wk) from 1 client at ₹${ndxIFA.avg_order_l_lw||ndxIFA.avg_order_l_all}L/trade`:'',
+    retailTop?`Top retail IFA: ${retailTop.name.split(' ').slice(0,3).join(' ')} — ${cr(retailTop.gtv_8wk_cr)}, ${retailTop.total_unique_clients} clients`:'',
+    consistent8?`Most consistent: ${consistent8.name.split(' ')[0]} — ${consistent8.active_weeks_8}/8 wks, ${consistent8.total_unique_clients} clients`:'',
+  ].filter(Boolean));
+  insights('ins-s7',[
+    {color:AMBER,txt:`NDX (${ndxShare}% of 8wk GTV) is an institutional outlier — ring-fence from retail IFA metrics. Its ₹${ndxIFA?ndxIFA.avg_order_l_lw||ndxIFA.avg_order_l_all:'-'}L avg order skews segment averages.`},
+    retailTop?{color:EMERALD,txt:`${retailTop.name.split(' ').slice(0,2).join(' ')} leads retail IFAs at ${cr(retailTop.gtv_8wk_cr)} across ${retailTop.total_unique_clients} clients — ${retailTop.active_weeks_8}/8 active weeks confirms consistency.`}:{color:GREY,txt:'No retail IFA data'},
+  ].filter(x=>x.txt));
 })();
 
 initNav();showSlide(0);
