@@ -271,13 +271,151 @@
     </div>
   </div>
 </div></div>
+  <!-- ═══════════════════════════════════════════════════════ MF SECTION ══ -->
+  <!-- Slide MF-0 · Section Divider Cover -->
+  <div class="slide cover" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 45%,#0d5c6b 100%);">
+    <div class="cover-inner">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span style="background:#0e7490;color:#fff;font-size:.52rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:20px;">MUTUAL FUNDS</span>
+        <span style="background:rgba(255,255,255,.1);color:#94a3b8;font-size:.52rem;padding:3px 10px;border-radius:20px;">IFA Segment Only</span>
+      </div>
+      <div class="cover-title" style="font-size:2.1rem;line-height:1.1;">Mutual Fund<br>Activity Deep-Dive</div>
+      <div class="cover-sub" style="margin-top:8px;color:#94a3b8;">IFA-Sourced Purchases · Apr – May 2026</div>
+      <div class="cover-chips" style="margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;">
+        <div class="chip"><span id="mf-cov-amt">—</span><span class="chip-lbl">Total Investment</span></div>
+        <div class="chip"><span id="mf-cov-txns">—</span><span class="chip-lbl">Transactions</span></div>
+        <div class="chip"><span id="mf-cov-partners">—</span><span class="chip-lbl">IFA Partners</span></div>
+        <div class="chip"><span id="mf-cov-clients">—</span><span class="chip-lbl">Unique Clients</span></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:12px;">
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#22d3ee;" id="mf-cov-sip-txns">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIP Installments</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#f59e0b;" id="mf-cov-lump-txns">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">Lumpsum Purchases</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
+          <div style="font-size:1.05rem;font-weight:700;color:#a78bfa;" id="mf-cov-sif-pct">—</div>
+          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIF by Value</div>
+        </div>
+      </div>
+      <div class="cover-note" id="mf-cov-note" style="margin-top:14px;font-size:.52rem;color:#64748b;line-height:1.5;"></div>
+    </div>
+  </div>
+
+  <!-- Slide MF-1 · Weekly Activity -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#0f172a;">
+      <div class="slide-num">MF · Slide 01</div>
+      <div class="slide-ttl">Weekly Investment Activity</div>
+      <div class="slide-sub">IFA-sourced MF purchases · 8-week view</div>
+      <div class="hero-lbl">Last week investment</div>
+      <div class="hero-num" id="mf-s1-lw-amt">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Prior week</span><span class="si-val" id="mf-s1-pw-amt">—</span></div>
+        <div class="stat-item"><span class="si-lbl">LW transactions</span><span class="si-val" id="mf-s1-lw-txns">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week txns</span><span class="si-val" id="mf-s1-pw-txns">—</span></div>
+        <div class="stat-item"><span class="si-lbl">LW unique clients</span><span class="si-val" id="mf-s1-lw-cli">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior week clients</span><span class="si-val" id="mf-s1-pw-cli">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week total</span><span class="si-val" id="mf-s1-total">—</span></div>
+      </div>
+      <div class="takeaway-box" id="tw-mf-s1"></div>
+    </div>
+    <div class="right-panel" style="flex-direction:column;padding:14px 16px 10px;gap:6px;">
+      <div style="font-size:.53rem;font-weight:600;color:#94a3b8;letter-spacing:.05em;">WEEKLY INVESTMENT (₹L) · SIP vs LUMPSUM</div>
+      <div style="flex:1;position:relative;min-height:0;">
+        <canvas id="chart-mf-s1"></canvas>
+      </div>
+      <div class="insight-box"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s1"></div></div>
+    </div>
+  </div>
+
+  <!-- Slide MF-2 · Category & Fund Breakdown -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#0f172a;">
+      <div class="slide-num">MF · Slide 02</div>
+      <div class="slide-ttl">Category &amp; Fund Mix</div>
+      <div class="slide-sub">Where IFAs are investing · by value</div>
+      <div class="hero-lbl">SIF share of total value</div>
+      <div class="hero-num" id="mf-s2-sif-pct">—</div>
+      <div class="stat-list" id="mf-s2-cat-list"></div>
+      <div class="takeaway-box" id="tw-mf-s2"></div>
+    </div>
+    <div class="right-panel" style="flex-direction:column;padding:14px 16px 10px;gap:0;">
+      <div style="font-size:.53rem;font-weight:600;color:#94a3b8;letter-spacing:.05em;flex-shrink:0;">TOP FUNDS BY INVESTMENT VALUE (₹L)</div>
+      <div style="flex:0 0 50%;position:relative;min-height:0;margin-top:4px;">
+        <canvas id="chart-mf-s2"></canvas>
+      </div>
+      <div style="font-size:.49rem;font-weight:600;color:#64748b;letter-spacing:.05em;margin-top:6px;flex-shrink:0;">ALL CATEGORIES · DETAIL</div>
+      <div style="flex:1;overflow:auto;min-height:0;">
+        <table style="font-size:.63rem;width:100%;border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:4px 6px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Category</th>
+              <th style="text-align:right;padding:4px 6px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Txns</th>
+              <th style="text-align:right;padding:4px 6px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Amount (₹L)</th>
+              <th style="text-align:right;padding:4px 6px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Share</th>
+            </tr>
+          </thead>
+          <tbody id="mf-cat-tbody"></tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="flex-shrink:0;margin-top:4px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s2"></div></div>
+    </div>
+  </div>
+
+  <!-- Slide MF-3 · Top IFA Partners -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#0f172a;">
+      <div class="slide-num">MF · Slide 03</div>
+      <div class="slide-ttl">Top IFA Partners · MF</div>
+      <div class="slide-sub">By total investment value · Apr–May 2026</div>
+      <div class="hero-lbl">Top IFA partner investment</div>
+      <div class="hero-num" id="mf-s3-top-amt">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Top IFA partner</span><span class="si-val" id="mf-s3-top-name">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Most active (txns)</span><span class="si-val" id="mf-s3-active-name">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Most clients served</span><span class="si-val" id="mf-s3-cli-name">—</span></div>
+        <div class="stat-item"><span class="si-lbl">SIF partners (≥₹10L)</span><span class="si-val" id="mf-s3-sif-count">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Consistent SIP partners</span><span class="si-val" id="mf-s3-sip-only">—</span></div>
+      </div>
+      <div class="takeaway-box" id="tw-mf-s3"></div>
+    </div>
+    <div class="right-panel" style="flex-direction:column;padding:12px 16px 8px;gap:0;">
+      <div style="font-size:.53rem;font-weight:600;color:#94a3b8;letter-spacing:.05em;flex-shrink:0;">TOP 10 IFA PARTNERS · INVESTMENT VALUE (₹L) · ⊕ = SIF</div>
+      <div style="flex:0 0 46%;position:relative;min-height:0;margin-top:4px;">
+        <canvas id="chart-mf-s3"></canvas>
+      </div>
+      <div style="font-size:.49rem;font-weight:600;color:#64748b;letter-spacing:.05em;margin-top:5px;flex-shrink:0;">PARTNER DETAIL TABLE</div>
+      <div style="flex:1;overflow:auto;min-height:0;">
+        <table style="font-size:.63rem;width:100%;border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">#</th>
+              <th style="text-align:left;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Partner</th>
+              <th style="text-align:right;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">₹L</th>
+              <th style="text-align:right;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Txns</th>
+              <th style="text-align:right;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Clients</th>
+              <th style="text-align:right;padding:3px 5px;color:#64748b;font-weight:600;border-bottom:1px solid #1e293b;">Active Wks</th>
+            </tr>
+          </thead>
+          <tbody id="mf-partner-tbody"></tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="flex-shrink:0;margin-top:3px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-mf-s3"></div></div>
+    </div>
+  </div>
 <div class="nav-bar">
   <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">&#8592;</button>
   <div class="dots" id="dots"></div>
   <button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
 </div>
 <script>
-const D = {"generated":"May 14, 2026 \u00b7 15:02","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"total_dists_onboarded":1543,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"monthly_trades":[5,4,20,20,21,31,43,19,24,26,45,44,58,25],"monthly_clients":[5,3,8,13,12,18,27,13,18,18,28,30,37,19],"monthly_new_clients":[5,2,8,8,10,15,18,6,14,8,18,19,23,12],"weekly_gtv_cr":[3.21,2.29,3.37,1.61,4.5,3.48,3.56,7.35],"weekly_trades":[61,29,87,59,91,56,79,67],"weekly_avg_order_l":[5.27,7.89,3.88,2.72,4.95,6.21,4.5,10.97],"weekly_active_dists":[37, 15, 43, 34, 46, 35, 45, 37],"weekly_active_clients":[45, 22, 60, 48, 65, 44, 62, 51],"weekly_new_dists":[14, 13, 15, 24, 16, 17, 18, 13],"weekly_new_clients":[30, 27, 33, 42, 41, 43, 51, 37],"kpi_gtv":{"this":7.35,"last":3.56,"avg":3.1,"delta":3.79,"suffix":"cr"},"kpi_trades":{"this":67,"last":79,"avg":66.0,"delta":-12},"kpi_dist":{"this":37,"last":45,"avg":36.5,"delta":-8},"kpi_clients":{"this":51,"last":62,"avg":49.6,"delta":-11},"kpi_avg_order":{"this":10.97,"last":4.5,"avg":5.1,"delta":6.47},"kpi_new_dist":{"this":13,"last":18,"avg":16.2,"delta":-5},"kpi_new_cli":{"this":37,"last":51,"avg":38.0,"delta":-14},"top_ifas":[{"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","rank_all":1,"rank_8wk":1,"gtv_8wk_cr":5.32,"gtv_total_cr":53.36,"gtv_lw_cr":4.89,"total_unique_clients":1,"new_clients_total":1,"avg_order_l_lw":489.0,"avg_order_l_all":410.5,"active_months":6,"active_weeks_8":4,"institutional":true},{"name":"DEEPAK THUKRAL","rank_all":3,"rank_8wk":2,"gtv_8wk_cr":2.36,"gtv_total_cr":13.0,"gtv_lw_cr":0.02,"total_unique_clients":35,"new_clients_total":35,"avg_order_l_lw":2.0,"avg_order_l_all":14.8,"active_months":12,"active_weeks_8":6,"institutional":false},{"name":"PINAL N SHAH","rank_all":2,"rank_8wk":3,"gtv_8wk_cr":2.25,"gtv_total_cr":15.57,"gtv_lw_cr":0,"total_unique_clients":15,"new_clients_total":15,"avg_order_l_lw":0,"avg_order_l_all":42.1,"active_months":13,"active_weeks_8":4,"institutional":false},{"name":"LKP SECURITIES LTD","rank_all":5,"rank_8wk":4,"gtv_8wk_cr":1.9,"gtv_total_cr":5.28,"gtv_lw_cr":0.2,"total_unique_clients":80,"new_clients_total":80,"avg_order_l_lw":2.86,"avg_order_l_all":3.6,"active_months":13,"active_weeks_8":8,"institutional":false},{"name":"EQ ADDWISE LLP","rank_all":10,"rank_8wk":5,"gtv_8wk_cr":1.26,"gtv_total_cr":3.84,"gtv_lw_cr":0,"total_unique_clients":7,"new_clients_total":7,"avg_order_l_lw":0,"avg_order_l_all":32.0,"active_months":3,"active_weeks_8":2,"institutional":false},{"name":"VALUMINDS FINSPERITI CATALYST LLP","rank_all":6,"rank_8wk":10,"gtv_8wk_cr":0.54,"gtv_total_cr":4.91,"gtv_lw_cr":0.19,"total_unique_clients":17,"new_clients_total":17,"avg_order_l_lw":9.5,"avg_order_l_all":12.9,"active_months":12,"active_weeks_8":4,"institutional":false},{"name":"Saroj Agrawal","rank_all":9,"rank_8wk":15,"gtv_8wk_cr":0.36,"gtv_total_cr":3.85,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":9.9,"active_months":11,"active_weeks_8":2,"institutional":false},{"name":"ANICUT CAPITAL LLP","rank_all":4,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":10.69,"gtv_lw_cr":0,"total_unique_clients":4,"new_clients_total":4,"avg_order_l_lw":0,"avg_order_l_all":178.2,"active_months":3,"active_weeks_8":0,"institutional":false},{"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","rank_all":7,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":4.45,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":148.3,"active_months":1,"active_weeks_8":0,"institutional":false},{"name":"RESURGENT INDIA LIMITED","rank_all":8,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":3.96,"gtv_lw_cr":0,"total_unique_clients":3,"new_clients_total":3,"avg_order_l_lw":0,"avg_order_l_all":99.0,"active_months":1,"active_weeks_8":0,"institutional":false}],"ifa_8wk_total_gtv":29.37,"ifa_8wk_total_trades":529,"ifa_8wk_active_dists":156,"wdp_avg_order_lw":107.36};
+const D = {"generated":"May 14, 2026 \u00b7 15:02","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_ifa_gtv_cr":205.98,"total_all_gtv_cr":3018.56,"ifa_pct_of_total":6.8,"total_dists_onboarded":1543,"ifa_monthly_total":[2.76,3.11,15.51,13.33,7.6,18.79,17.86,19.02,22.7,13.4,29.69,16.98,14.33,10.91],"monthly_trades":[5,4,20,20,21,31,43,19,24,26,45,44,58,25],"monthly_clients":[5,3,8,13,12,18,27,13,18,18,28,30,37,19],"monthly_new_clients":[5,2,8,8,10,15,18,6,14,8,18,19,23,12],"weekly_gtv_cr":[3.21,2.29,3.37,1.61,4.5,3.48,3.56,7.35],"weekly_trades":[61,29,87,59,91,56,79,67],"weekly_avg_order_l":[5.27,7.89,3.88,2.72,4.95,6.21,4.5,10.97],"weekly_active_dists":[37, 15, 43, 34, 46, 35, 45, 37],"weekly_active_clients":[45, 22, 60, 48, 65, 44, 62, 51],"weekly_new_dists":[14, 13, 15, 24, 16, 17, 18, 13],"weekly_new_clients":[30, 27, 33, 42, 41, 43, 51, 37],"kpi_gtv":{"this":7.35,"last":3.56,"avg":3.1,"delta":3.79,"suffix":"cr"},"kpi_trades":{"this":67,"last":79,"avg":66.0,"delta":-12},"kpi_dist":{"this":37,"last":45,"avg":36.5,"delta":-8},"kpi_clients":{"this":51,"last":62,"avg":49.6,"delta":-11},"kpi_avg_order":{"this":10.97,"last":4.5,"avg":5.1,"delta":6.47},"kpi_new_dist":{"this":13,"last":18,"avg":16.2,"delta":-5},"kpi_new_cli":{"this":37,"last":51,"avg":38.0,"delta":-14},"top_ifas":[{"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","rank_all":1,"rank_8wk":1,"gtv_8wk_cr":5.32,"gtv_total_cr":53.36,"gtv_lw_cr":4.89,"total_unique_clients":1,"new_clients_total":1,"avg_order_l_lw":489.0,"avg_order_l_all":410.5,"active_months":6,"active_weeks_8":4,"institutional":true},{"name":"DEEPAK THUKRAL","rank_all":3,"rank_8wk":2,"gtv_8wk_cr":2.36,"gtv_total_cr":13.0,"gtv_lw_cr":0.02,"total_unique_clients":35,"new_clients_total":35,"avg_order_l_lw":2.0,"avg_order_l_all":14.8,"active_months":12,"active_weeks_8":6,"institutional":false},{"name":"PINAL N SHAH","rank_all":2,"rank_8wk":3,"gtv_8wk_cr":2.25,"gtv_total_cr":15.57,"gtv_lw_cr":0,"total_unique_clients":15,"new_clients_total":15,"avg_order_l_lw":0,"avg_order_l_all":42.1,"active_months":13,"active_weeks_8":4,"institutional":false},{"name":"LKP SECURITIES LTD","rank_all":5,"rank_8wk":4,"gtv_8wk_cr":1.9,"gtv_total_cr":5.28,"gtv_lw_cr":0.2,"total_unique_clients":80,"new_clients_total":80,"avg_order_l_lw":2.86,"avg_order_l_all":3.6,"active_months":13,"active_weeks_8":8,"institutional":false},{"name":"EQ ADDWISE LLP","rank_all":10,"rank_8wk":5,"gtv_8wk_cr":1.26,"gtv_total_cr":3.84,"gtv_lw_cr":0,"total_unique_clients":7,"new_clients_total":7,"avg_order_l_lw":0,"avg_order_l_all":32.0,"active_months":3,"active_weeks_8":2,"institutional":false},{"name":"VALUMINDS FINSPERITI CATALYST LLP","rank_all":6,"rank_8wk":10,"gtv_8wk_cr":0.54,"gtv_total_cr":4.91,"gtv_lw_cr":0.19,"total_unique_clients":17,"new_clients_total":17,"avg_order_l_lw":9.5,"avg_order_l_all":12.9,"active_months":12,"active_weeks_8":4,"institutional":false},{"name":"Saroj Agrawal","rank_all":9,"rank_8wk":15,"gtv_8wk_cr":0.36,"gtv_total_cr":3.85,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":9.9,"active_months":11,"active_weeks_8":2,"institutional":false},{"name":"ANICUT CAPITAL LLP","rank_all":4,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":10.69,"gtv_lw_cr":0,"total_unique_clients":4,"new_clients_total":4,"avg_order_l_lw":0,"avg_order_l_all":178.2,"active_months":3,"active_weeks_8":0,"institutional":false},{"name":"SIMPLY GROW TECHNOLOGIES PRIVATE LIMITED","rank_all":7,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":4.45,"gtv_lw_cr":0,"total_unique_clients":2,"new_clients_total":2,"avg_order_l_lw":0,"avg_order_l_all":148.3,"active_months":1,"active_weeks_8":0,"institutional":false},{"name":"RESURGENT INDIA LIMITED","rank_all":8,"rank_8wk":99,"gtv_8wk_cr":0,"gtv_total_cr":3.96,"gtv_lw_cr":0,"total_unique_clients":3,"new_clients_total":3,"avg_order_l_lw":0,"avg_order_l_all":99.0,"active_months":1,"active_weeks_8":0,"institutional":false}],"ifa_8wk_total_gtv":29.37,"ifa_8wk_total_trades":529,"ifa_8wk_active_dists":156,"wdp_avg_order_lw":107.36,
+"mf":{"total_amt_l":83.36,"total_txns":64,"unique_partners":16,"unique_clients":28,"sip_txns":47,"lump_txns":17,"sip_amt_l":1.67,"lump_amt_l":81.69,"lw_txns":5,"lw_amt_l":7.23,"lw_clients":2,"pw_txns":21,"pw_amt_l":42.78,"pw_clients":14,"weekly_txns":[0,3,12,7,11,5,21,5],"weekly_amt_l":[0.0,0.10,10.32,0.25,20.40,2.27,42.78,7.23],"weekly_clients":[0,1,9,6,4,3,14,2],"weekly_sip":[0,3,11,4,9,4,15,1],"weekly_lump":[0,0,1,3,2,1,6,4],"categories":[{"name":"SIF Equity","txns":5,"amount_l":50.00,"pct":60.0},{"name":"SIF Hybrid","txns":2,"amount_l":20.00,"pct":24.0},{"name":"Equity","txns":46,"amount_l":8.85,"pct":10.6},{"name":"Other","txns":3,"amount_l":4.10,"pct":4.9},{"name":"Hybrid","txns":7,"amount_l":0.21,"pct":0.2},{"name":"Gold","txns":1,"amount_l":0.20,"pct":0.2}],"top_funds":[{"name":"WSIF MF","amount_l":40.00,"txns":4},{"name":"ICICI Pru SIF","amount_l":10.00,"txns":1},{"name":"TITANIUM SIF","amount_l":10.00,"txns":1},{"name":"Quant SIF","amount_l":10.00,"txns":1},{"name":"Groww MF","amount_l":4.10,"txns":3},{"name":"PPFAS MF","amount_l":3.09,"txns":4},{"name":"WhiteOak Capital","amount_l":3.03,"txns":2},{"name":"Bandhan MF","amount_l":1.07,"txns":4},{"name":"Nippon India MF","amount_l":0.47,"txns":10},{"name":"Quant MF","amount_l":0.38,"txns":1}],"top_partners":[{"name":"SANJEEV KUMAR GOYAL","short":"S. K. Goyal","amount_l":40.00,"txns":4,"clients":4,"active_weeks":1,"sif":true},{"name":"BESTOW FINMART","short":"Bestow Finmart","amount_l":10.00,"txns":1,"clients":1,"active_weeks":1,"sif":true},{"name":"RISHAB GARG","short":"Rishab Garg","amount_l":10.00,"txns":1,"clients":1,"active_weeks":1,"sif":true},{"name":"SANAM MUKHIJA","short":"Sanam Mukhija","amount_l":10.00,"txns":1,"clients":1,"active_weeks":1,"sif":true},{"name":"MAHESH SADASHIV RANE","short":"M. S. Rane","amount_l":7.00,"txns":3,"clients":1,"active_weeks":1,"sif":false},{"name":"GULSHAN KALRA","short":"Gulshan Kalra","amount_l":4.40,"txns":7,"clients":1,"active_weeks":4,"sif":false},{"name":"VRIKSHAM FINANCIAL SOLUTIONS","short":"Vriksham FS","amount_l":0.46,"txns":16,"clients":7,"active_weeks":3,"sif":false},{"name":"NAVEEN KUMAR REDDY VADULA","short":"N. K. R. Vadula","amount_l":0.43,"txns":9,"clients":3,"active_weeks":3,"sif":false},{"name":"SANJAY SHIVKUMAR VERMA","short":"S. S. Verma","amount_l":0.39,"txns":2,"clients":2,"active_weeks":2,"sif":false},{"name":"SHRUTI SAHNI","short":"Shruti Sahni","amount_l":0.26,"txns":3,"clients":1,"active_weeks":2,"sif":false}]}
+};
 const GREEN='#10b981',EMERALD='#047857',TEAL='#14b8a6',LIME='#84cc16',BLUE='#3b82f6',AMBER='#f59e0b',GREY='#94a3b8',ROSE='#f43f5e',VIOLET='#8b5cf6';
 const Y2={id:'y2',position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:8}}};
 function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
@@ -579,6 +717,182 @@ function initNav(){
     {color:AMBER,txt:`NDX (${ndxShare}% of 8wk GTV) is an institutional outlier — ring-fence from retail IFA metrics. Its ₹${ndxIFA?ndxIFA.avg_order_l_lw||ndxIFA.avg_order_l_all:'-'}L avg order skews segment averages.`},
     retailTop?{color:EMERALD,txt:`${retailTop.name.split(' ').slice(0,2).join(' ')} leads retail IFAs at ${cr(retailTop.gtv_8wk_cr)} across ${retailTop.total_unique_clients} clients — ${retailTop.active_weeks_8}/8 active weeks confirms consistency.`}:{color:GREY,txt:'No retail IFA data'},
   ].filter(x=>x.txt));
+})();
+
+
+// ══════════════════════════════════════════════════════════════ MF SLIDES ══
+const MF = D.mf;
+const CYAN = '#22d3ee';
+
+// MF Cover
+(function(){
+  const sifAmt = MF.categories.filter(c => c.name.includes('SIF')).reduce((s,c) => s+c.amount_l, 0);
+  const sifPct = Math.round(sifAmt / MF.total_amt_l * 100);
+  setEl('mf-cov-amt', '₹' + MF.total_amt_l + 'L');
+  setEl('mf-cov-txns', MF.total_txns);
+  setEl('mf-cov-partners', MF.unique_partners);
+  setEl('mf-cov-clients', MF.unique_clients);
+  setEl('mf-cov-sip-txns', MF.sip_txns + ' txns');
+  setEl('mf-cov-lump-txns', MF.lump_txns + ' txns');
+  setEl('mf-cov-sif-pct', sifPct + '%');
+  setEl('mf-cov-note', 'Bonds data covers 8 weeks (Mar 23 – May 17, 2026). MF data covers Apr – May 2026 only (first MF transactions via IFA channel). Column AK “Partner” identifies IFA-sourced transactions.');
+})();
+
+// MF Slide 1 – Weekly Activity
+(function(){
+  const lw = MF.lw_amt_l, pw = MF.pw_amt_l;
+  const del = +(lw - pw).toFixed(2);
+  const sign = del >= 0 ? '+' : '';
+  setEl('mf-s1-lw-amt', '₹' + lw + 'L');
+  setEl('mf-s1-pw-amt', '₹' + pw + 'L');
+  setEl('mf-s1-lw-txns', MF.lw_txns);
+  setEl('mf-s1-pw-txns', MF.pw_txns);
+  setEl('mf-s1-lw-cli', MF.lw_clients);
+  setEl('mf-s1-pw-cli', MF.pw_clients);
+  setEl('mf-s1-total', '₹' + MF.total_amt_l + 'L');
+
+  takeaways('tw-mf-s1', [
+    'May 4–10 was peak week: ₹' + MF.weekly_amt_l[6] + 'L across ' + MF.weekly_txns[6] + ' transactions',
+    'Last week (May 11–17): ₹' + lw + 'L — ' + sign + '₹' + Math.abs(del) + 'L vs prior week',
+    MF.sip_txns + ' SIPs (₹' + MF.sip_amt_l + 'L) vs ' + MF.lump_txns + ' lumpsum (₹' + MF.lump_amt_l + 'L) — lumpsums dominate by value',
+  ]);
+  insights('ins-mf-s1', [
+    {color: '#f59e0b', txt: 'Lumpsum purchases account for ₹' + MF.lump_amt_l + 'L (' + Math.round(MF.lump_amt_l/MF.total_amt_l*100) + '%) of total — SIF one-time investments drove the May 4–10 spike.'},
+    {color: '#22d3ee', txt: 'SIP count (' + MF.sip_txns + ' installments, ₹' + MF.sip_amt_l + 'L) shows steady recurring activity from ' + MF.unique_partners + ' IFA partners.'},
+  ]);
+
+  const el = document.getElementById('chart-mf-s1');
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: D.week_labels_8,
+      datasets: [
+        {label: 'Lumpsum (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
+          if (!tot) return 0;
+          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
+          return t ? +(tot * MF.weekly_lump[i] / t).toFixed(2) : 0;
+        }), backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3, stack: 's'},
+        {label: 'SIP (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
+          if (!tot) return 0;
+          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
+          return t ? +(tot * MF.weekly_sip[i] / t).toFixed(2) : 0;
+        }), backgroundColor: 'rgba(34,211,238,.65)', borderRadius: 3, stack: 's'},
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {labels: {color: '#94a3b8', font: {size: 9}}},
+        tooltip: {callbacks: {label: ctx => ctx.dataset.label + ': ₹' + ctx.parsed.y + 'L'}}},
+      scales: {
+        x: {ticks: {color: '#64748b', font: {size: 8}}, grid: {color: 'rgba(255,255,255,.04)'}},
+        y: {stacked: true, ticks: {color: '#64748b', font: {size: 8}, callback: v => '₹' + v + 'L'}, grid: {color: 'rgba(255,255,255,.07)'}}
+      }
+    }
+  });
+})();
+
+// MF Slide 2 – Category & Fund Breakdown
+(function(){
+  const sifAmt = MF.categories.filter(c => c.name.includes('SIF')).reduce((s,c) => s + c.amount_l, 0);
+  const sifPct = Math.round(sifAmt / MF.total_amt_l * 100);
+  setEl('mf-s2-sif-pct', sifPct + '%');
+
+  const catColors = {'SIF Equity': '#22d3ee', 'SIF Hybrid': '#a78bfa', 'Equity': '#f59e0b', 'Other': '#4ade80', 'Hybrid': '#f87171', 'Gold': '#fbbf24'};
+  const catListEl = document.getElementById('mf-s2-cat-list');
+  catListEl.innerHTML = MF.categories.map(c =>
+    '<div class="stat-item"><span class="si-lbl" style="color:' + (catColors[c.name]||'#e2e8f0') + ';">' + c.name + '</span>' +
+    '<span class="si-val">₹' + c.amount_l + 'L <span style="color:#64748b;font-size:.6em;">(' + c.pct + '%)</span></span></div>'
+  ).join('');
+
+  const tbody = document.getElementById('mf-cat-tbody');
+  tbody.innerHTML = MF.categories.map(c => '<tr>' +
+    '<td style="padding:4px 6px;color:' + (catColors[c.name]||'#e2e8f0') + ';">' + c.name + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;color:#94a3b8;">' + c.txns + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;color:#e2e8f0;font-weight:600;">₹' + c.amount_l + '</td>' +
+    '<td style="text-align:right;padding:4px 6px;"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">' +
+    '<div style="width:40px;height:4px;background:#1e293b;border-radius:2px;overflow:hidden;"><div style="width:' + c.pct + '%;height:100%;background:' + (catColors[c.name]||'#94a3b8') + ';border-radius:2px;"></div></div>' +
+    '<span style="font-size:.6rem;color:#64748b;">' + c.pct + '%</span></div></td>' +
+  '</tr>').join('');
+
+  const topN = MF.top_funds.slice(0, 8);
+  const fundBg = topN.map(f => (f.name.includes('SIF') || f.name.includes('WSIF')) ? 'rgba(34,211,238,.8)' : 'rgba(245,158,11,.75)');
+  new Chart(document.getElementById('chart-mf-s2'), {
+    type: 'bar',
+    data: {labels: topN.map(f => f.name), datasets: [{label: 'Investment (₹L)', data: topN.map(f => f.amount_l), backgroundColor: fundBg, borderRadius: 4, borderSkipped: false}]},
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: ctx => '₹' + ctx.parsed.x + 'L · ' + topN[ctx.dataIndex].txns + ' txns'}}},
+      scales: {
+        x: {ticks: {color: '#64748b', font: {size: 8}, callback: v => '₹' + v + 'L'}, grid: {color: 'rgba(255,255,255,.07)'}},
+        y: {ticks: {color: '#e2e8f0', font: {size: 8}}, grid: {display: false}}
+      }
+    }
+  });
+
+  takeaways('tw-mf-s2', [
+    'SIF products: ₹' + sifAmt.toFixed(0) + 'L (' + sifPct + '%) — Specialized Investment Funds with ₹10L minimum',
+    'Regular equity MF: ₹' + MF.categories.find(c => c.name === 'Equity').amount_l + 'L across ' + MF.categories.find(c => c.name === 'Equity').txns + ' SIP/lumpsum transactions',
+    'WSIF MF alone: ₹40L — 4 lumpsum SIF purchases by single partner S. K. Goyal',
+  ]);
+  insights('ins-mf-s2', [
+    {color: '#22d3ee', txt: 'SIF (Specialized Investment Funds) account for ' + sifPct + '% of IFA MF value — driven by high-ticket lumpsum placements (₹10L minimum per investment).'},
+    {color: '#f59e0b', txt: 'Regular equity MF activity (46 txns, mostly SIPs) reflects consistent retail-level IFA engagement — separate from the SIF ticket buyers.'},
+  ]);
+})();
+
+// MF Slide 3 – Top IFA Partners
+(function(){
+  const p = MF.top_partners;
+  const topP = p[0];
+  const mostActive = p.reduce((a, b) => b.txns > a.txns ? b : a);
+  const mostCli = p.reduce((a, b) => b.clients > a.clients ? b : a);
+  const sifCount = p.filter(x => x.sif).length;
+  const multiWk = p.filter(x => !x.sif && x.active_weeks >= 2);
+
+  setEl('mf-s3-top-amt', '₹' + topP.amount_l + 'L');
+  setEl('mf-s3-top-name', topP.short);
+  setEl('mf-s3-active-name', mostActive.short + ' (' + mostActive.txns + ' txns)');
+  setEl('mf-s3-cli-name', mostCli.short + ' (' + mostCli.clients + ' clients)');
+  setEl('mf-s3-sif-count', sifCount);
+  setEl('mf-s3-sip-only', multiWk.length + ' partners (≥2 wks)');
+
+  new Chart(document.getElementById('chart-mf-s3'), {
+    type: 'bar',
+    data: {
+      labels: p.map(x => x.short + (x.sif ? ' ⊕' : '')),
+      datasets: [{label: 'Investment (₹L)', data: p.map(x => x.amount_l),
+        backgroundColor: p.map(x => x.sif ? 'rgba(34,211,238,.8)' : 'rgba(74,222,128,.75)'),
+        borderRadius: 4, borderSkipped: false}]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: ctx => '₹' + ctx.parsed.x + 'L · ' + p[ctx.dataIndex].txns + ' txns · ' + p[ctx.dataIndex].clients + ' clients'}}},
+      scales: {
+        x: {ticks: {color: '#64748b', font: {size: 8}, callback: v => '₹' + v + 'L'}, grid: {color: 'rgba(255,255,255,.07)'}},
+        y: {ticks: {color: '#e2e8f0', font: {size: 8}}, grid: {display: false}}
+      }
+    }
+  });
+
+  const tbody = document.getElementById('mf-partner-tbody');
+  tbody.innerHTML = p.map((x, i) => '<tr style="border-bottom:1px solid #1e293b;">' +
+    '<td style="padding:3px 5px;color:#64748b;">' + (i+1) + '</td>' +
+    '<td style="padding:3px 5px;color:' + (x.sif ? '#22d3ee' : '#e2e8f0') + ';">' + x.short + (x.sif ? ' <span style="color:#f59e0b;font-size:.55em;font-weight:700;">SIF</span>' : '') + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;font-weight:600;color:#e2e8f0;">₹' + x.amount_l + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#94a3b8;">' + x.txns + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#94a3b8;">' + x.clients + '</td>' +
+    '<td style="text-align:right;padding:3px 5px;color:#64748b;">' + x.active_weeks + '/8</td>' +
+  '</tr>').join('');
+
+  takeaways('tw-mf-s3', [
+    'Top 4 partners are SIF buyers: ' + p.filter(x => x.sif).map(x => x.short).join(', '),
+    'Vriksham Financial Solutions — most clients (7 clients, 16 SIP txns over 3 weeks)',
+    multiWk.length + ' non-SIF IFAs active for 2+ weeks — consistent SIP pipeline',
+  ]);
+  insights('ins-mf-s3', [
+    {color: '#22d3ee', txt: 'Top 4 IFA partners placed SIF lumpsum investments (≥₹10L each). S. K. Goyal alone: ₹40L. SIF activity is concentrated and episodic.'},
+    {color: '#4ade80', txt: 'Non-SIF IFAs (Gulshan Kalra, Vriksham FS, Naveen Reddy) show multi-week SIP patterns. Vriksham leads client reach at 7 clients across 3 active weeks.'},
+  ]);
 })();
 
 initNav();showSlide(0);
