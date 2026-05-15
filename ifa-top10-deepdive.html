@@ -273,35 +273,12 @@
   <!-- ═══════════════════════════════════════════════════════ MF SECTION ══ -->
   <!-- Slide MF-0 · Section Divider Cover -->
   <div class="slide cover" style="background:linear-gradient(135deg,#0c4a6e 0%,#0e7490 55%,#06b6d4 100%);">
-    <div class="cover-inner">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-        <span style="background:#0e7490;color:#fff;font-size:.52rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:20px;">MUTUAL FUNDS</span>
-        <span style="background:rgba(255,255,255,.1);color:#94a3b8;font-size:.52rem;padding:3px 10px;border-radius:20px;">IFA Segment Only</span>
-      </div>
-      <div class="cover-title" style="font-size:2.1rem;line-height:1.1;">Mutual Fund<br>Activity Deep-Dive</div>
-      <div class="cover-sub" style="margin-top:8px;color:#94a3b8;">IFA-Sourced Purchases · Apr – May 2026</div>
-      <div class="cover-chips" style="margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;">
-        <div class="chip"><span id="mf-cov-amt">—</span><span class="chip-lbl">Total Investment</span></div>
-        <div class="chip"><span id="mf-cov-txns">—</span><span class="chip-lbl">Transactions</span></div>
-        <div class="chip"><span id="mf-cov-partners">—</span><span class="chip-lbl">IFA Partners</span></div>
-        <div class="chip"><span id="mf-cov-clients">—</span><span class="chip-lbl">Unique Clients</span></div>
-      </div>
-      <div style="margin-top:14px;display:flex;gap:12px;">
-        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
-          <div style="font-size:1.05rem;font-weight:700;color:#22d3ee;" id="mf-cov-sip-txns">—</div>
-          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIP Installments</div>
-        </div>
-        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
-          <div style="font-size:1.05rem;font-weight:700;color:#f59e0b;" id="mf-cov-lump-txns">—</div>
-          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">Lumpsum Purchases</div>
-        </div>
-        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center;">
-          <div style="font-size:1.05rem;font-weight:700;color:#a78bfa;" id="mf-cov-sif-pct">—</div>
-          <div style="font-size:.5rem;color:#94a3b8;margin-top:2px;">SIF by Value</div>
-        </div>
-      </div>
-      <div class="cover-note" id="mf-cov-note" style="margin-top:14px;font-size:.52rem;color:#64748b;line-height:1.5;"></div>
-    </div>
+    <div class="cover-eyebrow">Yubi Wealth B2B · IFA Segment</div>
+    <h1>Mutual Fund<br>Activity</h1>
+    <div class="cover-sub">IFA-Sourced Purchases · Apr – May 2026</div>
+    <div class="cover-period">Apr – May 2026 · IFA Channel Only</div>
+    <div class="cover-metrics" id="mf-cov-metrics"></div>
+    <div id="mf-cov-note" style="margin-top:16px;font-size:.55rem;color:rgba(255,255,255,.6);line-height:1.6;max-width:520px;text-align:center;"></div>
   </div>
 
   <!-- Slide MF-1 · Weekly Activity -->
@@ -728,14 +705,15 @@ const CYAN = '#22d3ee';
 (function(){
   const sifAmt = MF.categories.filter(c => c.name.includes('SIF')).reduce((s,c) => s+c.amount_l, 0);
   const sifPct = Math.round(sifAmt / MF.total_amt_l * 100);
-  setEl('mf-cov-amt', '₹' + MF.total_amt_l + 'L');
-  setEl('mf-cov-txns', MF.total_txns);
-  setEl('mf-cov-partners', MF.unique_partners);
-  setEl('mf-cov-clients', MF.unique_clients);
-  setEl('mf-cov-sip-txns', MF.sip_txns + ' txns');
-  setEl('mf-cov-lump-txns', MF.lump_txns + ' txns');
-  setEl('mf-cov-sif-pct', sifPct + '%');
-  setEl('mf-cov-note', 'Bonds data covers 8 weeks (Mar 23 – May 17, 2026). MF data covers Apr – May 2026 only (first MF transactions via IFA channel). Column AK “Partner” identifies IFA-sourced transactions.');
+  document.getElementById('mf-cov-metrics').innerHTML = [
+    {lbl:'Total Investment', val:'₹'+MF.total_amt_l+'L'},
+    {lbl:'Transactions',     val:MF.total_txns},
+    {lbl:'IFA Partners',     val:MF.unique_partners},
+    {lbl:'Unique Clients',   val:MF.unique_clients},
+    {lbl:'SIP Installments', val:MF.sip_txns},
+    {lbl:'SIF by Value',     val:sifPct+'%'},
+  ].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
+  setEl('mf-cov-note', 'Bonds data covers 8 weeks (Mar 23 – May 17, 2026). MF data covers Apr – May 2026 only (first MF transactions via IFA channel). Column AK "Partner" identifies IFA-sourced transactions.');
 })();
 
 // MF Slide 1 – Weekly Activity
