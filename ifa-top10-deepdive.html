@@ -747,13 +747,14 @@ const CYAN = '#22d3ee';
       datasets: [
         {label: 'Lumpsum (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
           if (!tot) return 0;
-          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
-          return t ? +(tot * MF.weekly_lump[i] / t).toFixed(2) : 0;
+          const sipAvgL = MF.sip_amt_l / (MF.sip_txns || 1);
+          const sipEst = +(MF.weekly_sip[i] * sipAvgL).toFixed(2);
+          return Math.max(0, +(tot - sipEst).toFixed(2));
         }), backgroundColor: AMBER+'cc', borderColor: AMBER, borderWidth: 1, borderRadius: 3, stack: 's'},
         {label: 'SIP (₹L)', data: MF.weekly_amt_l.map((tot, i) => {
           if (!tot) return 0;
-          const t = MF.weekly_sip[i] + MF.weekly_lump[i];
-          return t ? +(tot * MF.weekly_sip[i] / t).toFixed(2) : 0;
+          const sipAvgL = MF.sip_amt_l / (MF.sip_txns || 1);
+          return Math.min(tot, +(MF.weekly_sip[i] * sipAvgL).toFixed(2));
         }), backgroundColor: TEAL+'cc', borderColor: TEAL, borderWidth: 1, borderRadius: 3, stack: 's'},
       ]
     },
