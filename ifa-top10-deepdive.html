@@ -462,10 +462,17 @@ function initNav(){
   setEl('s1-trades',num(t.this)+' / avg '+num(t.avg));
   setEl('s1-avgord',lakh(a.this));
   setEl('s1-8wkgtv',cr(D.ifa_8wk_total_gtv));
-  mkChart('chart-s1',[
-    bar('Weekly GTV (₹cr)',D.weekly_gtv_cr,EMERALD),
-    line('Trades',D.weekly_trades,AMBER,'y2')
-  ],{...Y2,ticks:{...Y2.ticks,callback:v=>v>0?v:''}});
+  const el1=document.getElementById('chart-s1');
+  if(el1){new Chart(el1,{type:'bar',data:{labels:D.week_labels_8,datasets:[
+    {label:'New Client GTV (₹cr)',data:D.weekly_new_cli_gtv_cr,backgroundColor:GREEN+'cc',borderColor:GREEN,borderWidth:1,borderRadius:3,stack:'s',yAxisID:'y'},
+    {label:'Existing Client GTV (₹cr)',data:D.weekly_exist_cli_gtv_cr,backgroundColor:EMERALD+'cc',borderColor:EMERALD,borderWidth:1,borderRadius:3,stack:'s',yAxisID:'y'},
+    {type:'line',label:'Trades',data:D.weekly_trades,borderColor:AMBER,backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.3,yAxisID:'y2'},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:6}}},
+  scales:{
+    x:{grid:{color:'#f0fdf4'},ticks:{font:{size:8},maxRotation:30}},
+    y:{stacked:true,beginAtZero:true,grid:{color:'#f0fdf4'},ticks:{font:{size:8},callback:v=>v>0?'₹'+v+'cr':''}},
+    y2:{id:'y2',position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:8},callback:v=>v>0?v:''}}
+  }}});}
   const gtvWoW1=g.last>0?Math.round((g.this-g.last)/g.last*100):0;
   const lwGtv=D.weekly_gtv_cr[7],lwNewGtv=D.weekly_new_cli_gtv_cr[7],lwExistGtv=D.weekly_exist_cli_gtv_cr[7];
   const lwNewPct=lwGtv>0?Math.round(lwNewGtv/lwGtv*100):0;
