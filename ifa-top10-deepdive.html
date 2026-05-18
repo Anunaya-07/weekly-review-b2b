@@ -278,6 +278,168 @@
       <div class="insight-box" style="flex-shrink:0;margin-top:3px;"><div class="ib-title">Key Insights</div><div class="ib-body" id="ins-s7"></div></div>
     </div>
   </div>
+  <!-- ═══════════════════════════════════════════════════════ FD SECTION ══ -->
+  <!-- Slide FD-0 · Section Divider Cover -->
+  <div class="slide cover" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 55%,#2563eb 100%);">
+    <div class="cover-eyebrow">Yubi Wealth · BtoBtoC</div>
+    <h1>FD Engagement<br>Weekly Review</h1>
+    <div class="cover-sub">Distributor · Investor · Orders</div>
+    <div class="cover-period">Week ending May 17, 2026 &nbsp;·&nbsp; 8-week trailing view (from Mar 23)</div>
+    <div class="cover-metrics">
+      <div class="cover-metric">
+        <div class="cm-label">Onboarded Distributors</div>
+        <div class="cm-val">6</div>
+        <div class="cm-wow down">▼ -40% vs prior wk</div>
+      </div>
+      <div class="cover-metric">
+        <div class="cm-label">Onboarded Investors</div>
+        <div class="cm-val">0</div>
+        <div class="cm-wow flat">no May data in source</div>
+      </div>
+      <div class="cover-metric">
+        <div class="cm-label">Total Orders</div>
+        <div class="cm-val">0</div>
+        <div class="cm-wow flat">no May data in source</div>
+      </div>
+      <div class="cover-metric">
+        <div class="cm-label">FD Booked</div>
+        <div class="cm-val">0</div>
+        <div class="cm-wow flat">no May data in source</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD Slide 1: Weekly Onboarded Distributors -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:linear-gradient(160deg,#1d4ed8,#3b82f6);">
+      <div class="slide-num">FD · Slide 01</div>
+      <div class="slide-ttl">Weekly Onboarded Distributors</div>
+      <div class="slide-sub">Count of onboarded distributors per week</div>
+      <div class="hero-num">6</div>
+      <div class="hero-lbl">Last week onboarded</div>
+      <div class="hero-badge down">▼ -40% vs prior wk</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">10</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak (8-wk)</span><span class="si-val">11</span></div>
+        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">7.0</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Count of Onboarded Distributors</h2>
+      <div class="rp-sub">vs. start date of the week</div>
+      <div class="chart-area"><canvas id="chart-fd-dist"></canvas></div>
+      <div class="insight-row">
+        <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Rebound after Mar-30 trough</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak 11 on Apr-13</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD Slide 2: Active vs Pending Distributors -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:linear-gradient(160deg,#5b21b6,#8b5cf6);">
+      <div class="slide-num">FD · Slide 02</div>
+      <div class="slide-ttl">Onboarded vs Onboarding-Pending Distributors</div>
+      <div class="slide-sub">Onboarded vs onboarding-pending</div>
+      <div class="hero-num">60%</div>
+      <div class="hero-lbl">Onboarded share (last wk)</div>
+      <div class="hero-badge flat">6 onboarded · 4 pending</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Onboarded (last wk)</span><span class="si-val">6</span></div>
+        <div class="stat-item"><span class="si-lbl">Pending (last wk)</span><span class="si-val">4</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">4</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Onboarded vs Onboarding-Pending Distributors</h2>
+      <div class="rp-sub">weekly · onboarded (blue) vs onboarding-pending (red)</div>
+      <div class="chart-area"><canvas id="chart-fd-distpending"></canvas></div>
+      <div class="insight-row">
+        <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Onboarded distributors</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#ef4444"></span>Onboarding-pending</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD Slide 3: Weekly Onboarded Investors -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:linear-gradient(160deg,#065f46,#10b981);">
+      <div class="slide-num">FD · Slide 03</div>
+      <div class="slide-ttl">Weekly Onboarded Investors</div>
+      <div class="slide-sub">New onboarded distinct clients added per week</div>
+      <div class="hero-num">0</div>
+      <div class="hero-lbl">Last week onboarded</div>
+      <div class="hero-badge down">▼ from 6 (Apr-13 peak)</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Peak (8-wk)</span><span class="si-val">6</span></div>
+        <div class="stat-item"><span class="si-lbl">Second peak</span><span class="si-val">5</span></div>
+        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">1.75</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Client Onboarding Per Week</h2>
+      <div class="rp-sub">count of new onboarded distinct clients</div>
+      <div class="chart-area"><canvas id="chart-fd-inv"></canvas></div>
+      <div class="insight-row">
+        <span class="ins-chip"><span class="ins-dot" style="background:#10b981"></span>Peak of 6 on Apr-13</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#f59e0b"></span>Trailing weeks trending to 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD Slide 4: Onboarded vs Pending Investors -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:linear-gradient(160deg,#134e4a,#14b8a6);">
+      <div class="slide-num">FD · Slide 04</div>
+      <div class="slide-ttl">Onboarded Investors vs Onboarding-Pending</div>
+      <div class="slide-sub">New onboarded vs pending by onboarding week</div>
+      <div class="hero-num">0</div>
+      <div class="hero-lbl">New onboarded last wk</div>
+      <div class="hero-badge flat">0 onboarded · 4 pending</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Peak Onboarded</span><span class="si-val">6</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">4</span></div>
+        <div class="stat-item"><span class="si-lbl">Pending : Onboarded</span><span class="si-val">~5 : 7</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Weekly Onboarded Investors vs Onboarding-Pending</h2>
+      <div class="rp-sub">onboarded clients (blue) vs onboarding-pending (red)</div>
+      <div class="chart-area"><canvas id="chart-fd-invpending"></canvas></div>
+      <div class="insight-row">
+        <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>New onboarded clients</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#ef4444"></span>Onboarding-pending</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FD Slide 5: Total Orders vs FD Booked -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:linear-gradient(160deg,#881337,#ec4899);">
+      <div class="slide-num">FD · Slide 05</div>
+      <div class="slide-ttl">Total Orders vs FD Booked</div>
+      <div class="slide-sub">Order volume vs confirmed FD bookings</div>
+      <div class="hero-num">0</div>
+      <div class="hero-lbl">Orders last week</div>
+      <div class="hero-badge flat">no May data in source</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">FD Booked (last wk)</span><span class="si-val">0</span></div>
+        <div class="stat-item"><span class="si-lbl">Order→Book Rate (8-wk)</span><span class="si-val">~9%</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak Orders</span><span class="si-val">14</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Total Orders vs FD Booked</h2>
+      <div class="rp-sub">weekly · by created_at</div>
+      <div class="chart-area"><canvas id="chart-fd-orders"></canvas></div>
+      <div class="insight-row">
+        <span class="ins-chip"><span class="ins-dot" style="background:#3b82f6"></span>Total orders</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#ef4444"></span>FD booked</span>
+        <span class="ins-chip"><span class="ins-dot" style="background:#f59e0b"></span>Large gap = booking friction</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════════════════ MF SECTION ══ -->
   <!-- Slide MF-0 · Section Divider Cover -->
   <div class="slide cover" style="background:linear-gradient(135deg,#0c4a6e 0%,#0e7490 55%,#06b6d4 100%);">
@@ -724,6 +886,55 @@ function initNav(){
   ].filter(x=>x.txt));
 })();
 
+
+// ══════════════════════════════════════════════════════════════ FD SLIDES ══
+const FD_LABELS = ['Mar 23','Mar 30','Apr 06','Apr 13','Apr 20','Apr 27','May 04','May 11'];
+const FD_GRID = '#f1f5f9';
+function fdBarOpts(maxY) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+      y: { beginAtZero: true, suggestedMax: maxY, grid: { color: FD_GRID }, ticks: { stepSize: 2 } }
+    }
+  };
+}
+new Chart(document.getElementById('chart-fd-dist'), {
+  type: 'bar',
+  data: { labels: FD_LABELS, datasets: [{ data: [6, 1, 8, 11, 5, 9, 10, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
+  options: fdBarOpts(12)
+});
+new Chart(document.getElementById('chart-fd-distpending'), {
+  type: 'bar',
+  data: { labels: FD_LABELS, datasets: [
+    { label: 'Onboarded', data: [6, 1, 8, 11, 5, 9, 10, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'Pending',   data: [0, 0, 0,  3, 2, 2,  0, 4], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+  ]},
+  options: fdBarOpts(12)
+});
+new Chart(document.getElementById('chart-fd-inv'), {
+  type: 'bar',
+  data: { labels: FD_LABELS, datasets: [{ data: [1, 1, 5, 6, 1, 0, 0, 0], backgroundColor: '#10b981', borderRadius: 4, borderSkipped: false }] },
+  options: fdBarOpts(8)
+});
+new Chart(document.getElementById('chart-fd-invpending'), {
+  type: 'bar',
+  data: { labels: FD_LABELS, datasets: [
+    { label: 'New Onboarded', data: [1, 1, 5, 6, 1, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'Pending',       data: [2, 0, 2, 0, 2, 0, 0, 4], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+  ]},
+  options: fdBarOpts(8)
+});
+new Chart(document.getElementById('chart-fd-orders'), {
+  type: 'bar',
+  data: { labels: FD_LABELS, datasets: [
+    { label: 'Total Orders', data: [5, 1, 1, 14, 12, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'FD Booked',    data: [0, 0, 0,  1,  2, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+  ]},
+  options: fdBarOpts(16)
+});
 
 // ══════════════════════════════════════════════════════════════ MF SLIDES ══
 const MF = D.mf;
