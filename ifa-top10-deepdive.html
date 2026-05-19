@@ -179,10 +179,6 @@
         <div class="stat-item"><span class="si-lbl">Active clients last wk</span><span class="si-val" id="s4-clients">—</span></div>
         <div class="stat-item"><span class="si-lbl">Clients: prior / 8-wk avg</span><span class="si-val" id="s4-cli-prev">—</span></div>
         <div class="stat-item"><span class="si-lbl">Clients per active IFA</span><span class="si-val" id="s4-cli-per-dist">—</span></div>
-        <div class="stat-item" style="border:1px solid rgba(251,191,36,.5);background:rgba(251,191,36,.15);border-radius:5px;padding:6px 8px;margin-top:6px;">
-          <span class="si-lbl" style="color:#fbbf24;font-weight:600;">Dormant clients (onbd Apr 25+)</span>
-          <span class="si-val" style="color:#fbbf24;" id="s4-dormant">—</span>
-        </div>
         <div class="takeaway-box" id="tw-s4"></div>
       </div>
     </div>
@@ -711,15 +707,12 @@ function initNav(){
 (function(){
   const d=D.kpi_dist,c=D.kpi_clients;
   const cliPerDist=d.this>0?rnd(c.this/d.this,1):0;
-  const dormant=D.ifa_cli_dormant_apr25,total=D.ifa_cli_post_apr25;
-  const dormantPct=total>0?Math.round(dormant/total*100):0;
   setEl('s4-dist',num(d.this));
   badge(document.getElementById('s4-dist-badge'),d.delta,'');
   setEl('s4-prev-avg',num(d.last)+' / avg '+rnd(d.avg,1)+'/wk');
   setEl('s4-clients',num(c.this)+' clients');
   setEl('s4-cli-prev',num(c.last)+' / avg '+rnd(c.avg,1));
   setEl('s4-cli-per-dist',cliPerDist+' clients/IFA');
-  setEl('s4-dormant',num(dormant)+' of '+num(total)+' ('+dormantPct+'%) never traded');
   mkChart('chart-s4',[
     bar('Active IFAs',D.weekly_active_dists,EMERALD),
     line('Active Clients',D.weekly_active_clients,TEAL,'y2'),
@@ -727,12 +720,10 @@ function initNav(){
   insights('ins-s4',[
     {color:EMERALD,txt:`Active base contracted slightly (${num(d.this)} IFAs, ${num(c.this)} clients vs ${num(d.last)} and ${num(c.last)} prior) — normal week-to-week variation. The 8-wk avg of ${rnd(d.avg,1)} IFAs signals a stable, committed core.`},
     {color:TEAL,txt:`Client-to-IFA ratio of ${cliPerDist}x is low — most IFAs are bringing 1-2 clients. There is significant room to deepen each IFA's book (cross-sell, repeat investment) before scaling IFA headcount.`},
-    {color:'#f59e0b',txt:`${dormantPct}% dormant alert — ${num(dormant)} of ${num(total)} clients onboarded since Apr 2025 have never placed a trade. Re-engagement campaigns targeting these clients represent a high-conversion opportunity.`},
   ]);
   takeaways('tw-s4',[
     `${num(d.this)} active IFAs vs ${num(d.last)} prior (8-wk avg: ${rnd(d.avg,1)})`,
     `${num(c.this)} active clients · ${cliPerDist} clients per active IFA`,
-    `⚠ ${num(dormant)}/${num(total)} clients (Apr 25+) dormant — ${dormantPct}% never traded`,
   ]);
 })();
 
