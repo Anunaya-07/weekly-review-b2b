@@ -311,13 +311,13 @@
       <div class="slide-num">FD · Slide 01</div>
       <div class="slide-ttl">Weekly Onboarded Distributors</div>
       <div class="slide-sub">Count of onboarded distributors per week</div>
-      <div class="hero-num">6</div>
+      <div class="hero-num">10</div>
       <div class="hero-lbl">Last week onboarded</div>
-      <div class="hero-badge down">▼ -40% vs prior wk</div>
+      <div class="hero-badge flat">= same as prior wk</div>
       <div class="stat-list">
         <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">10</span></div>
         <div class="stat-item"><span class="si-lbl">Peak (8-wk)</span><span class="si-val">11</span></div>
-        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">7.0</span></div>
+        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">7.5</span></div>
       </div>
     </div>
     <div class="right-panel">
@@ -337,13 +337,13 @@
       <div class="slide-num">FD · Slide 02</div>
       <div class="slide-ttl">Onboarded vs Onboarding-Pending Distributors</div>
       <div class="slide-sub">Onboarded vs onboarding-pending</div>
-      <div class="hero-num">60%</div>
+      <div class="hero-num">90%</div>
       <div class="hero-lbl">Onboarded share (last wk)</div>
-      <div class="hero-badge flat">6 onboarded · 4 pending</div>
+      <div class="hero-badge flat">9 onboarded · 1 pending</div>
       <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Onboarded (last wk)</span><span class="si-val">6</span></div>
-        <div class="stat-item"><span class="si-lbl">Pending (last wk)</span><span class="si-val">4</span></div>
-        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">4</span></div>
+        <div class="stat-item"><span class="si-lbl">Onboarded (last wk)</span><span class="si-val">9</span></div>
+        <div class="stat-item"><span class="si-lbl">Pending (last wk)</span><span class="si-val">1</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">3</span></div>
       </div>
     </div>
     <div class="right-panel">
@@ -391,11 +391,11 @@
       <div class="slide-sub">New onboarded vs pending by onboarding week</div>
       <div class="hero-num">0</div>
       <div class="hero-lbl">New onboarded last wk</div>
-      <div class="hero-badge flat">0 onboarded · 4 pending</div>
+      <div class="hero-badge flat">0 onboarded · 0 pending</div>
       <div class="stat-list">
         <div class="stat-item"><span class="si-lbl">Peak Onboarded</span><span class="si-val">6</span></div>
-        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">4</span></div>
-        <div class="stat-item"><span class="si-lbl">Pending : Onboarded</span><span class="si-val">~5 : 7</span></div>
+        <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">2</span></div>
+        <div class="stat-item"><span class="si-lbl">Pending : Onboarded</span><span class="si-val">~3 : 7</span></div>
       </div>
     </div>
     <div class="right-panel">
@@ -892,14 +892,14 @@ function fdBarOpts(maxY) {
 }
 new Chart(document.getElementById('chart-fd-dist'), {
   type: 'bar',
-  data: { labels: FD_LABELS, datasets: [{ data: [6, 1, 8, 11, 5, 9, 10, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
+  data: { labels: FD_LABELS, datasets: [{ data: [6, 1, 8, 11, 5, 9, 10, 10], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
   options: fdBarOpts(12)
 });
 new Chart(document.getElementById('chart-fd-distpending'), {
   type: 'bar',
   data: { labels: FD_LABELS, datasets: [
-    { label: 'Onboarded', data: [6, 1, 8, 11, 5, 9, 10, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
-    { label: 'Pending',   data: [0, 0, 0,  3, 2, 2,  0, 4], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+    { label: 'Onboarded', data: [6, 1, 8, 11, 5, 9, 10, 9], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'Pending',   data: [0, 0, 0,  3, 2, 2,  0, 1], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
   ]},
   options: fdBarOpts(12)
 });
@@ -912,7 +912,7 @@ new Chart(document.getElementById('chart-fd-invpending'), {
   type: 'bar',
   data: { labels: FD_LABELS, datasets: [
     { label: 'New Onboarded', data: [1, 1, 5, 6, 1, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
-    { label: 'Pending',       data: [2, 0, 2, 0, 2, 0, 0, 4], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+    { label: 'Pending',       data: [2, 0, 2, 0, 2, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
   ]},
   options: fdBarOpts(8)
 });
