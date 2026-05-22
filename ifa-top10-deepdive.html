@@ -1041,14 +1041,17 @@ const CYAN = '#22d3ee';
     }
   });
 
+  const eqCats = MF.categories.filter(c => c.name.startsWith('Equity'));
+  const eqAmt = eqCats.reduce((s,c) => s + c.amount_l, 0).toFixed(2);
+  const eqTxns = eqCats.reduce((s,c) => s + c.txns, 0);
   takeaways('tw-mf-s2', [
     'SIF products: ₹' + sifAmt.toFixed(0) + 'L (' + sifPct + '%) — Specialized Investment Funds with ₹10L minimum',
-    'Regular equity MF: ₹' + MF.categories.find(c => c.name === 'Equity').amount_l + 'L across ' + MF.categories.find(c => c.name === 'Equity').txns + ' SIP/lumpsum transactions',
+    'Regular equity MF: ₹' + eqAmt + 'L across ' + eqTxns + ' SIP/lumpsum transactions',
     'WSIF MF alone: ₹40L — 4 lumpsum SIF purchases by single partner S. K. Goyal',
   ]);
   insights('ins-mf-s2', [
     {color: '#22d3ee', txt: 'SIF (Specialized Investment Funds) account for ' + sifPct + '% of IFA MF value — driven by high-ticket lumpsum placements (₹10L minimum per investment).'},
-    {color: '#f59e0b', txt: 'Regular equity MF activity (46 txns, mostly SIPs) reflects consistent retail-level IFA engagement — separate from the SIF ticket buyers.'},
+    {color: '#f59e0b', txt: 'Regular equity MF activity (' + eqTxns + ' txns, mostly SIPs) reflects consistent retail-level IFA engagement — separate from the SIF ticket buyers.'},
   ]);
 })();
 
