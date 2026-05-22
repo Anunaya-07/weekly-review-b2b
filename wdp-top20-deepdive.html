@@ -1,166 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WDP Top 20 · Deep Dive</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px 56px}
-    .deck-wrap{width:min(100%,1200px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
-    .deck{width:100%;height:100%}
-    .slide{display:none;width:100%;height:100%;position:absolute;inset:0}
-    .slide.active{display:flex}
-    .cover{background:linear-gradient(135deg,#0f172a 0%,#0c1a3a 55%,#1d4ed8 100%);flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:32px 40px}
-    .cover-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px}
-    .cover h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:8px}
-    .cover-sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:20px}
-    .cover-period{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:5px 18px;font-size:.76rem;color:rgba(255,255,255,.75);margin-bottom:32px}
-    .cover-metrics{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-    .cover-metric{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 20px;text-align:left;min-width:130px}
-    .cm-label{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:5px}
-    .cm-val{font-size:1.35rem;font-weight:700}
-    .two-col{flex-direction:row}
-    .left-panel{width:30%;flex-shrink:0;display:flex;flex-direction:column;padding:28px 22px 24px;color:#fff;position:relative;overflow:hidden}
-    .left-panel::before{content:'';position:absolute;bottom:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
-    .slide-num{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.45;margin-bottom:3px}
-    .slide-ttl{font-size:clamp(.9rem,1.5vw,1.1rem);font-weight:700;line-height:1.25;margin-bottom:3px}
-    .slide-sub{font-size:.67rem;opacity:.55;margin-bottom:20px}
-    .hero-num{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
-    .hero-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-bottom:8px}
-    .stat-list{display:flex;flex-direction:column;gap:0;margin-top:auto}
-    .stat-item{display:flex;justify-content:space-between;align-items:flex-end;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
-    .si-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5}
-    .si-val{font-size:.88rem;font-weight:700}
-    .right-panel{flex:1;display:flex;flex-direction:column;background:#fff;padding:20px 24px 14px}
-    .chart-area{flex:1;position:relative;min-height:0}
-    .insight-row{margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;gap:18px;flex-wrap:wrap}
-    .ins-chip{display:flex;align-items:center;gap:5px;font-size:.67rem;color:#64748b}
-    .ins-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-    .nav-bar{margin-top:16px;display:flex;align-items:center;gap:14px}
-    .nav-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
-    .nav-btn:hover{background:rgba(255,255,255,.2)}
-    .nav-btn:disabled{opacity:.25;cursor:default}
-    .dots{display:flex;gap:6px;align-items:center}
-    .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
-    .dot-btn.active{background:#fff;transform:scale(1.35)}
-    .dist-slide{flex-direction:row;background:#fff}
-    .ds-left{width:27%;flex-shrink:0;display:flex;flex-direction:column;padding:16px 14px 12px;color:#fff;overflow:hidden;position:relative}
-    .ds-left::before{content:'';position:absolute;bottom:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
-    .ds-rank-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap}
-    .ds-rank{background:rgba(255,255,255,.22);border-radius:4px;font-size:.72rem;font-weight:800;padding:2px 7px;white-space:nowrap}
-    .ds-slide-count{font-size:.5rem;opacity:.38;margin-left:auto}
-    .ds-name{font-size:clamp(.68rem,1.05vw,.88rem);font-weight:700;line-height:1.25;margin-bottom:2px}
-    .ds-period{font-size:.52rem;opacity:.42;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-    .ds-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px}
-    .ds-sl{font-size:.49rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5;margin-bottom:1px}
-    .ds-sv{font-size:.8rem;font-weight:700;line-height:1.1}
-    .ds-sv-xs{font-size:.66rem;font-weight:600;line-height:1.3}
-    .ds-divider{border:none;border-top:1px solid rgba(255,255,255,.12);margin:7px 0}
-    .ds-infer{margin-top:8px;background:rgba(0,0,0,.18);border-radius:6px;padding:6px 8px;flex-shrink:0}
-    .ds-inf{font-size:.62rem;line-height:1.55;opacity:.9}
-    .ds-inf+.ds-inf{margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1)}
-    .ds-right{flex:1;display:flex;flex-direction:column;padding:10px 14px 8px;background:#fff;gap:4px;min-height:0}
-    .ds-chart-lbl{font-size:.5rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:600;flex-shrink:0}
-    .ds-top-chart{flex:1;position:relative;min-height:0}
-    .ds-bottom{display:flex;gap:8px;height:42%;flex-shrink:0}
-    .ds-bottom-chart-wrap{flex:1;display:flex;flex-direction:column;gap:2px;min-height:0}
-    .ds-bottom-chart{flex:1;position:relative;min-height:0}
-    .ds-stats-panel{width:155px;flex-shrink:0;background:#f8fafc;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
-    .ds-sp-item{display:flex;flex-direction:column}
-    .ds-spl{font-size:.46rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:1px}
-    .ds-spv{font-size:.78rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ds-spv-sm{font-size:.62rem;font-weight:600;color:#475569}
-    .cons-strip{display:flex;gap:2px;margin-top:2px}
-    .cons-cell{height:8px;border-radius:2px;flex:1}
-    .rank-badge{font-size:.56rem;padding:1px 5px;border-radius:3px;white-space:nowrap}
-    .rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
-    .rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
-    .rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
-    .rank-badge.inactive{background:rgba(248,113,113,.1);color:#94a3b8}
-    @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WDP Deep Dive · Listed + Unlisted</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif}
+body{background:#111827;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.deck-wrap{width:min(100vw,177.78vh);aspect-ratio:16/9;position:relative}
+.deck{width:100%;height:100%;position:relative}
+.slide{display:none;width:100%;height:100%;position:absolute;top:0;left:0}
+.slide.active{display:flex}
+.cover{flex-direction:column;justify-content:center;align-items:flex-start;padding:4%;background:linear-gradient(135deg,#0c1a3a 0%,#1e3a5f 60%,#0d4a6e 100%);color:#fff}
+.cover-eyebrow{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:.5rem}
+.cover h1{font-size:2.4rem;font-weight:700;line-height:1.15;margin-bottom:.6rem}
+.cover-sub{font-size:.85rem;opacity:.7;margin-bottom:1.2rem}
+.cover-period{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:.3rem .9rem;font-size:.7rem;margin-bottom:1.4rem}
+.cover-metrics{display:flex;flex-wrap:wrap;gap:.6rem}
+.cover-metric{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:.5rem .8rem;min-width:100px}
+.cm-label{font-size:.55rem;opacity:.55;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.2rem}
+.cm-val{font-size:1rem;font-weight:700}
+.cm-sub{font-size:.55rem;opacity:.5;margin-top:.1rem}
+.two-col{flex-direction:row}
+.left-panel{width:30%;min-width:30%;background:#0c1a3a;color:#fff;display:flex;flex-direction:column;padding:4% 4% 3% 4%;overflow:hidden}
+.right-panel{flex:1;background:#fff;display:flex;flex-direction:column;padding:3%;overflow:hidden}
+.slide-num{font-size:.55rem;opacity:.4;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+.slide-ttl{font-size:1.05rem;font-weight:700;line-height:1.25;margin-bottom:.25rem}
+.slide-sub{font-size:.6rem;opacity:.6;line-height:1.4;margin-bottom:.8rem}
+.hero-lbl{font-size:.6rem;opacity:.5;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem}
+.hero-num{font-size:1.6rem;font-weight:800;margin-bottom:.8rem;line-height:1}
+.stat-list{display:flex;flex-direction:column;gap:.35rem;flex:1}
+.stat-item{display:flex;justify-content:space-between;align-items:center;font-size:.62rem;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.si-lbl{opacity:.6}
+.si-val{font-weight:600;text-align:right}
+.chart-area{flex:1;min-height:0;position:relative}
+.insight-row{display:flex;flex-wrap:wrap;gap:.35rem;padding-top:.5rem;flex-shrink:0}
+.ins-chip{display:flex;align-items:flex-start;gap:.3rem;background:#f8fafc;border-radius:6px;padding:.3rem .5rem;font-size:.58rem;line-height:1.4;flex:1;min-width:180px;max-width:50%}
+.ins-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* Platform badges */
+.ptag{display:inline-block;border-radius:3px;font-size:.5rem;font-weight:700;padding:.08rem .3rem;letter-spacing:.06em;text-transform:uppercase;margin-left:.3rem}
+.ptag-listed{background:#dbeafe;color:#1d4ed8}
+.ptag-unlisted{background:#ccfbf1;color:#0f766e}
+.ptag-both{background:#ede9fe;color:#6d28d9}
+/* Section cover */
+.sec-cover{flex-direction:column;justify-content:center;align-items:flex-start;padding:6%;color:#fff}
+/* Distributor slides */
+.dist-slide{flex-direction:row}
+.ds-left{width:27%;min-width:27%;display:flex;flex-direction:column;padding:3.5% 3.5% 2.5% 3.5%;color:#fff;overflow:hidden}
+.ds-rank-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.ds-rank{font-size:1.8rem;font-weight:800;opacity:.9}
+.ds-rank-sub{font-size:.55rem;opacity:.5;line-height:1.4}
+.ds-name{font-size:.78rem;font-weight:700;line-height:1.3;margin-bottom:.2rem}
+.ds-period{font-size:.55rem;opacity:.5;margin-bottom:.8rem}
+.ds-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem .5rem;margin-bottom:.6rem}
+.ds-sl{font-size:.52rem;opacity:.5;margin-bottom:.1rem;line-height:1.2}
+.ds-sv{font-size:.78rem;font-weight:700;line-height:1.2}
+.ds-sv-xs{font-size:.62rem;font-weight:500;line-height:1.3;opacity:.9}
+.ds-divider{border:none;border-top:1px solid rgba(255,255,255,.12);margin:.4rem 0}
+.ds-infer{background:rgba(0,0,0,.25);border-radius:6px;padding:.5rem .6rem;flex:1;overflow:hidden}
+.ds-inf{font-size:.57rem;line-height:1.5;opacity:.85;margin-bottom:.3rem}
+.ds-inf:last-child{margin-bottom:0}
+.ds-right{flex:1;display:flex;flex-direction:column;padding:2.5%;background:#fff;overflow:hidden}
+.ds-chart-lbl{font-size:.55rem;color:#64748b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.25rem}
+.ds-top-chart{flex:1;min-height:0;position:relative;margin-bottom:2.5%}
+.ds-bottom{display:flex;gap:2%;flex-shrink:0;height:38%}
+.ds-bottom-chart-wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+.ds-bottom-chart{flex:1;min-height:0;position:relative}
+.ds-stats-panel{width:36%;background:#f8fafc;border-radius:8px;padding:.7rem .8rem;display:flex;flex-direction:column;gap:.25rem;overflow:hidden}
+.ds-sp-item{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;border-bottom:1px solid #e2e8f0;font-size:.6rem}
+.ds-sp-item:last-child{border:none}
+.ds-spl{color:#64748b}
+.ds-spv{font-weight:700;color:#0f172a;text-align:right}
+.ds-spv-sm{font-size:.55rem;font-weight:500;color:#334155}
+.cons-strip{display:flex;gap:2px;flex-wrap:wrap}
+.cons-cell{width:8px;height:8px;border-radius:2px}
+.rank-badge{display:inline-flex;align-items:center;gap:2px;font-size:.55rem;font-weight:700;padding:.12rem .35rem;border-radius:4px}
+.rank-badge.up{background:#d1fae5;color:#065f46}
+.rank-badge.down{background:#fee2e2;color:#991b1b}
+.rank-badge.flat{background:#f1f5f9;color:#475569}
+.rank-badge.inactive{background:#e2e8f0;color:#94a3b8}
+/* Section divider */
+.sec-div{flex-direction:column;justify-content:center;align-items:flex-start;padding:6%}
+.nav-bar{position:fixed;bottom:1.5%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:.5rem;background:rgba(15,23,42,.7);backdrop-filter:blur(6px);border-radius:30px;padding:.4rem .9rem}
+.nav-btn{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.dots{display:flex;gap:.35rem;align-items:center}
+.dot-btn{width:7px;height:7px;border-radius:50%;border:none;background:rgba(255,255,255,.3);cursor:pointer;padding:0;transition:all .2s}
+.dot-btn.active{background:#fff;transform:scale(1.35)}
+.takeaway-box{font-size:.58rem;line-height:1.6;margin-top:.5rem;flex-shrink:0}
+.takeaway-box ul{list-style:none;padding:0}
+.takeaway-box li::before{content:"›  ";opacity:.5}
+.takeaway-box li{padding:.1rem 0;border-bottom:1px solid rgba(255,255,255,.08)}
+</style>
 </head>
 <body>
-<div class="deck-wrap"><div class="deck">
-  <!-- Cover -->
-  <div class="slide cover">
-    <div class="cover-eyebrow">Yubi Wealth B2B · WDP Segment</div>
-    <h1>Top 20 WDP<br>Deep Dive</h1>
-    <div class="cover-sub">Wealth Distribution Partners · Performance Analysis</div>
-    <div class="cover-period" id="cover-period">—</div>
-    <div class="cover-metrics" id="cover-metrics"></div>
-  </div>
-  <!-- Slide 1: Leaderboard -->
-  <div class="slide two-col">
-    <div class="left-panel" style="background:#0c1a3a;">
-      <div class="slide-num">Slide 01</div>
-      <div class="slide-ttl">GTV Leaderboard</div>
-      <div class="slide-sub">All 20 WDPs ranked by total GTV · 14-month period</div>
-      <div class="hero-lbl">Total WDP GTV</div>
-      <div class="hero-num" id="lb-total-gtv">—</div>
-      <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">WDP % of total HTM</span><span class="si-val" id="lb-wdp-pct">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Active WDPs in ranking</span><span class="si-val" id="lb-active-count">—</span></div>
-        <div class="stat-item"><span class="si-lbl">#1 dist share</span><span class="si-val" id="lb-top1-share">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Top 3 combined</span><span class="si-val" id="lb-top3-share">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Top 5 combined</span><span class="si-val" id="lb-top5-share">—</span></div>
-      </div>
-    </div>
-    <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-leaderboard"></canvas></div>
-      <div class="insight-row" id="ins-leaderboard"></div>
-    </div>
-  </div>
-  <!-- Slide 2: Monthly Trend -->
-  <div class="slide two-col">
-    <div class="left-panel" style="background:#1e3a5f;">
-      <div class="slide-num">Slide 02</div>
-      <div class="slide-ttl">Monthly GTV Trend</div>
-      <div class="slide-sub">14-month trajectory · top contributors · seasonality</div>
-      <div class="hero-lbl">Peak month GTV</div>
-      <div class="hero-num" id="trend-peak-gtv">—</div>
-      <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Peak month</span><span class="si-val" id="trend-peak-mo">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Latest (May-26 MTD)</span><span class="si-val" id="trend-latest-mo">—</span></div>
-        <div class="stat-item"><span class="si-lbl">13-month avg</span><span class="si-val" id="trend-avg-mo">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Months above avg</span><span class="si-val" id="trend-above-avg">—</span></div>
-      </div>
-    </div>
-    <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-monthly-trend"></canvas></div>
-      <div class="insight-row" id="ins-monthly-trend"></div>
-    </div>
-  </div>
-  <!-- Slide 3: Consistency -->
-  <div class="slide two-col">
-    <div class="left-panel" style="background:#1e293b;">
-      <div class="slide-num">Slide 03</div>
-      <div class="slide-ttl">Consistency Tracker</div>
-      <div class="slide-sub">Active months of 14 · reliable vs bursty traders</div>
-      <div class="hero-lbl">Always-on (14/14 months)</div>
-      <div class="hero-num" id="cons-always-on">—</div>
-      <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">≥ 10 of 14 months</span><span class="si-val" id="cons-10plus">—</span></div>
-        <div class="stat-item"><span class="si-lbl">≤ 5 months (bursty)</span><span class="si-val" id="cons-bursty">—</span></div>
-        <div class="stat-item"><span class="si-lbl">Avg active months</span><span class="si-val" id="cons-avg">—</span></div>
-      </div>
-    </div>
-    <div class="right-panel">
-      <div class="chart-area"><canvas id="chart-consistency"></canvas></div>
-      <div class="insight-row" id="ins-consistency"></div>
-    </div>
-  </div>
-  <!-- Card slides inserted by JS -->
-</div></div>
-<div class="nav-bar">
-  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
-  <div class="dots" id="dots"></div>
-  <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+<div class="deck-wrap">
+<div class="deck" id="deck">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide cover active">
+  <div class="cover-eyebrow">Yubi Wealth B2B · WDP Segment · Listed + Unlisted</div>
+  <h1>WDP Deep Dive<br><span style="opacity:.5;font-size:1.6rem">All Platforms</span></h1>
+  <div class="cover-sub">Wealth Distribution Partners · Combined Performance Analysis</div>
+  <div class="cover-period" id="cover-period">—</div>
+  <div class="cover-metrics" id="cover-metrics"></div>
 </div>
+
+<!-- SLIDE 1: Leaderboard 8 Weeks -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#0c1a3a">
+    <div class="slide-num">Slide 01</div>
+    <div class="slide-ttl">GTV Leaderboard</div>
+    <div class="slide-sub">Top 20 WDPs by combined listed+unlisted GTV · Last 8 weeks</div>
+    <div class="hero-lbl">Combined 8-Week GTV</div>
+    <div class="hero-num" id="lb8-total">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Platform split (listed / unlisted)</span><span class="si-val" id="lb8-split">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Distributors active (8wk)</span><span class="si-val" id="lb8-active">—</span></div>
+      <div class="stat-item"><span class="si-lbl">#1 share of 8wk GTV</span><span class="si-val" id="lb8-top1">—</span></div>
+      <div class="stat-item"><span class="si-lbl">On both platforms</span><span class="si-val" id="lb8-both">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted-only in top 20</span><span class="si-val" id="lb8-unlonly">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-lb8wk"></canvas></div>
+    <div class="insight-row" id="ins-lb8wk"></div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Leaderboard All-Time -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#0c1a3a">
+    <div class="slide-num">Slide 02</div>
+    <div class="slide-ttl">All-Time GTV Leaderboard</div>
+    <div class="slide-sub">Top 20 WDPs by combined listed+unlisted GTV · Since inception</div>
+    <div class="hero-lbl">Combined All-Time WDP GTV</div>
+    <div class="hero-num" id="lball-total">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Listed WDP GTV</span><span class="si-val" id="lball-listed">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted WDP GTV</span><span class="si-val" id="lball-unlisted">—</span></div>
+      <div class="stat-item"><span class="si-lbl">WDP % of all HTM GTV</span><span class="si-val" id="lball-pct">—</span></div>
+      <div class="stat-item"><span class="si-lbl">#1 all-time share</span><span class="si-val" id="lball-top1">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Top 5 combined share</span><span class="si-val" id="lball-top5">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-lball"></canvas></div>
+    <div class="insight-row" id="ins-lball"></div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Platform Comparison -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#1e3a5f">
+    <div class="slide-num">Slide 03</div>
+    <div class="slide-ttl">Platform GTV Comparison</div>
+    <div class="slide-sub">Listed vs Unlisted WDP GTV · Monthly trend Apr 25–May 26</div>
+    <div class="hero-lbl">Combined WDP GTV</div>
+    <div class="hero-num" id="plat-combined">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Listed platform total</span><span class="si-val" id="plat-listed">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted platform total</span><span class="si-val" id="plat-unlisted">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Listed share</span><span class="si-val" id="plat-listed-pct">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted share</span><span class="si-val" id="plat-unlisted-pct">—</span></div>
+      <div class="stat-item"><span class="si-lbl">WDP % of all HTM</span><span class="si-val" id="plat-all-pct">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-platcomp"></canvas></div>
+    <div class="insight-row" id="ins-platcomp"></div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Cross-Platform Distributors -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#1e1b4b">
+    <div class="slide-num">Slide 04</div>
+    <div class="slide-ttl">Cross-Platform WDPs</div>
+    <div class="slide-sub">Distributors active on both listed &amp; unlisted · Top 20 by combined GTV</div>
+    <div class="hero-lbl">Common WDPs (traded both)</div>
+    <div class="hero-num" id="xp-count">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Combined GTV (all common)</span><span class="si-val" id="xp-combined-gtv">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Listed GTV (common dists)</span><span class="si-val" id="xp-listed-gtv">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted GTV (common dists)</span><span class="si-val" id="xp-unlisted-gtv">—</span></div>
+      <div class="stat-item"><span class="si-lbl">#1 cross-platform name</span><span class="si-val" id="xp-top1">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-xplatform"></canvas></div>
+    <div class="insight-row" id="ins-xplatform"></div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Monthly Trend -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#0c1a3a">
+    <div class="slide-num">Slide 05</div>
+    <div class="slide-ttl">Monthly GTV Trend</div>
+    <div class="slide-sub">Top 5 WDPs (combined) monthly contribution · 14 months</div>
+    <div class="hero-lbl">Combined WDP GTV (all-time period)</div>
+    <div class="hero-num" id="mtrend-total">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Peak combined month</span><span class="si-val" id="mtrend-peak">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Latest month GTV</span><span class="si-val" id="mtrend-lm">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Listed peak month</span><span class="si-val" id="mtrend-lpeak">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted peak month</span><span class="si-val" id="mtrend-upeak">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-monthly-trend"></canvas></div>
+    <div class="insight-row" id="ins-mtrend"></div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Consistency Tracker -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#0c1a3a">
+    <div class="slide-num">Slide 06</div>
+    <div class="slide-ttl">Consistency Tracker</div>
+    <div class="slide-sub">Active months (listed platform) · 14-month window</div>
+    <div class="hero-lbl">Always Active (14/14 months)</div>
+    <div class="hero-num" id="cons-full">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">≥10 active months</span><span class="si-val" id="cons-10">—</span></div>
+      <div class="stat-item"><span class="si-lbl">≥7 active months</span><span class="si-val" id="cons-7">—</span></div>
+      <div class="stat-item"><span class="si-lbl">≤3 active months</span><span class="si-val" id="cons-low">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="chart-area"><canvas id="chart-consistency"></canvas></div>
+    <div class="insight-row" id="ins-consistency"></div>
+  </div>
+</div>
+
+<!-- SLIDE N: Listed section cover -->
+<div class="slide sec-div" style="background:linear-gradient(135deg,#0c1a3a,#1e3a5f);color:#fff">
+  <div style="font-size:.6rem;opacity:.4;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem">Section</div>
+  <div style="font-size:2.2rem;font-weight:800;margin-bottom:.6rem">Listed Platform</div>
+  <div style="font-size:.9rem;opacity:.6;margin-bottom:1.5rem">Top 20 WDP deep-dives · Ranked by all-time listed GTV</div>
+  <div class="cover-metrics" id="listed-sec-metrics"></div>
+</div>
+
+<!-- SLIDE N: Unlisted section cover (added dynamically after listed slides) -->
+
+</div><!-- end .deck -->
+<div class="nav-bar">
+  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
+</div>
+</div><!-- end .deck-wrap -->
+
 <script>
-const D = {"generated":"May 19, 2026","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 11\u201317","week_labels_8":["Mar 23\u201329","Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_wdp_gtv_cr":2329.59,"total_all_gtv_cr":3043.59,"wdp_pct_of_total":76.5,"wdp_monthly_total":[158.85,228.01,246.44,166.45,131.91,195.67,168.72,133.43,201.02,135.56,160.97,145.16,111.7,145.72],"distributors":[{"rank_all":1,"rank_8wk":2,"rank_lw":11,"name":"Ambium Finserve Private Limited","gtv_total_cr":232.22,"gtv_8wk_cr":38.24,"gtv_lw_cr":1.99,"gtv_monthly":[15.46,22.35,33.41,0.0,18.59,16.91,5.12,5.14,76.45,0.0,0.55,9.79,13.31,15.15],"gtv_weekly_8":[0.0,9.79,13.31,0.0,0.0,0.0,13.15,1.99],"trades_monthly":[6,11,8,0,6,6,2,2,12,0,1,1,2,3],"trades_lw":1,"avg_order_l_lw":199.31,"active_months":12,"top_issuer_lw":"MUFIN GREEN FINANCE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUFIN GREEN FINANCE LIMITED","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"IIFL SAMASTA FINANCE LIMITED","top_issuer_pct_alltime":17.0,"issuers_m":[{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,39.42,0.0,0.0,0.0,0.0,0.0]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.79,13.31,15.15]},{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,2.97,0.0,0.0,0.0,0.0,0.0,0.0,24.8,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[5.93,7.08,6.51,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.55,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,14.64,0.88,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":38.24,"pct":100.0,"vals":[0.0,9.79,13.31,0.0,0.0,0.0,13.15,1.99]}],"issuers_lw":[{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":1.99,"pct":100.0,"vals":[1.99]}]},{"rank_all":2,"rank_8wk":7,"rank_lw":8,"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_total_cr":140.2,"gtv_8wk_cr":16.32,"gtv_lw_cr":2.89,"gtv_monthly":[8.11,7.46,7.91,3.05,1.75,7.17,6.82,1.17,28.47,31.4,15.08,7.45,9.51,4.85],"gtv_weekly_8":[0.98,0.98,2.9,5.63,0.98,0.0,1.95,2.89],"trades_monthly":[31,21,27,14,9,16,10,2,36,21,10,6,8,3],"trades_lw":1,"avg_order_l_lw":289.33,"active_months":14,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":56.2,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":47.8,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.94,0.09,0.28,0.29,0.86,1.42,1.9,0.0,19.12,12.49,14.92,5.49,6.28,2.89]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,14.97,0.0,0.0,0.0,0.0]},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA","vals":[3.19,2.41,0.98,2.26,0.88,1.51,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.97,1.69,1.92,0.0,0.0,0.48,3.02,1.17,0.0,0.0,0.06,0.0,0.0,0.0]},{"name":"Kanakadurga Finance Limited","short_name":"Kanakadurga Finance Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.89,1.48,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":9.17,"pct":56.2,"vals":[0.0,0.0,1.93,4.35,0.0,0.0,0.0,2.89]}],"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":2.89,"pct":100.0,"vals":[2.89]}]},{"rank_all":3,"rank_8wk":4,"rank_lw":14,"name":"Ladderup Wealth Management","gtv_total_cr":130.12,"gtv_8wk_cr":24.14,"gtv_lw_cr":1.28,"gtv_monthly":[4.75,6.0,6.96,6.93,17.72,14.16,4.23,20.21,7.08,9.1,5.54,4.06,20.31,3.08],"gtv_weekly_8":[0.75,0.0,12.67,0.59,4.08,2.96,1.8,1.28],"trades_monthly":[6,14,15,13,22,28,16,83,27,36,29,22,27,22],"trades_lw":10,"avg_order_l_lw":12.82,"active_months":14,"top_issuer_lw":"Indel Money Limited","top_issuer_pct_lw":49.8,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":56.8,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":44.3,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.0,0.0,0.0,0.0,12.11,10.59,1.75,9.77,2.75,2.55,2.03,3.03,12.96,0.1]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,1.38,0.0,0.0,0.0,1.66,0.3,2.62,0.64,0.0,0.32,0.2,6.21,0.55]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,1.58,0.8,0.82,4.59,0.64,3.38,1.1,0.71,0.04,0.05]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[4.37,2.28,1.46,0.0,0.0,0.0,0.0,0.0,0.0,0.69,1.13,0.0,0.5,1.29]},{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS","vals":[0.0,0.0,0.99,4.59,0.13,0.45,1.02,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":13.71,"pct":56.8,"vals":[0.65,0.0,6.22,0.5,3.87,2.37,0.1,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":6.76,"pct":28.0,"vals":[0.0,0.0,6.01,0.0,0.0,0.2,0.45,0.1]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":0.19,"pct":0.8,"vals":[0.1,0.0,0.04,0.0,0.0,0.0,0.05,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":1.81,"pct":7.5,"vals":[0.0,0.0,0.31,0.0,0.0,0.2,0.66,0.64]}],"issuers_lw":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":0.64,"pct":49.8,"vals":[0.64]},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":0.34,"pct":26.9,"vals":[0.34]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":0.2,"pct":15.5,"vals":[0.2]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.1,"pct":7.8,"vals":[0.1]}]},{"rank_all":4,"rank_8wk":99,"rank_lw":99,"name":"Nuvama Wealth Finance Limited","gtv_total_cr":120.09,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.3,5.11,8.68,0.98,67.4,25.68,0.0,11.94,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,1,2,1,1,14,4,0,1,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":7,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Muthoot Capital Services Limited","top_issuer_pct_alltime":41.9,"issuers_m":[{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[0.0,0.0,0.0,0.0,0.0,25.67,24.7,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,25.15,0.97,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,0.0,0.0,0.0,16.58,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,0.0,4.91,8.68,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,11.94,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":5,"rank_8wk":52,"rank_lw":99,"name":"ZEPHYR FINANCIAL PUBLISHERS PRIVATE LIMITED","gtv_total_cr":108.22,"gtv_8wk_cr":0.2,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,15.07,40.54,10.41,9.49,1.74,8.03,14.15,5.16,1.27,1.24,0.91,0.0,0.2],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.2,0.0],"trades_monthly":[0,21,47,28,23,12,14,19,7,7,8,4,0,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":12,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"INCRED FINANCIAL SERVICES LIMITED","top_issuer_pct_8wk":70.2,"top_issuer_alltime":"AYE FINANCE LIMITED","top_issuer_pct_alltime":19.1,"issuers_m":[{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,2.23,12.26,5.94,0.16,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,7.33,8.23,4.96,0.0,0.0,0.0,0.0,0.0]},{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,8.41,8.88,1.75,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS","vals":[0.0,2.31,11.89,0.33,0.27,0.0,0.0,0.33,0.03,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,2.13,7.5,2.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":6,"rank_8wk":14,"rank_lw":13,"name":"TRUST SECURITIES SERVICES PRIVATE LIMITED","gtv_total_cr":108.09,"gtv_8wk_cr":7.42,"gtv_lw_cr":1.95,"gtv_monthly":[25.21,26.23,6.89,14.77,0.0,9.34,2.96,0.3,0.0,0.0,0.0,14.97,4.0,3.42],"gtv_weekly_8":[0.0,0.0,0.0,1.08,0.0,2.92,1.46,1.95],"trades_monthly":[19,11,5,6,0,8,3,1,0,0,0,3,3,4],"trades_lw":2,"avg_order_l_lw":97.64,"active_months":10,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":46.0,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":20.1,"issuers_m":[{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,19.81,1.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[9.92,3.41,0.0,2.92,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[14.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[0.0,0.0,0.0,0.0,0.0,8.84,2.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.97,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":1.95,"pct":100.0,"vals":[1.95]}]},{"rank_all":7,"rank_8wk":9,"rank_lw":22,"name":"KALYAN CAPITAL SERVICES PRIVATE LIMITED","gtv_total_cr":87.05,"gtv_8wk_cr":11.42,"gtv_lw_cr":0.34,"gtv_monthly":[0.78,0.0,8.48,33.71,2.36,0.0,0.63,0.15,0.0,0.0,19.57,10.35,10.68,0.34],"gtv_weekly_8":[0.4,0.1,4.85,2.82,2.72,0.19,0.0,0.34],"trades_monthly":[2,0,6,10,7,0,3,1,0,0,8,5,8,2],"trades_lw":2,"avg_order_l_lw":16.9,"active_months":10,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":89.2,"top_issuer_alltime":"VIVRITI CAPITAL LIMITED","top_issuer_pct_alltime":28.8,"issuers_m":[{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.3,0.0,0.0,24.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,19.57,0.0,0.0,0.0]},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,10.19,0.0]},{"name":"FINNABLE CREDIT PRIVATE LIMITED","short_name":"FINNABLE CREDIT","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.95,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,8.91,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":10.19,"pct":89.3,"vals":[0.0,0.0,4.85,2.43,2.72,0.19,0.0,0.0]}],"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.34,"pct":100.0,"vals":[0.34]}]},{"rank_all":8,"rank_8wk":21,"rank_lw":99,"name":"Spark PWM Private Limited","gtv_total_cr":83.6,"gtv_8wk_cr":2.95,"gtv_lw_cr":0.0,"gtv_monthly":[1.93,26.88,14.89,5.68,24.23,0.0,0.0,0.0,0.0,7.05,0.0,2.95,0.0,0.0],"gtv_weekly_8":[2.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,20,4,2,6,0,0,0,0,2,0,1,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":7,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"Indel Money Limited","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"KRAZYBEE SERVICES PRIVATE LIMITED","top_issuer_pct_alltime":44.0,"issuers_m":[{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,21.96,9.87,4.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"NEOGEN CHEMICALS LIMITED","short_name":"NEOGEN CHEMICALS","vals":[0.0,0.0,0.0,0.0,24.23,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,4.92,5.02,0.69,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.05,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.95,0.0,0.0]}],"issuers_8wk":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":2.95,"pct":100.1,"vals":[2.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":9,"rank_8wk":3,"rank_lw":99,"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_total_cr":82.1,"gtv_8wk_cr":32.95,"gtv_lw_cr":0.0,"gtv_monthly":[6.91,9.86,0.0,0.0,0.0,0.0,0.0,0.0,7.96,0.0,4.85,52.52,0.0,0.0],"gtv_weekly_8":[32.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,1,0,0,0,0,0,0,2,0,1,10,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"Navi Finserv Limited","top_issuer_pct_8wk":90.9,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":36.5,"issuers_m":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,29.94,0.0,0.0]},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.85,14.51,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[6.91,9.86,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.97,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.06,0.0,0.0]}],"issuers_8wk":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":29.94,"pct":90.9,"vals":[29.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":10,"rank_8wk":1,"rank_lw":1,"name":"AVENDUS FINANCE PRIVATE LIMITED","gtv_total_cr":76.49,"gtv_8wk_cr":42.94,"gtv_lw_cr":42.94,"gtv_monthly":[0.0,13.77,8.9,0.0,0.0,2.91,7.96,0.0,0.0,0.0,0.0,0.0,0.0,42.94],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,42.94],"trades_monthly":[0,4,2,0,0,1,1,0,0,0,0,0,0,3],"trades_lw":3,"avg_order_l_lw":1431.41,"active_months":5,"top_issuer_lw":"EARLYSALARY SERVICES PRIVATE LIMITED","top_issuer_pct_lw":94.3,"top_issuer_8wk":"EARLYSALARY SERVICES PRIVATE LIMITED","top_issuer_pct_8wk":94.3,"top_issuer_alltime":"EARLYSALARY SERVICES PRIVATE LIMITED","top_issuer_pct_alltime":63.4,"issuers_m":[{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,7.96,0.0,0.0,0.0,0.0,0.0,0.0,40.5]},{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,4.93,8.9,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,6.87,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,0.0,2.91,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.44]}],"issuers_8wk":[{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":40.5,"pct":94.3,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,40.5]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":2.44,"pct":5.7,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.44]}],"issuers_lw":[{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":40.5,"pct":94.3,"vals":[40.5]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":2.44,"pct":5.7,"vals":[2.44]}]},{"rank_all":11,"rank_8wk":15,"rank_lw":27,"name":"Incred Wealth and Investment Services Private Limited","gtv_total_cr":68.61,"gtv_8wk_cr":6.03,"gtv_lw_cr":0.19,"gtv_monthly":[18.86,0.2,0.35,0.39,2.72,1.98,1.68,4.4,8.03,2.77,20.41,5.83,0.49,0.5],"gtv_weekly_8":[5.04,0.2,0.1,0.0,0.0,0.19,0.3,0.19],"trades_monthly":[6,1,4,3,13,8,11,9,19,17,20,6,3,3],"trades_lw":1,"avg_order_l_lw":19.48,"active_months":14,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_8wk":81.9,"top_issuer_alltime":"INCRED FINANCIAL SERVICES LIMITED","top_issuer_pct_alltime":34.9,"issuers_m":[{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","vals":[18.27,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.98,0.0,0.0,0.1,0.3,0.3]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.58,1.55,16.97,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,0.2,0.0,0.0,0.0,0.0,0.0,0.2,0.3,1.1,5.63,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.2,3.63,1.09,0.1,0.35,0.0,0.0,0.0]},{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.59,0.0,0.0,0.0,2.08,0.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":0.6,"pct":9.9,"vals":[0.0,0.2,0.1,0.0,0.0,0.0,0.3,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":4.94,"pct":81.9,"vals":[4.94,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":0.19,"pct":100.0,"vals":[0.19]}]},{"rank_all":12,"rank_8wk":6,"rank_lw":9,"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_total_cr":64.82,"gtv_8wk_cr":16.49,"gtv_lw_cr":2.36,"gtv_monthly":[8.43,0.69,0.4,0.0,0.0,5.95,4.96,9.46,0.35,11.01,0.0,7.58,9.52,6.48],"gtv_weekly_8":[0.29,1.59,0.39,1.0,0.29,6.44,4.12,2.36],"trades_monthly":[12,4,3,0,0,3,1,6,2,2,0,8,16,9],"trades_lw":6,"avg_order_l_lw":39.35,"active_months":11,"top_issuer_lw":"Indel Money Limited","top_issuer_pct_lw":74.6,"top_issuer_8wk":"Indel Money Limited","top_issuer_pct_8wk":34.5,"top_issuer_alltime":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_alltime":42.1,"issuers_m":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[2.99,0.0,0.4,0.0,0.0,4.97,0.0,5.12,0.25,4.98,0.0,5.99,0.0,2.6]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.03,0.0,0.2,1.0,2.02]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.78,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.29,3.64,1.76]},{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,4.96,0.4,0.1,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[3.96,0.0,0.0,0.0,0.0,0.98,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":2.6,"pct":15.8,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,2.1,0.5]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":3.22,"pct":19.5,"vals":[0.0,0.2,0.0,1.0,0.0,0.0,2.02,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":5.69,"pct":34.5,"vals":[0.29,1.39,0.39,0.0,0.29,1.57,0.0,1.76]}],"issuers_lw":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":1.76,"pct":74.6,"vals":[1.76]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":0.5,"pct":21.2,"vals":[0.5]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.1,"pct":4.2,"vals":[0.1]}]},{"rank_all":13,"rank_8wk":18,"rank_lw":18,"name":"ANGEL ONE INVESTMENT MANAGERS & ADVISORS PRIVATE LIMITED","gtv_total_cr":61.53,"gtv_8wk_cr":3.73,"gtv_lw_cr":0.7,"gtv_monthly":[0.0,3.19,4.43,2.27,1.84,3.76,1.33,1.69,3.69,1.79,32.76,1.47,1.71,1.58],"gtv_weekly_8":[0.05,0.5,0.69,0.5,0.3,0.11,0.88,0.7],"trades_monthly":[0,14,29,25,17,27,25,26,21,16,59,18,38,15],"trades_lw":4,"avg_order_l_lw":17.47,"active_months":13,"top_issuer_lw":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","top_issuer_pct_lw":65.7,"top_issuer_8wk":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","top_issuer_pct_8wk":20.2,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":24.8,"issuers_m":[{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,1.12,2.08,0.26,0.74,1.16,0.51,0.62,2.29,0.14,6.37,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.46,0.13,0.0,0.0,0.0,0.0,0.0,0.42,7.81,0.11,0.23,0.0]},{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORAT","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.49,0.0,5.62,0.5,0.25,0.46]},{"name":"PROFECTUS CAPITAL PRIVATE LIMITED","short_name":"PROFECTUS CAPITAL","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.13,0.4,0.29,0.12]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","vals":[0.0,0.3,0.59,0.08,0.0,0.0,0.0,0.0,0.0,0.1,2.83,0.18,0.4,0.34]}],"issuers_8wk":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":0.23,"pct":6.2,"vals":[0.0,0.1,0.1,0.03,0.0,0.0,0.0,0.0]},{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORAT","gtv_cr":0.76,"pct":20.4,"vals":[0.05,0.0,0.18,0.07,0.0,0.0,0.0,0.46]},{"name":"PROFECTUS CAPITAL PRIVATE LIMITED","short_name":"PROFECTUS CAPITAL","gtv_cr":0.59,"pct":15.8,"vals":[0.0,0.18,0.17,0.08,0.0,0.04,0.12,0.0]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","gtv_cr":0.74,"pct":19.8,"vals":[0.0,0.0,0.09,0.09,0.21,0.02,0.22,0.11]}],"issuers_lw":[{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORAT","gtv_cr":0.46,"pct":65.7,"vals":[0.46]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","gtv_cr":0.11,"pct":16.4,"vals":[0.11]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":0.07,"pct":10.1,"vals":[0.07]},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":0.05,"pct":7.8,"vals":[0.05]}]},{"rank_all":14,"rank_8wk":30,"rank_lw":42,"name":"Smest Capital Private Limited","gtv_total_cr":60.97,"gtv_8wk_cr":1.51,"gtv_lw_cr":0.05,"gtv_monthly":[6.01,6.77,19.67,3.25,0.76,0.77,4.05,7.83,0.47,4.19,5.55,1.1,0.49,0.05],"gtv_weekly_8":[0.97,0.0,0.0,0.39,0.05,0.05,0.0,0.05],"trades_monthly":[39,39,45,22,5,5,21,22,5,16,17,4,9,1],"trades_lw":1,"avg_order_l_lw":4.87,"active_months":14,"top_issuer_lw":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":77.1,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":40.0,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.48,0.33,1.55,1.8,0.57,0.33,3.49,7.09,0.42,2.17,4.91,1.07,0.19,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,0.0,14.77,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,4.07,2.47,0.96,0.2,0.24,0.16,0.0,0.0,1.95,0.31,0.0,0.05,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[4.06,0.48,0.44,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA","vals":[1.02,0.29,0.21,0.24,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":1.17,"pct":77.7,"vals":[0.97,0.0,0.0,0.15,0.05,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","gtv_cr":0.05,"pct":3.3,"vals":[0.0,0.0,0.0,0.05,0.0,0.0,0.0,0.0]}],"issuers_lw":[{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORAT","gtv_cr":0.05,"pct":100.0,"vals":[0.05]}]},{"rank_all":15,"rank_8wk":17,"rank_lw":6,"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","gtv_total_cr":53.36,"gtv_8wk_cr":5.32,"gtv_lw_cr":4.89,"gtv_monthly":[0.0,0.0,9.91,0.0,0.0,0.0,0.0,10.08,12.87,0.0,15.18,0.0,0.24,5.08],"gtv_weekly_8":[0.0,0.0,0.15,0.0,0.0,0.1,0.2,4.89],"trades_monthly":[0,0,2,0,0,0,0,3,2,0,2,0,2,2],"trades_lw":1,"avg_order_l_lw":488.58,"active_months":6,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":91.8,"top_issuer_alltime":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_alltime":37.4,"issuers_m":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,9.91,0.0,0.0,0.0,0.0,0.0,0.0,0.0,10.05,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,10.08,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KRAZYBEE SERVICES LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.89,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.13,0.0,0.0,0.0]},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.89]}],"issuers_8wk":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":4.89,"pct":91.8,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.89]}],"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":4.89,"pct":100.0,"vals":[4.89]}]},{"rank_all":16,"rank_8wk":99,"rank_lw":99,"name":"JIRAAF ASSET MANAGEMENT PRIVATE LIMITED","gtv_total_cr":51.14,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[1.94,5.3,4.44,7.43,6.21,9.91,10.02,1.56,0.24,4.09,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[2,6,6,6,6,7,9,3,1,3,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":10,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"SATIN FINSERV LIMITED","top_issuer_pct_alltime":18.8,"issuers_m":[{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV","vals":[0.0,0.98,0.99,3.97,1.17,2.51,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Aye Finance Limited","short_name":"Aye Finance Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,6.68,0.09,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.0,5.94,0.55,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[1.94,1.95,0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.77,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":17,"rank_8wk":99,"rank_lw":99,"name":"LC CAPITAL INDIA PVT LTD","gtv_total_cr":44.87,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[4.96,14.78,0.0,10.01,2.01,2.47,0.0,10.65,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,3,0,2,3,1,0,1,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":6,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"MAS Financial Services Limited","top_issuer_pct_alltime":32.9,"issuers_m":[{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,14.78,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,10.65,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.0,0.0,0.0,10.01,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[4.96,0.0,0.0,0.0,0.0,2.47,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,1.01,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":18,"rank_8wk":32,"rank_lw":19,"name":"Sanctum Wealth Private Limited","gtv_total_cr":43.02,"gtv_8wk_cr":0.8,"gtv_lw_cr":0.4,"gtv_monthly":[0.9,0.36,4.69,9.44,10.87,3.37,2.01,5.37,2.4,1.0,1.66,0.15,0.0,0.8],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.4],"trades_monthly":[2,2,7,15,10,6,2,6,7,2,7,2,0,6],"trades_lw":2,"avg_order_l_lw":20.07,"active_months":13,"top_issuer_lw":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_lw":50.4,"top_issuer_8wk":"KEERTANA FINSERV LIMITED","top_issuer_pct_8wk":37.5,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":85.5,"issuers_m":[{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,4.3,8.83,10.46,3.37,2.01,3.37,2.4,0.5,1.51,0.05,0.0,0.0]},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.9,0.36,0.39,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.1]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.0,0.5,0.15,0.1,0.0,0.2]},{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":0.1,"pct":12.5,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":0.2,"pct":24.9,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.2]}],"issuers_lw":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":0.2,"pct":50.4,"vals":[0.2]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":0.2,"pct":49.6,"vals":[0.2]}]},{"rank_all":19,"rank_8wk":44,"rank_lw":20,"name":"Julius Baer","gtv_total_cr":38.93,"gtv_8wk_cr":0.4,"gtv_lw_cr":0.4,"gtv_monthly":[12.17,0.0,0.0,0.0,0.7,1.0,12.63,4.95,1.98,0.0,1.36,3.74,0.0,0.4],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.4],"trades_monthly":[5,0,0,0,2,1,2,1,1,0,2,3,0,2],"trades_lw":2,"avg_order_l_lw":19.97,"active_months":9,"top_issuer_lw":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_lw":50.2,"top_issuer_8wk":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_8wk":50.2,"top_issuer_alltime":"MUTHOOTTU MINI FINANCIERS LTD","top_issuer_pct_alltime":25.2,"issuers_m":[{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS","vals":[0.1,0.0,0.0,0.0,0.0,0.0,9.71,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.2,0.0,0.0,0.0,0.0,0.0,0.0,4.95,1.98,0.0,0.0,0.0,0.0,0.2]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.5,1.0,0.0,0.0,0.0,0.0,1.0,3.74,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[4.93,0.0,0.0,0.0,0.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[3.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":0.2,"pct":50.1,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.2]}],"issuers_lw":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":0.2,"pct":50.2,"vals":[0.2]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.2,"pct":49.8,"vals":[0.2]}]},{"rank_all":20,"rank_8wk":99,"rank_lw":99,"name":"ASK Wealth Advisors Private Limited","gtv_total_cr":34.77,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[5.0,6.89,13.45,0.0,0.0,8.54,0.89,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,1,5,0,0,2,1,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_alltime":38.2,"issuers_m":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,13.3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,8.54,0.89,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,6.89,0.15,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[5.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]}]};
+const D={"generated":"May 22, 2026","period_label":"Apr 2025 \u2013 May 2026","latest_week":"May 18\u201322","week_labels_8":["Mar 30\u2013Apr 5","Apr 6\u201312","Apr 13\u201319","Apr 20\u201326","Apr 27\u2013May 3","May 4\u201310","May 11\u201317","May 18\u201322"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"n_months":14,"total_wdp_gtv_listed_cr":5951.32,"total_wdp_gtv_unlisted_cr":2003.79,"total_wdp_gtv_cr":7955.11,"total_all_gtv_cr":10296.93,"wdp_pct_of_total":77.3,"wdp_monthly_listed":[158.85,228.01,246.44,166.45,131.91,195.67,168.72,133.43,201.02,135.56,160.97,145.16,111.7,196.07],"wdp_monthly_unlisted":[45.8,72.24,32.1,0.0,0.0,0.0,0.0,4.94,101.9,97.55,79.1,122.81,30.0,129.78],"wdp_monthly_total":[204.65,300.25,278.54,166.45,131.91,195.67,168.72,138.37,302.92,233.11,240.07,267.97,141.7,325.85],"leaderboard_8wk":[{"rank":1,"name":"YUBI MARKETS PRIVATE LIMITED","pan":"AABCY9794P","combined_8wk":128.19,"listed_8wk":0.0,"unlisted_8wk":128.19,"platform_tag":"unlisted"},{"rank":2,"name":"AVENDUS FINANCE PRIVATE LIMITED","pan":"AAACP8224G","combined_8wk":42.94,"listed_8wk":42.94,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":3,"name":"Ambium Finserve Private Limited","pan":"AAPCA3271R","combined_8wk":38.24,"listed_8wk":38.24,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":4,"name":"Ladderup Wealth Management","pan":"AABCL4104A","combined_8wk":23.9,"listed_8wk":23.9,"unlisted_8wk":0.0,"platform_tag":"both"},{"rank":5,"name":"MOTILAL OSWAL WEALTH LIMITED","pan":"AADCA3864A","combined_8wk":23.09,"listed_8wk":23.09,"unlisted_8wk":0.0,"platform_tag":"both"},{"rank":6,"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","pan":"AAICG3416F","combined_8wk":19.69,"listed_8wk":19.69,"unlisted_8wk":0.0,"platform_tag":"both"},{"rank":7,"name":"Sunrise Gilts & Securities Private Limited","pan":"AATCS8262J","combined_8wk":19.48,"listed_8wk":19.48,"unlisted_8wk":0.0,"platform_tag":"both"},{"rank":8,"name":"Nuvama Wealth Finance Limited","pan":"AAACC2233N","combined_8wk":18.73,"listed_8wk":18.73,"unlisted_8wk":0.0,"platform_tag":"both"},{"rank":9,"name":"Phronesis Capital LTD","pan":"AAACC2071L","combined_8wk":15.03,"listed_8wk":15.03,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":10,"name":"STRATA PROPERTY MANAGEMENT PRIVATE LIMITED","pan":"AABCY0996R","combined_8wk":14.23,"listed_8wk":0.0,"unlisted_8wk":14.23,"platform_tag":"unlisted"},{"rank":11,"name":"Sanctum Wealth Private Limited","pan":"AAVCS8275R","combined_8wk":13.53,"listed_8wk":0.8,"unlisted_8wk":12.73,"platform_tag":"both"},{"rank":12,"name":"Axis Securities Ltd.","pan":"AABCE6263F","combined_8wk":12.69,"listed_8wk":12.69,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":13,"name":"KALYAN CAPITAL SERVICES PRIVATE LIMITED","pan":"AAICK4215A","combined_8wk":11.01,"listed_8wk":11.01,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":14,"name":"Wealth India Financial Services Private Limited","pan":"AAACW8245Q","combined_8wk":9.7,"listed_8wk":9.7,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":15,"name":"ANGEL ONE INVESTMENT SERVICES PRIVATE LIMITED","pan":"ABACA7942B","combined_8wk":9.35,"listed_8wk":9.35,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":16,"name":"TRUST SECURITIES SERVICES PRIVATE LIMITED","pan":"AAFCT9761M","combined_8wk":8.89,"listed_8wk":8.89,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":17,"name":"CAPNXTPMO PRIVATE LIMITED","pan":"AAJCC9804A","combined_8wk":6.02,"listed_8wk":6.02,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":18,"name":"PRIME TRIGEN WEALTH LIMITED","pan":"AAKCP2557J","combined_8wk":5.93,"listed_8wk":5.93,"unlisted_8wk":0.0,"platform_tag":"listed"},{"rank":19,"name":"LGT Wealth India Pvt. Ltd.","pan":"AAECL6975A","combined_8wk":5.89,"listed_8wk":0.0,"unlisted_8wk":5.89,"platform_tag":"both"},{"rank":20,"name":"NDX FINANCIAL SERVICES PRIVATE LIMITED","pan":"AAGCN2895M","combined_8wk":5.32,"listed_8wk":5.32,"unlisted_8wk":0.0,"platform_tag":"listed"}],"leaderboard_alltime":[{"rank":1,"name":"LGT Wealth India Pvt. Ltd.","pan":"AAECL6975A","combined_total":797.27,"listed_total":425.72,"unlisted_total":371.54,"platform_tag":"both"},{"rank":2,"name":"Incred Wealth and Investment Services Private Limited","pan":"aafci9141l","combined_total":445.67,"listed_total":227.73,"unlisted_total":217.94,"platform_tag":"both"},{"rank":3,"name":"Ambium Finserve Private Limited","pan":"AAPCA3271R","combined_total":440.9,"listed_total":440.9,"unlisted_total":0.0,"platform_tag":"listed"},{"rank":4,"name":"YUBI MARKETS PRIVATE LIMITED","pan":"AABCY9794P","combined_total":400.51,"listed_total":0.0,"unlisted_total":400.51,"platform_tag":"unlisted"},{"rank":5,"name":"Julius Baer","pan":"AAACB6154F","combined_total":374.09,"listed_total":329.39,"unlisted_total":44.7,"platform_tag":"both"},{"rank":6,"name":"Nuvama Wealth Finance Limited","pan":"AAACC2233N","combined_total":339.56,"listed_total":217.91,"unlisted_total":121.65,"platform_tag":"both"},{"rank":7,"name":"AVENDUS FINANCE PRIVATE LIMITED","pan":"AAACP8224G","combined_total":331.76,"listed_total":331.76,"unlisted_total":0.0,"platform_tag":"listed"},{"rank":8,"name":"MOTILAL OSWAL WEALTH LIMITED","pan":"AADCA3864A","combined_total":326.31,"listed_total":324.93,"unlisted_total":1.38,"platform_tag":"both"},{"rank":9,"name":"Ladderup Wealth Management","pan":"AABCL4104A","combined_total":258.53,"listed_total":245.81,"unlisted_total":12.72,"platform_tag":"both"},{"rank":10,"name":"ASK Wealth Advisors Private Limited","pan":"AAFCA9124M","combined_total":256.68,"listed_total":154.91,"unlisted_total":101.77,"platform_tag":"both"},{"rank":11,"name":"Spark PWM Private Limited","pan":"AAGCP7111A","combined_total":235.08,"listed_total":225.6,"unlisted_total":9.48,"platform_tag":"both"},{"rank":12,"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","pan":"AAICG3416F","combined_total":211.11,"listed_total":208.89,"unlisted_total":2.22,"platform_tag":"both"},{"rank":13,"name":"Sanctum Wealth Private Limited","pan":"AAVCS8275R","combined_total":209.23,"listed_total":77.59,"unlisted_total":131.64,"platform_tag":"both"},{"rank":14,"name":"LC CAPITAL INDIA PVT LTD","pan":"AAECL1700H","combined_total":208.61,"listed_total":177.17,"unlisted_total":31.44,"platform_tag":"both"},{"rank":15,"name":"Conscience Multi Family Office","pan":"AAOFC7570K","combined_total":183.54,"listed_total":29.52,"unlisted_total":154.02,"platform_tag":"both"},{"rank":16,"name":"KALYAN CAPITAL SERVICES PRIVATE LIMITED","pan":"AAICK4215A","combined_total":163.2,"listed_total":163.2,"unlisted_total":0.0,"platform_tag":"listed"},{"rank":17,"name":"Dezerv Distributor Services Pvt Ltd","pan":"AAJCD3845L","combined_total":141.91,"listed_total":141.91,"unlisted_total":0.0,"platform_tag":"listed"},{"rank":18,"name":"JM FINANCIAL SERVICES LTD","pan":"AAACJ5977A","combined_total":133.32,"listed_total":131.52,"unlisted_total":1.8,"platform_tag":"both"},{"rank":19,"name":"Smest Capital Private Limited","pan":"ABACS5302H","combined_total":130.9,"listed_total":130.84,"unlisted_total":0.06,"platform_tag":"both"},{"rank":20,"name":"DEXIF FINTECH PRIVATE LIMITED","pan":"AAJCD6737F","combined_total":125.43,"listed_total":112.46,"unlisted_total":12.98,"platform_tag":"both"}],"cross_platform":[{"name":"LGT Wealth India Pvt. Ltd.","pan":"AAECL6975A","listed_total":425.72,"unlisted_total":371.54,"combined_total":797.26,"listed_8wk":0.0,"unlisted_8wk":5.89},{"name":"Incred Wealth and Investment Services Private Limited","pan":"aafci9141l","listed_total":227.73,"unlisted_total":217.94,"combined_total":445.67,"listed_8wk":0.99,"unlisted_8wk":0.0},{"name":"Julius Baer","pan":"AAACB6154F","listed_total":329.39,"unlisted_total":44.7,"combined_total":374.09,"listed_8wk":4.82,"unlisted_8wk":0.0},{"name":"Nuvama Wealth Finance Limited","pan":"AAACC2233N","listed_total":217.91,"unlisted_total":121.65,"combined_total":339.56,"listed_8wk":18.73,"unlisted_8wk":0.0},{"name":"MOTILAL OSWAL WEALTH LIMITED","pan":"AADCA3864A","listed_total":324.93,"unlisted_total":1.38,"combined_total":326.31,"listed_8wk":23.09,"unlisted_8wk":0.0},{"name":"Ladderup Wealth Management","pan":"AABCL4104A","listed_total":245.81,"unlisted_total":12.72,"combined_total":258.53,"listed_8wk":23.9,"unlisted_8wk":0.0},{"name":"ASK Wealth Advisors Private Limited","pan":"AAFCA9124M","listed_total":154.91,"unlisted_total":101.77,"combined_total":256.68,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"Spark PWM Private Limited","pan":"AAGCP7111A","listed_total":225.6,"unlisted_total":9.48,"combined_total":235.08,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","pan":"AAICG3416F","listed_total":208.89,"unlisted_total":2.22,"combined_total":211.11,"listed_8wk":19.69,"unlisted_8wk":0.0},{"name":"Sanctum Wealth Private Limited","pan":"AAVCS8275R","listed_total":77.59,"unlisted_total":131.64,"combined_total":209.23,"listed_8wk":0.8,"unlisted_8wk":12.73},{"name":"LC CAPITAL INDIA PVT LTD","pan":"AAECL1700H","listed_total":177.17,"unlisted_total":31.44,"combined_total":208.61,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"Conscience Multi Family Office","pan":"AAOFC7570K","listed_total":29.52,"unlisted_total":154.02,"combined_total":183.54,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"JM FINANCIAL SERVICES LTD","pan":"AAACJ5977A","listed_total":131.52,"unlisted_total":1.8,"combined_total":133.32,"listed_8wk":1.01,"unlisted_8wk":0.0},{"name":"Smest Capital Private Limited","pan":"ABACS5302H","listed_total":130.84,"unlisted_total":0.06,"combined_total":130.9,"listed_8wk":0.67,"unlisted_8wk":0.0},{"name":"DEXIF FINTECH PRIVATE LIMITED","pan":"AAJCD6737F","listed_total":112.46,"unlisted_total":12.98,"combined_total":125.44,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"Centricity Fincap Private Limited","pan":"AAKCC6789P","listed_total":64.11,"unlisted_total":56.76,"combined_total":120.87,"listed_8wk":0.0,"unlisted_8wk":0.0},{"name":"Moneywise Financial Services Pvt Ltd","pan":"AADCS7346H","listed_total":48.86,"unlisted_total":8.49,"combined_total":57.35,"listed_8wk":3.59,"unlisted_8wk":0.0},{"name":"Prudent Corporate Advisory Services Limited","pan":"aadcp1830b","listed_total":52.57,"unlisted_total":4.77,"combined_total":57.34,"listed_8wk":2.46,"unlisted_8wk":0.0},{"name":"Sunrise Gilts & Securities Private Limited","pan":"AATCS8262J","listed_total":47.42,"unlisted_total":5.98,"combined_total":53.4,"listed_8wk":19.48,"unlisted_8wk":0.0},{"name":"Darashaw & Company Private Ltd","pan":"AAACB2360F","listed_total":45.62,"unlisted_total":3.67,"combined_total":49.29,"listed_8wk":0.51,"unlisted_8wk":0.0}],"cross_platform_count":50,"distributors_listed":[{"rank_all":1,"rank_8wk":2,"rank_lw":99,"name":"Ambium Finserve Private Limited","gtv_total_cr":440.9,"gtv_8wk_cr":38.24,"gtv_lw_cr":0.0,"gtv_monthly":[15.46,22.35,33.41,0.0,18.59,16.91,5.12,5.14,76.45,0.0,0.55,9.79,13.31,15.15],"gtv_weekly_8":[9.79,13.31,0.0,0.0,0.0,13.15,1.99,0.0],"trades_monthly":[6,11,8,0,6,6,2,2,12,0,1,1,2,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":12,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"MUFIN GREEN FINANCE LIMITED","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"Krazybee Services Private Limited","top_issuer_pct_alltime":15.1,"issuers_m":[{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,1.99,9.11,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,39.42,0.0,0.0,0.0,0.0,0.0]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","vals":[0.99,0.0,13.76,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.79,13.31,15.15]}],"issuers_8wk":[{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE","gtv_cr":38.24,"pct":100.0,"vals":[9.79,13.31,0.0,0.0,0.0,13.15,1.99,0.0]}],"issuers_lw":[]},{"rank_all":2,"rank_8wk":99,"rank_lw":99,"name":"LGT Wealth India Pvt. Ltd.","gtv_total_cr":425.72,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[14.14,4.95,1.94,1.84,0.59,0.0,0.39,0.1,0.0,0.0,4.68,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[21,9,6,5,2,0,1,1,0,0,8,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":8,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Indel Money Limited","top_issuer_pct_alltime":17.2,"issuers_m":[{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[12.01,2.04,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Aye Finance Private Limited","short_name":"Aye Finance Private Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.96,2.61,1.94,1.84,0.59,0.0,0.39,0.1,0.0,0.0,1.96,0.0,0.0,0.0]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","vals":[0.67,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"RDC Concrete India Private Limited","short_name":"RDC Concrete India Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":3,"rank_8wk":1,"rank_lw":99,"name":"AVENDUS FINANCE PRIVATE LIMITED","gtv_total_cr":331.76,"gtv_8wk_cr":42.94,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,13.77,8.9,0.0,0.0,2.91,7.96,0.0,0.0,0.0,0.0,0.0,0.0,42.94],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,42.94,0.0],"trades_monthly":[0,4,2,0,0,1,1,0,0,0,0,0,0,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"EARLYSALARY SERVICES PRIVATE LIMITED","top_issuer_pct_8wk":94.3,"top_issuer_alltime":"Krazybee Services Private Limited","top_issuer_pct_alltime":31.0,"issuers_m":[{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,7.96,0.0,0.0,0.0,0.0,0.0,0.0,40.5]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,1.97,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Aye Finance Private Limited","short_name":"Aye Finance Private Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Piramal Enterprises Limited","short_name":"Piramal Enterprises Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":40.5,"pct":94.3,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,40.5,0.0]}],"issuers_lw":[]},{"rank_all":4,"rank_8wk":17,"rank_lw":4,"name":"Julius Baer","gtv_total_cr":329.39,"gtv_8wk_cr":4.82,"gtv_lw_cr":4.42,"gtv_monthly":[12.17,0.0,0.0,0.0,0.7,1.0,12.63,4.95,1.98,0.0,1.36,3.74,0.0,4.82],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.4,4.42],"trades_monthly":[5,0,0,0,2,1,2,1,1,0,2,3,0,4],"trades_lw":2,"avg_order_l_lw":221.18,"active_months":9,"top_issuer_lw":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_lw":88.7,"top_issuer_8wk":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","top_issuer_pct_8wk":85.5,"top_issuer_alltime":"VIVRITI CAPITAL PRIVATE LIMITED","top_issuer_pct_alltime":16.7,"issuers_m":[{"name":"VIVRITI CAPITAL PRIVATE LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Shriram Transport Finance Company Limited","short_name":"Shriram Transport Finance","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Avanse Financial Services Limited","short_name":"Avanse Financial Services","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[4.93,0.0,0.0,0.0,0.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":3.93,"pct":88.7,"vals":[3.93]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.5,"pct":11.3,"vals":[0.5]}]},{"rank_all":5,"rank_8wk":4,"rank_lw":3,"name":"MOTILAL OSWAL WEALTH LIMITED","gtv_total_cr":324.93,"gtv_8wk_cr":23.09,"gtv_lw_cr":6.89,"gtv_monthly":[8.43,0.69,0.4,0.0,0.0,5.95,4.96,9.46,0.35,11.01,0.0,7.58,9.52,13.37],"gtv_weekly_8":[1.59,0.39,1.0,0.29,6.44,4.12,2.36,6.89],"trades_monthly":[12,4,3,0,0,3,1,6,2,2,0,8,16,15],"trades_lw":6,"avg_order_l_lw":114.9,"active_months":11,"top_issuer_lw":"Navi Finserv Limited","top_issuer_pct_lw":75.1,"top_issuer_8wk":"Indel Money Limited","top_issuer_pct_8wk":30.4,"top_issuer_alltime":"Krazybee Services Private Limited","top_issuer_pct_alltime":36.2,"issuers_m":[{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.2,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[2.99,0.0,0.4,0.0,0.0,4.97,0.0,5.12,0.25,4.98,0.0,5.99,0.0,2.6]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.49,0.49,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","gtv_cr":2.6,"pct":11.3,"vals":[0.0,0.0,0.0,0.0,0.0,2.1,0.5,0.0]}],"issuers_lw":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":5.18,"pct":75.1,"vals":[5.18]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":1.62,"pct":23.5,"vals":[1.62]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","gtv_cr":0.1,"pct":1.4,"vals":[0.1]}]},{"rank_all":6,"rank_8wk":3,"rank_lw":11,"name":"Ladderup Wealth Management","gtv_total_cr":245.81,"gtv_8wk_cr":23.9,"gtv_lw_cr":0.51,"gtv_monthly":[4.75,6.0,6.96,6.93,17.72,14.16,4.23,20.21,7.08,9.1,5.54,4.06,20.31,3.59],"gtv_weekly_8":[0.0,12.67,0.59,4.08,2.96,1.8,1.28,0.51],"trades_monthly":[6,14,15,13,22,28,16,83,27,36,29,22,27,25],"trades_lw":3,"avg_order_l_lw":16.95,"active_months":14,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":48.5,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":55.7,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":23.5,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.0,0.0,0.0,0.0,12.11,10.59,1.75,9.77,2.75,2.55,2.03,3.03,12.96,0.34]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,1.58,0.8,0.82,4.59,0.64,3.38,1.1,0.71,0.04,0.15]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[4.37,2.28,1.46,0.0,0.0,0.0,0.0,0.0,0.0,0.69,1.13,0.0,0.5,1.29]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,1.38,0.0,0.0,0.0,1.66,0.3,2.62,0.64,0.0,0.32,0.2,6.21,0.55]},{"name":"Lendingkart Finance Limited","short_name":"Lendingkart Finance Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":13.31,"pct":55.7,"vals":[0.0,6.22,0.5,3.87,2.37,0.1,0.0,0.25]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":0.19,"pct":0.8,"vals":[0.0,0.04,0.0,0.0,0.0,0.05,0.0,0.1]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":1.81,"pct":7.6,"vals":[0.0,0.31,0.0,0.0,0.2,0.66,0.64,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":6.76,"pct":28.3,"vals":[0.0,6.01,0.0,0.0,0.2,0.45,0.1,0.0]}],"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.25,"pct":48.5,"vals":[0.25]},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV","gtv_cr":0.16,"pct":31.9,"vals":[0.16]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","gtv_cr":0.1,"pct":19.6,"vals":[0.1]}]},{"rank_all":7,"rank_8wk":31,"rank_lw":99,"name":"Incred Wealth and Investment Services Private Limited","gtv_total_cr":227.73,"gtv_8wk_cr":0.99,"gtv_lw_cr":0.0,"gtv_monthly":[18.86,0.2,0.35,0.39,2.72,1.98,1.68,4.4,8.03,2.77,20.41,5.83,0.49,0.5],"gtv_weekly_8":[0.2,0.1,0.0,0.0,0.19,0.3,0.19,0.0],"trades_monthly":[6,1,4,3,13,8,11,9,19,17,20,6,3,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":14,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"INCRED FINANCIAL SERVICES LIMITED","top_issuer_pct_8wk":60.8,"top_issuer_alltime":"INCRED FINANCIAL SERVICES LIMITED","top_issuer_pct_alltime":25.3,"issuers_m":[{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","vals":[18.27,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.98,0.0,0.0,0.1,0.3,0.3]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,0.2,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.58,1.55,16.97,0.0,0.0,0.0]},{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.59,0.0,0.0,0.0,2.08,0.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Microfin Limited","short_name":"Muthoot Microfin Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES","gtv_cr":0.6,"pct":60.4,"vals":[0.2,0.1,0.0,0.0,0.0,0.3,0.0,0.0]}],"issuers_lw":[]},{"rank_all":8,"rank_8wk":99,"rank_lw":99,"name":"Spark PWM Private Limited","gtv_total_cr":225.6,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[1.93,26.88,14.89,5.68,24.23,0.0,0.0,0.0,0.0,7.05,0.0,2.95,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,20,4,2,6,0,0,0,0,2,0,1,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":7,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Krazybee Services Private Limited","top_issuer_pct_alltime":24.0,"issuers_m":[{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.95,0.0,0.0]},{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,21.96,9.87,4.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"NEOGEN CHEMICALS LIMITED","short_name":"NEOGEN CHEMICALS","vals":[0.0,0.0,0.0,0.0,24.23,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":9,"rank_8wk":7,"rank_lw":2,"name":"Nuvama Wealth Finance Limited","gtv_total_cr":217.91,"gtv_8wk_cr":18.73,"gtv_lw_cr":9.94,"gtv_monthly":[0.0,3.25,12.49,11.13,1.34,67.4,28.98,0.06,15.78,0.0,0.38,0.06,0.97,17.76],"gtv_weekly_8":[0.0,0.0,0.97,0.0,0.0,0.0,7.82,9.94],"trades_monthly":[0,3,7,3,3,14,7,1,5,0,2,1,1,6],"trades_lw":3,"avg_order_l_lw":331.46,"active_months":12,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":98.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":83.2,"top_issuer_alltime":"Muthoot Capital Services Limited","top_issuer_pct_alltime":25.6,"issuers_m":[{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[0.0,0.0,0.0,0.0,0.0,25.67,24.7,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,25.15,0.97,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,0.0,0.0,0.0,16.58,0.0,0.06,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS","vals":[0.0,2.95,7.38,2.46,0.36,0.0,3.3,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":9.74,"pct":98.0,"vals":[9.74]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","gtv_cr":0.2,"pct":2.0,"vals":[0.2]}]},{"rank_all":10,"rank_8wk":5,"rank_lw":5,"name":"GRIP INVEST TECHNOLOGIES PRIVATE LIMITED","gtv_total_cr":208.89,"gtv_8wk_cr":19.69,"gtv_lw_cr":4.35,"gtv_monthly":[8.11,7.46,7.91,3.05,1.75,7.17,6.82,1.17,28.47,31.4,15.08,7.45,9.51,9.2],"gtv_weekly_8":[0.98,2.9,5.63,0.98,0.0,1.95,2.89,4.35],"trades_monthly":[31,21,27,14,9,16,10,2,36,21,10,6,8,7],"trades_lw":4,"avg_order_l_lw":108.76,"active_months":14,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":68.7,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":38.1,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.94,0.09,0.28,0.29,0.86,1.42,1.9,0.0,19.12,12.49,14.92,5.49,6.28,7.24]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.97,1.69,1.92,0.0,0.0,0.48,3.02,1.17,0.0,0.0,0.06,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.96,2.93,1.95]},{"name":"Kanakadurga Finance Limited","short_name":"Kanakadurga Finance Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.89,1.48,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,14.97,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":13.52,"pct":68.7,"vals":[0.0,1.93,4.35,0.0,0.0,0.0,2.89,4.35]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":5.87,"pct":29.8,"vals":[0.98,0.98,0.98,0.98,0.0,1.95,0.0,0.0]}],"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":4.35,"pct":100.0,"vals":[4.35]}]},{"rank_all":11,"rank_8wk":99,"rank_lw":99,"name":"LC CAPITAL INDIA PVT LTD","gtv_total_cr":177.17,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[4.96,14.78,0.0,10.01,2.01,2.47,0.0,10.65,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,3,0,2,3,1,0,1,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":6,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Aye Finance Private Limited","top_issuer_pct_alltime":24.0,"issuers_m":[{"name":"Aye Finance Private Limited","short_name":"Aye Finance Private Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,14.78,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":12,"rank_8wk":10,"rank_lw":99,"name":"KALYAN CAPITAL SERVICES PRIVATE LIMITED","gtv_total_cr":163.2,"gtv_8wk_cr":11.01,"gtv_lw_cr":0.0,"gtv_monthly":[0.78,0.0,8.48,33.71,2.36,0.0,0.63,0.15,0.0,0.0,19.57,10.35,10.68,0.34],"gtv_weekly_8":[0.1,4.85,2.82,2.72,0.19,0.0,0.34,0.0],"trades_monthly":[2,0,6,10,7,0,3,1,0,0,8,5,8,2],"trades_lw":0,"avg_order_l_lw":0,"active_months":10,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":92.5,"top_issuer_alltime":"Spandana Sphoorty Financial Limited","top_issuer_pct_alltime":22.4,"issuers_m":[{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,19.57,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.3,0.0,0.0,24.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,10.19,0.0]}],"issuers_8wk":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":10.19,"pct":92.5,"vals":[0.0,4.85,2.43,2.72,0.19,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":13,"rank_8wk":99,"rank_lw":99,"name":"ASK Wealth Advisors Private Limited","gtv_total_cr":154.91,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[5.0,6.89,13.45,0.0,0.0,8.54,0.89,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,1,5,0,0,2,1,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Spandana Sphoorty Financial Limited","top_issuer_pct_alltime":28.6,"issuers_m":[{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,6.89,0.15,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,8.54,0.89,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Clix Capital Services Private Limited","short_name":"Clix Capital Services Pri","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTME","vals":[0.0,0.0,13.3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":14,"rank_8wk":99,"rank_lw":99,"name":"Dezerv Distributor Services Pvt Ltd","gtv_total_cr":141.91,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,14.22,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,1,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Spandana Sphoorty Financial Limited","top_issuer_pct_alltime":48.2,"issuers_m":[{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"AUXILO FINSERVE PRIVATE LIMITED","short_name":"AUXILO FINSERVE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Aye Finance Private Limited","short_name":"Aye Finance Private Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIVRITI CAPITAL LIMITED","short_name":"VIVRITI CAPITAL","vals":[0.0,0.0,0.0,14.22,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Arman Financial Services Limited","short_name":"Arman Financial Services ","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":15,"rank_8wk":30,"rank_lw":14,"name":"JM FINANCIAL SERVICES LTD","gtv_total_cr":131.52,"gtv_8wk_cr":1.01,"gtv_lw_cr":0.4,"gtv_monthly":[0.0,0.8,0.7,1.98,4.82,0.99,10.58,0.49,0.1,0.25,0.0,0.0,0.21,0.8],"gtv_weekly_8":[0.0,0.21,0.0,0.0,0.0,0.1,0.3,0.4],"trades_monthly":[0,5,4,2,18,10,7,5,1,2,0,0,2,4],"trades_lw":2,"avg_order_l_lw":19.87,"active_months":11,"top_issuer_lw":"MUTHOOT FINCORP LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT FINCORP LIMITED","top_issuer_pct_8wk":80.1,"top_issuer_alltime":"SATIN CREDITCARE NETWORK LIMITED","top_issuer_pct_alltime":29.0,"issuers_m":[{"name":"SATIN CREDITCARE NETWORK LIMITED","short_name":"SATIN CREDITCARE NETWORK","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Adani Enterprises Limited","short_name":"Adani Enterprises Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Microfin Limited","short_name":"Muthoot Microfin Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SATIN HOUSING FINANCE LIMITED","short_name":"SATIN HOUSING FINANCE","vals":[0.0,0.5,0.7,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.2,10.45,0.0,0.0,0.0,0.0,0.0,0.0,0.1]}],"issuers_8wk":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.1,"pct":9.9,"vals":[0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0]}],"issuers_lw":[{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","gtv_cr":0.4,"pct":100.0,"vals":[0.4]}]},{"rank_all":16,"rank_8wk":36,"rank_lw":20,"name":"Smest Capital Private Limited","gtv_total_cr":130.84,"gtv_8wk_cr":0.67,"gtv_lw_cr":0.13,"gtv_monthly":[6.01,6.77,19.67,3.25,0.76,0.77,4.05,7.83,0.47,4.19,5.55,1.1,0.49,0.18],"gtv_weekly_8":[0.0,0.0,0.39,0.05,0.05,0.0,0.05,0.13],"trades_monthly":[39,39,45,22,5,5,21,22,5,16,17,4,9,3],"trades_lw":2,"avg_order_l_lw":6.38,"active_months":14,"top_issuer_lw":"RDC CONCRETEINDIA LIMITED","top_issuer_pct_lw":61.8,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":29.1,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":36.7,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","vals":[0.48,0.33,1.55,1.8,0.57,0.33,3.49,7.09,0.42,2.17,4.91,1.07,0.19,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,0.0,14.77,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,4.07,2.47,0.96,0.2,0.24,0.16,0.0,0.0,1.95,0.31,0.0,0.05,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Lendingkart Finance Limited","short_name":"Lendingkart Finance Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS","gtv_cr":0.2,"pct":30.0,"vals":[0.0,0.0,0.15,0.05,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","gtv_cr":0.05,"pct":7.5,"vals":[0.0,0.0,0.05,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA","gtv_cr":0.08,"pct":61.8,"vals":[0.08]},{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV","gtv_cr":0.05,"pct":38.2,"vals":[0.05]}]},{"rank_all":17,"rank_8wk":99,"rank_lw":99,"name":"DEXIF FINTECH PRIVATE LIMITED","gtv_total_cr":112.46,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Krazybee Services Private Limited","top_issuer_pct_alltime":21.4,"issuers_m":[{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financi","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":18,"rank_8wk":13,"rank_lw":6,"name":"TRUST SECURITIES SERVICES PRIVATE LIMITED","gtv_total_cr":109.9,"gtv_8wk_cr":8.89,"gtv_lw_cr":1.47,"gtv_monthly":[25.21,26.23,6.89,14.77,0.0,9.34,2.96,0.3,0.0,0.0,0.0,14.97,4.0,4.88],"gtv_weekly_8":[0.0,0.0,1.08,0.0,2.92,1.46,1.95,1.47],"trades_monthly":[19,11,5,6,0,8,3,1,0,0,0,3,3,5],"trades_lw":1,"avg_order_l_lw":146.69,"active_months":10,"top_issuer_lw":"MUTHOOT MCRED LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"MUTHOOT MCRED LIMITED","top_issuer_pct_8wk":55.0,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":19.9,"issuers_m":[{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,19.81,1.95,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[9.92,3.41,0.0,2.92,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[14.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services ","vals":[0.0,0.0,0.0,0.0,0.0,8.84,2.96,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.97,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[{"name":"MUTHOOT MCRED LIMITED","short_name":"MUTHOOT MCRED","gtv_cr":1.47,"pct":100.0,"vals":[1.47]}]},{"rank_all":19,"rank_8wk":54,"rank_lw":99,"name":"ZEPHYR FINANCIAL PUBLISHERS PRIVATE LIMITED","gtv_total_cr":108.22,"gtv_8wk_cr":0.2,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,15.07,40.54,10.41,9.49,1.74,8.03,14.15,5.16,1.27,1.24,0.91,0.0,0.2],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.2,0.0,0.0],"trades_monthly":[0,21,47,28,23,12,14,19,7,7,8,4,0,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":12,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"INCRED FINANCIAL SERVICES LIMITED","top_issuer_pct_8wk":70.2,"top_issuer_alltime":"AYE FINANCE LIMITED","top_issuer_pct_alltime":19.1,"issuers_m":[{"name":"AYE FINANCE LIMITED","short_name":"AYE FINANCE","vals":[0.0,2.23,12.26,5.94,0.16,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,7.33,8.23,4.96,0.0,0.0,0.0,0.0,0.0]},{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES","vals":[0.0,8.41,8.88,1.75,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS","vals":[0.0,2.31,11.89,0.33,0.27,0.0,0.0,0.33,0.03,0.0,0.0,0.0,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[0.0,2.13,7.5,2.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":20,"rank_8wk":99,"rank_lw":99,"name":"CORPCARE INVESTECH PRIVATE LIMITED","gtv_total_cr":86.99,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[6.91,9.86,0.0,0.0,0.0,0.0,0.0,0.0,7.96,0.0,4.85,52.52,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,1,0,0,0,0,0,0,2,0,1,10,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":34.4,"issuers_m":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,29.94,0.0,0.0]},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.85,14.51,0.0,0.0]},{"name":"MAS Financial Services Limited","short_name":"MAS Financial Services Li","vals":[6.91,9.86,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.97,0.0,0.0,0.0,0.0,0.0]},{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.06,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]}],"distributors_unlisted":[{"rank_all":1,"rank_8wk":1,"rank_lw":2,"name":"YUBI MARKETS PRIVATE LIMITED","gtv_total_cr":400.51,"gtv_8wk_cr":128.19,"gtv_lw_cr":5.71,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.75,80.34,52.89,72.24,69.9,9.33,112.05],"gtv_weekly_8":[7.05,2.93,4.87,1.28,0.0,80.93,25.42,5.71],"trades_monthly":[0,0,0,0,0,0,0,8,54,40,49,44,17,29],"trades_lw":6,"avg_order_l_lw":95.14,"active_months":7,"top_issuer_lw":"MPOKKET FINANCIAL SERVICES PRIVATE LIMITED","top_issuer_pct_lw":47.3,"top_issuer_8wk":"MPOKKET FINANCIAL SERVICES PRIVATE LIMITED","top_issuer_pct_8wk":45.7,"top_issuer_alltime":"WHIZDM FINANCE PRIVATE LIMITED","top_issuer_pct_alltime":31.4,"issuers_m":[{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.5,11.98,25.55,22.73,19.66,1.98,42.49]},{"name":"MPOKKET FINANCIAL SERVICES PRIVATE LIMITED","short_name":"MPOKKET FINANCIAL SERVICE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.24,31.26,34.48,1.98,55.17]},{"name":"ZETWERK MANUFACTURING BUSINESSES PRIVATE LIMITED","short_name":"ZETWERK MANUFACTURING BUS","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,29.95,0.78,11.61,8.79,2.99,0.0]},{"name":"BRANCH INTERNATIONAL FINANCIAL SERVICES PRIVATE LIMITED","short_name":"BRANCH INTERNATIONAL FINA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,18.01,12.57,1.27,0.1,0.0,0.87]},{"name":"TRUE CREDITS PRIVATE LIMITED","short_name":"TRUE CREDITS","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.51,11.75,0.19,0.19,0.0,0.0]}],"issuers_8wk":[{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","gtv_cr":44.48,"pct":34.7,"vals":[0.0,0.0,1.98,0.0,0.0,37.52,3.98,1.0]},{"name":"MPOKKET FINANCIAL SERVICES PRIVATE LIMITED","short_name":"MPOKKET FINANCIAL SERVICE","gtv_cr":58.64,"pct":45.7,"vals":[1.73,1.49,0.0,0.25,0.0,43.41,9.06,2.7]},{"name":"ZETWERK MANUFACTURING BUSINESSES PRIVATE LIMITED","short_name":"ZETWERK MANUFACTURING BUS","gtv_cr":7.88,"pct":6.1,"vals":[4.89,0.0,2.89,0.1,0.0,0.0,0.0,0.0]},{"name":"BRANCH INTERNATIONAL FINANCIAL SERVICES PRIVATE LIMITED","short_name":"BRANCH INTERNATIONAL FINA","gtv_cr":0.87,"pct":0.7,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.29,0.58]}],"issuers_lw":[{"name":"MPOKKET FINANCIAL SERVICES PRIVATE LIMITED","short_name":"MPOKKET FINANCIAL SERVICE","gtv_cr":2.7,"pct":47.3,"vals":[2.7]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","gtv_cr":1.43,"pct":25.0,"vals":[1.43]},{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","gtv_cr":1.0,"pct":17.4,"vals":[1.0]},{"name":"BRANCH INTERNATIONAL FINANCIAL SERVICES PRIVATE LIMITED","short_name":"BRANCH INTERNATIONAL FINA","gtv_cr":0.58,"pct":10.2,"vals":[0.58]}]},{"rank_all":2,"rank_8wk":4,"rank_lw":3,"name":"LGT Wealth India Pvt. Ltd.","gtv_total_cr":371.54,"gtv_8wk_cr":5.89,"gtv_lw_cr":0.98,"gtv_monthly":[9.78,43.29,20.67,0.0,0.0,0.0,0.0,0.0,0.0,18.99,0.0,1.23,4.91,0.98],"gtv_weekly_8":[0.0,0.0,4.91,0.0,0.0,0.0,0.0,0.98],"trades_monthly":[20,38,28,0,0,0,0,0,0,23,0,2,2,1],"trades_lw":1,"avg_order_l_lw":97.9,"active_months":7,"top_issuer_lw":"WHIZDM FINANCE PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"WHIZDM FINANCE PRIVATE LIMITED","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"NAVI TECHNOLOGIES LIMITED","top_issuer_pct_alltime":34.7,"issuers_m":[{"name":"NAVI TECHNOLOGIES LIMITED","short_name":"NAVI TECHNOLOGIES","vals":[0.0,40.74,20.67,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"JAI RAJ ISPAT LTD","short_name":"JAI RAJ ISPAT","vals":[9.78,2.55,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","gtv_cr":0.98,"pct":100.0,"vals":[0.98]}]},{"rank_all":3,"rank_8wk":99,"rank_lw":99,"name":"Incred Wealth and Investment Services Private Limited","gtv_total_cr":217.94,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[4.76,0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,1,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":2,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":36.2,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA CHEMICAL MARKET PRIVATE LIMITED","short_name":"HELLA CHEMICAL MARKET","vals":[4.76,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"VIKRAN ENGINEERING LIMITED","short_name":"VIKRAN ENGINEERING","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":4,"rank_8wk":99,"rank_lw":99,"name":"Conscience Multi Family Office","gtv_total_cr":154.02,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[1.53,4.06,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[12,19,4,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":3,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":26.9,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SUPERB LAND SPACE PROJECT PRIVATE LIMITED","short_name":"SUPERB LAND SPACE PROJECT","vals":[0.18,3.56,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"TRUE CREDITS PRIVATE LIMITED","short_name":"TRUE CREDITS","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"EVERNEST INFRATECH PRIVATE LIMITED","short_name":"EVERNEST INFRATECH","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"ZET TOWN INDIA PRIVATE LIMITED","short_name":"ZET TOWN INDIA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":5,"rank_8wk":3,"rank_lw":5,"name":"Sanctum Wealth Private Limited","gtv_total_cr":131.64,"gtv_8wk_cr":12.73,"gtv_lw_cr":0.5,"gtv_monthly":[14.5,8.05,1.51,0.0,0.0,0.0,0.0,0.99,1.94,1.1,2.32,16.48,11.24,1.49],"gtv_weekly_8":[0.0,0.0,0.5,6.83,3.92,0.49,0.5,0.5],"trades_monthly":[10,7,2,0,0,0,0,1,6,4,7,12,11,3],"trades_lw":1,"avg_order_l_lw":49.99,"active_months":10,"top_issuer_lw":"INFIFRESH FOODS LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"INFIFRESH FOODS LIMITED","top_issuer_pct_8wk":96.1,"top_issuer_alltime":"HELLA INFRA MARKET LIMITED","top_issuer_pct_alltime":26.3,"issuers_m":[{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[9.44,7.6,0.0,0.0,0.0,0.0,0.0,0.99,1.9,1.1,0.4,1.99,0.5,0.0]},{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.04,0.0,0.0,0.0,0.0,0.0]},{"name":"SILVERLINE HOMES PRIVATE LIMITED","short_name":"SILVERLINE HOMES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.92,14.49,0.0,0.0]},{"name":"B9 BEVERAGES LIMITED","short_name":"B9 BEVERAGES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.5,0.44,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","gtv_cr":0.5,"pct":3.9,"vals":[0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[{"name":"INFIFRESH FOODS LIMITED","short_name":"INFIFRESH FOODS","gtv_cr":0.5,"pct":100.0,"vals":[0.5]}]},{"rank_all":6,"rank_8wk":99,"rank_lw":99,"name":"Nuvama Wealth Finance Limited","gtv_total_cr":121.65,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":83.5,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SMARTPADDLE TECHNOLOGY PRIVATE LIMITED","short_name":"SMARTPADDLE TECHNOLOGY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"UPMOVE CAPITAL PRIVATE LIMITED","short_name":"UPMOVE CAPITAL","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":7,"rank_8wk":99,"rank_lw":99,"name":"ASK Wealth Advisors Private Limited","gtv_total_cr":101.77,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[1.43,0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[3,1,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":2,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":80.1,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"ZET TOWN INDIA PRIVATE LIMITED","short_name":"ZET TOWN INDIA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA CHEMICAL MARKET PRIVATE LIMITED","short_name":"HELLA CHEMICAL MARKET","vals":[1.43,0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":8,"rank_8wk":99,"rank_lw":99,"name":"Centricity Fincap Private Limited","gtv_total_cr":56.76,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":62.7,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SMARTPADDLE TECHNOLOGY PRIVATE LIMITED","short_name":"SMARTPADDLE TECHNOLOGY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA CHEMICAL MARKET PRIVATE LIMITED","short_name":"HELLA CHEMICAL MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":9,"rank_8wk":2,"rank_lw":1,"name":"STRATA PROPERTY MANAGEMENT PRIVATE LIMITED","gtv_total_cr":56.45,"gtv_8wk_cr":14.23,"gtv_lw_cr":5.75,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,11.65,0.0,30.56,0.0,14.23],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,8.49,5.75],"trades_monthly":[0,0,0,0,0,0,0,0,0,55,0,17,0,58],"trades_lw":26,"avg_order_l_lw":22.1,"active_months":3,"top_issuer_lw":"DAC DEVELOPERS PRIVATE LIMITED","top_issuer_pct_lw":100.0,"top_issuer_8wk":"DAC DEVELOPERS PRIVATE LIMITED","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"DAC DEVELOPERS PRIVATE LIMITED","top_issuer_pct_alltime":45.9,"issuers_m":[{"name":"DAC DEVELOPERS PRIVATE LIMITED","short_name":"DAC DEVELOPERS","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,11.65,0.0,0.0,0.0,14.23]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,20.79,0.0,0.0]},{"name":"HELLA CHEMICAL MARKET PRIVATE LIMITED","short_name":"HELLA CHEMICAL MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,9.77,0.0,0.0]}],"issuers_8wk":[{"name":"DAC DEVELOPERS PRIVATE LIMITED","short_name":"DAC DEVELOPERS","gtv_cr":14.24,"pct":100.0,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,8.49,5.75]}],"issuers_lw":[{"name":"DAC DEVELOPERS PRIVATE LIMITED","short_name":"DAC DEVELOPERS","gtv_cr":5.75,"pct":100.0,"vals":[5.75]}]},{"rank_all":10,"rank_8wk":99,"rank_lw":99,"name":"Julius Baer","gtv_total_cr":44.7,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[1,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":39.8,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA CHEMICAL MARKET PRIVATE LIMITED","short_name":"HELLA CHEMICAL MARKET","vals":[0.48,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Hero Wind Energy Private Limited","short_name":"Hero Wind Energy Private ","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"AVANTI FINANCE PRIVATE LIMITED","short_name":"AVANTI FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":11,"rank_8wk":5,"rank_lw":99,"name":"Kalki Financial Services LLP","gtv_total_cr":31.72,"gtv_8wk_cr":3.02,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.74,0.0,0.0,0.0,0.0,0.2,0.0,0.0,3.47,2.01,3.02,0.0],"gtv_weekly_8":[0.0,2.52,0.5,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,3,0,0,0,0,1,0,0,6,4,3,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":5,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"CASA GRANDE GRACE PRIVATE LIMITED","top_issuer_pct_8wk":50.3,"top_issuer_alltime":"TRUE CREDITS PRIVATE LIMITED","top_issuer_pct_alltime":43.9,"issuers_m":[{"name":"TRUE CREDITS PRIVATE LIMITED","short_name":"TRUE CREDITS","vals":[0.0,0.0,0.74,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.47,0.5,0.0,0.0]},{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HELLA INFRA MARKET LIMITED","short_name":"HELLA INFRA MARKET","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.02,1.0,0.0]},{"name":"ZET TOWN INDIA PRIVATE LIMITED","short_name":"ZET TOWN INDIA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","gtv_cr":1.0,"pct":33.2,"vals":[0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":12,"rank_8wk":99,"rank_lw":99,"name":"LC CAPITAL INDIA PVT LTD","gtv_total_cr":31.44,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":47.0,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"NAMDEV FINVEST PRIVATE LIMITED","short_name":"NAMDEV FINVEST","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":13,"rank_8wk":99,"rank_lw":99,"name":"PURPLE PETAL INVEST PRIVATE LIMITED","gtv_total_cr":27.07,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":38.0,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"TRUE CREDITS PRIVATE LIMITED","short_name":"TRUE CREDITS","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"B9 BEVERAGES LIMITED","short_name":"B9 BEVERAGES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":14,"rank_8wk":99,"rank_lw":99,"name":"Credence Family Office Private Limited","gtv_total_cr":26.7,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"BLUSMART MOBILITY PRIVATE LIMITED","top_issuer_pct_alltime":62.5,"issuers_m":[{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"UPMOVE CAPITAL PRIVATE LIMITED","short_name":"UPMOVE CAPITAL","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"B9 BEVERAGES LIMITED","short_name":"B9 BEVERAGES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":15,"rank_8wk":99,"rank_lw":99,"name":"REALISTIC FINANCIAL SERVICES PRIVATE LIMITED","gtv_total_cr":25.23,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,4,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":43.4,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"B9 BEVERAGES LIMITED","short_name":"B9 BEVERAGES","vals":[0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SMARTPADDLE TECHNOLOGY PRIVATE LIMITED","short_name":"SMARTPADDLE TECHNOLOGY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"NAVI TECHNOLOGIES LIMITED","short_name":"NAVI TECHNOLOGIES","vals":[0.0,0.0,0.3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":16,"rank_8wk":99,"rank_lw":99,"name":"ADITYA BIRLA CAPITAL LIMITED","gtv_total_cr":18.63,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,18.63,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,2,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":1,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"HOUSE OF KIERAYA LIMITED","top_issuer_pct_alltime":100.0,"issuers_m":[{"name":"HOUSE OF KIERAYA LIMITED","short_name":"HOUSE OF KIERAYA","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,18.63,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":17,"rank_8wk":99,"rank_lw":99,"name":"Trufid Services Private Limited","gtv_total_cr":13.41,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Hella Infra Market Private Limited","top_issuer_pct_alltime":63.8,"issuers_m":[{"name":"Hella Infra Market Private Limited","short_name":"Hella Infra Market Privat","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BLUSMART MOBILITY PRIVATE LIMITED","short_name":"BLUSMART MOBILITY","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":18,"rank_8wk":99,"rank_lw":99,"name":"DEXIF FINTECH PRIVATE LIMITED","gtv_total_cr":12.98,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"AVANTI FINANCE PRIVATE LIMITED","top_issuer_pct_alltime":58.5,"issuers_m":[{"name":"AVANTI FINANCE PRIVATE LIMITED","short_name":"AVANTI FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Hero Wind Energy Private Limited","short_name":"Hero Wind Energy Private ","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":19,"rank_8wk":99,"rank_lw":99,"name":"Ladderup Wealth Management","gtv_total_cr":12.72,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Lendingkart Finance Limited","top_issuer_pct_alltime":100.0,"issuers_m":[{"name":"Lendingkart Finance Limited","short_name":"Lendingkart Finance Limit","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":20,"rank_8wk":99,"rank_lw":99,"name":"GREENRIDGE CAPITAL LLP","gtv_total_cr":12.52,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,1.8,0.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,13,8,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":2,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"WHIZDM FINANCE PRIVATE LIMITED","top_issuer_pct_alltime":56.1,"issuers_m":[{"name":"WHIZDM FINANCE PRIVATE LIMITED","short_name":"WHIZDM FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"NAVI TECHNOLOGIES LIMITED","short_name":"NAVI TECHNOLOGIES","vals":[0.0,1.8,0.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"SI CREVA CAPITAL SERVICES PRIVATE LIMITED","short_name":"SI CREVA CAPITAL SERVICES","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"AVANTI FINANCE PRIVATE LIMITED","short_name":"AVANTI FINANCE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"BHANIX FINANCE AND INVESTMENT LIMITED","short_name":"BHANIX FINANCE AND INVEST","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]}]};
+const GREEN='#10b981',EMERALD='#047857',TEAL='#14b8a6',LIME='#84cc16',BLUE='#3b82f6',AMBER='#f59e0b',GREY='#94a3b8',ROSE='#f43f5e',VIOLET='#8b5cf6',NAVY='#1e40af';
+const LISTED_CLR='#3b82f6',UNLISTED_CLR='#14b8a6',BOTH_CLR='#8b5cf6';
+const PALETTE=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f97316','#ec4899','#14b8a6','#6366f1','#0ea5e9','#22c55e','#eab308','#dc2626','#a855f7','#0891b2','#65a30d','#ea580c','#db2777'];
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
 let current=0,slides,total;
 const dotsEl=document.getElementById('dots');
 function initNav(){
@@ -175,209 +274,252 @@ function showSlide(n){
 }
 function navigate(dir){current=Math.max(0,Math.min(total-1,current+dir));showSlide(current)}
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1)});
-const PALETTE=['#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#ec4899','#f43f5e','#f97316','#f59e0b','#84cc16','#10b981','#14b8a6','#06b6d4','#0284c7','#1d4ed8','#4338ca','#7c3aed','#be185d','#dc2626','#ea580c'];
-const BLUE='#3b82f6',TEAL='#14b8a6',GREEN='#10b981',AMBER='#f59e0b',VIOLET='#8b5cf6',ROSE='#f43f5e',ORANGE='#f97316',GREY='#94a3b8';
-const ISS_PALETTE=['#60a5fa','#fbbf24','#34d399','#f87171','#94a3b8'];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
-function rnd(v,n=2){return Math.round(v*Math.pow(10,n))/Math.pow(10,n)}
-function insights(id,arr){const el=document.getElementById(id);if(!el)return;el.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('')}
+function num(v){return (v||0).toLocaleString('en-IN')}
+function rnd(v,d=1){return typeof v==='number'?v.toFixed(d):v}
+function mkChart(id,datasets,labels,opts={}){
+  const c=document.getElementById(id);if(!c)return;
+  const ex=Chart.getChart(c);if(ex)ex.destroy();
+  return new Chart(c,{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!opts.legend,labels:{font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:ctx=>`₹${ctx.parsed.x??ctx.parsed.y}cr`}}},scales:{x:{stacked:!!opts.stacked,ticks:{font:{size:8}},grid:{color:'rgba(0,0,0,.05)'}},y:{stacked:!!opts.stacked,ticks:{font:{size:8}},grid:{color:'rgba(0,0,0,.05)'}},...(opts.scales||{})},animation:false,...opts}});
+}
+function hBar(id,labels,datasets,opts={}){
+  const c=document.getElementById(id);if(!c)return;
+  const ex=Chart.getChart(c);if(ex)ex.destroy();
+  return new Chart(c,{type:'bar',data:{labels,datasets},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!!opts.legend,labels:{font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:ctx=>`₹${ctx.parsed.x}cr`}}},scales:{x:{stacked:!!opts.stacked,ticks:{font:{size:8}},grid:{color:'rgba(0,0,0,.05)'}},y:{stacked:!!opts.stacked,ticks:{font:{size:8},maxTicksLimit:22},grid:{display:false}}},animation:false,...opts}});
+}
+function insights(id,arr){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=arr.map(a=>`<div class="ins-chip"><div class="ins-dot" style="background:${a.color}"></div><div>${a.txt}</div></div>`).join('');
+}
+function ptag(tag){
+  const map={listed:'ptag-listed',unlisted:'ptag-unlisted',both:'ptag-both'};
+  const lbl={listed:'Listed',unlisted:'Unlisted',both:'Both'};
+  return `<span class="ptag ${map[tag]||'ptag-listed'}">${lbl[tag]||tag}</span>`;
+}
+function shortName(n,len=20){
+  const words=n.trim().split(/\s+/);
+  let s='',i=0;
+  while(i<words.length&&(s+words[i]).length<=len){s+=(s?' ':'')+words[i];i++;}
+  return s||n.slice(0,len);
+}
 
-// Cover
-setEl('cover-period',D.period_label+' · HTM trades · Top 20 WDP');
-document.getElementById('cover-metrics').innerHTML=[
-  {lbl:'Total WDP GTV',val:'₹'+D.total_wdp_gtv_cr+'cr'},
-  {lbl:'% of All HTM GTV',val:D.wdp_pct_of_total+'%'},
-  {lbl:'Period',val:D.period_label},
-  {lbl:'Latest Week',val:D.latest_week},
-].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
-
-// Leaderboard
+// ── Slide 0: Cover ────────────────────────────────────────────────────────────
 (function(){
-  const dists=D.distributors;
-  setEl('lb-total-gtv','₹'+D.total_wdp_gtv_cr+'cr');
-  setEl('lb-wdp-pct',D.wdp_pct_of_total+'%');
-  setEl('lb-active-count',dists.length+' WDPs');
-  const top1pct=rnd(dists[0].gtv_total_cr/D.total_wdp_gtv_cr*100,1);
-  const top3pct=rnd((dists[0].gtv_total_cr+dists[1].gtv_total_cr+dists[2].gtv_total_cr)/D.total_wdp_gtv_cr*100,1);
-  const top5pct=rnd(dists.slice(0,5).reduce((s,d)=>s+d.gtv_total_cr,0)/D.total_wdp_gtv_cr*100,1);
-  setEl('lb-top1-share',top1pct+'%');setEl('lb-top3-share',top3pct+'%');setEl('lb-top5-share',top5pct+'%');
-  new Chart(document.getElementById('chart-leaderboard'),{
-    type:'bar',
-    data:{labels:dists.map(d=>d.name.split(' ').slice(0,3).join(' ')),datasets:[{label:'Total GTV (₹cr)',data:dists.map(d=>d.gtv_total_cr),backgroundColor:PALETTE,borderRadius:4,borderWidth:0}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.x}cr · ${rnd(ctx.parsed.x/D.total_wdp_gtv_cr*100,1)}% of WDP`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
-  });
-  insights('ins-leaderboard',[
-    {color:BLUE,txt:`#1 ${dists[0].name.split(' ').slice(0,3).join(' ')} · ₹${dists[0].gtv_total_cr}cr (${top1pct}% of WDP total)`},
-    {color:TEAL,txt:`Top 5 account for ${top5pct}% of total WDP GTV · ${D.period_label}`},
+  setEl('cover-period',D.period_label+' · HTM trades · All platforms');
+  const listedPct=D.total_wdp_gtv_cr>0?Math.round(D.total_wdp_gtv_listed_cr/D.total_wdp_gtv_cr*100):0;
+  document.getElementById('cover-metrics').innerHTML=[
+    {lbl:'Combined WDP GTV',val:'₹'+D.total_wdp_gtv_cr+'cr'},
+    {lbl:'Listed Platform',val:'₹'+D.total_wdp_gtv_listed_cr+'cr',sub:listedPct+'% of WDP'},
+    {lbl:'Unlisted Platform',val:'₹'+D.total_wdp_gtv_unlisted_cr+'cr',sub:(100-listedPct)+'% of WDP'},
+    {lbl:'WDP % of All HTM',val:D.wdp_pct_of_total+'%'},
+    {lbl:'Latest Week',val:D.latest_week},
+    {lbl:'Generated',val:D.generated},
+  ].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div>${m.sub?`<div class="cm-sub">${m.sub}</div>`:''}</div>`).join('');
+  // Listed section metrics
+  const lm=document.getElementById('listed-sec-metrics');
+  if(lm) lm.innerHTML=[
+    {lbl:'Listed WDP GTV',val:'₹'+D.total_wdp_gtv_listed_cr+'cr'},
+    {lbl:'Top 20 distributors',val:'Ranked by all-time listed GTV'},
+    {lbl:'Latest week',val:D.latest_week},
+  ].map(m=>`<div class="cover-metric"><div class="cm-label">${m.lbl}</div><div class="cm-val">${m.val}</div></div>`).join('');
+})();
+
+// ── Slide 1: Leaderboard 8-week ───────────────────────────────────────────────
+(function(){
+  const lb=D.leaderboard_8wk;
+  if(!lb||!lb.length) return;
+  const total8=lb.reduce((s,x)=>s+x.combined_8wk,0);
+  const tot8wk_l=lb.reduce((s,x)=>s+x.listed_8wk,0);
+  const tot8wk_u=lb.reduce((s,x)=>s+x.unlisted_8wk,0);
+  setEl('lb8-total','₹'+rnd(total8)+'cr');
+  setEl('lb8-split','₹'+rnd(tot8wk_l)+'cr / ₹'+rnd(tot8wk_u)+'cr');
+  setEl('lb8-active',lb.length+' WDPs');
+  setEl('lb8-top1',lb[0].name.split(' ').slice(0,3).join(' ')+' · '+rnd(lb[0].combined_8wk/total8*100)+'%');
+  setEl('lb8-both',lb.filter(x=>x.platform_tag==='both').length+' WDPs');
+  setEl('lb8-unlonly',lb.filter(x=>x.platform_tag==='unlisted').length+' WDPs');
+  const names=lb.map(x=>shortName(x.name,22)+(x.platform_tag!=='listed'?' *':''));
+  hBar('chart-lb8wk',names,[
+    {label:'Listed',data:lb.map(x=>x.listed_8wk),backgroundColor:LISTED_CLR+'cc',borderRadius:2},
+    {label:'Unlisted',data:lb.map(x=>x.unlisted_8wk),backgroundColor:UNLISTED_CLR+'cc',borderRadius:2},
+  ],{stacked:true,legend:true});
+  insights('ins-lb8wk',[
+    {color:BOTH_CLR,txt:`#1 ${lb[0].name} · ₹${lb[0].combined_8wk}cr (8wk) — platform: ${lb[0].platform_tag}`},
+    {color:UNLISTED_CLR,txt:`${lb.filter(x=>x.platform_tag==='unlisted').length} unlisted-only distributors in top 20 — unlisted contributes ₹${rnd(tot8wk_u)}cr (${rnd(tot8wk_u/total8*100)}%) of 8wk total`},
   ]);
 })();
 
-// Monthly Trend
+// ── Slide 2: Leaderboard All-Time ─────────────────────────────────────────────
 (function(){
-  const mo=D.wdp_monthly_total;
-  const peak=Math.max(...mo);const peakIdx=mo.indexOf(peak);
-  const exLast=mo.slice(0,-1);
-  const avg=rnd(exLast.reduce((a,b)=>a+b,0)/exLast.length,2);
-  const aboveAvg=exLast.filter(v=>v>=avg).length;
-  setEl('trend-peak-gtv','₹'+peak+'cr');setEl('trend-peak-mo',D.month_labels[peakIdx]);
-  setEl('trend-latest-mo','₹'+mo[mo.length-1]+'cr');setEl('trend-avg-mo','₹'+avg+'cr');setEl('trend-above-avg',aboveAvg+'/13');
-  const top5=D.distributors.slice(0,5);
-  const othersMo=D.month_labels.map((_,i)=>{const s=top5.reduce((a,d)=>a+(d.gtv_monthly[i]||0),0);return rnd(Math.max(0,(mo[i]||0)-s),2)});
-  const colors5=[BLUE,TEAL,GREEN,VIOLET,AMBER];
-  const datasets=top5.map((d,i)=>({label:d.name.split(' ').slice(0,3).join(' '),data:d.gtv_monthly,backgroundColor:colors5[i],stack:'s',borderRadius:2,borderWidth:0}));
-  datasets.push({label:'Others',data:othersMo,backgroundColor:'#cbd5e1',stack:'s',borderRadius:2,borderWidth:0});
-  new Chart(document.getElementById('chart-monthly-trend'),{
-    type:'bar',data:{labels:D.month_labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:5}}},scales:{x:{stacked:true,grid:{color:'#f8fafc'},ticks:{font:{size:8}}},y:{stacked:true,beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'}}}}
-  });
-  insights('ins-monthly-trend',[
-    {color:BLUE,txt:`Peak: ${D.month_labels[peakIdx]} at ₹${peak}cr · 13-month avg: ₹${avg}cr/month`},
-    {color:TEAL,txt:`May-26 MTD: ₹${mo[mo.length-1]}cr (partial month) · ${aboveAvg}/13 months above avg`},
+  const lb=D.leaderboard_alltime;
+  if(!lb||!lb.length) return;
+  const top5=lb.slice(0,5).reduce((s,x)=>s+x.combined_total,0);
+  setEl('lball-total','₹'+D.total_wdp_gtv_cr+'cr');
+  setEl('lball-listed','₹'+D.total_wdp_gtv_listed_cr+'cr');
+  setEl('lball-unlisted','₹'+D.total_wdp_gtv_unlisted_cr+'cr');
+  setEl('lball-pct',D.wdp_pct_of_total+'%');
+  setEl('lball-top1',lb[0].name.split(' ').slice(0,3).join(' ')+' · '+rnd(lb[0].combined_total/D.total_wdp_gtv_cr*100)+'%');
+  setEl('lball-top5',rnd(top5/D.total_wdp_gtv_cr*100)+'%');
+  const names=lb.map(x=>shortName(x.name,22));
+  hBar('chart-lball',names,[
+    {label:'Listed',data:lb.map(x=>x.listed_total),backgroundColor:LISTED_CLR+'cc',borderRadius:2},
+    {label:'Unlisted',data:lb.map(x=>x.unlisted_total),backgroundColor:UNLISTED_CLR+'cc',borderRadius:2},
+  ],{stacked:true,legend:true});
+  insights('ins-lball',[
+    {color:BLUE,txt:`#1 all-time: ${lb[0].name} · ₹${lb[0].combined_total}cr — listed ₹${lb[0].listed_total}cr + unlisted ₹${lb[0].unlisted_total}cr`},
+    {color:TEAL,txt:`Top 5 account for ${rnd(top5/D.total_wdp_gtv_cr*100)}% of combined WDP GTV`},
   ]);
 })();
 
-// Consistency
+// ── Slide 3: Platform Comparison ──────────────────────────────────────────────
 (function(){
-  const dists=D.distributors,N=D.n_months;
-  const alwaysOn=dists.filter(d=>d.active_months===N).length;
-  const tenPlus=dists.filter(d=>d.active_months>=10).length;
-  const bursty=dists.filter(d=>d.active_months<=5).length;
-  const avg=rnd(dists.reduce((s,d)=>s+d.active_months,0)/dists.length,1);
-  setEl('cons-always-on',alwaysOn+' WDPs');setEl('cons-10plus',tenPlus+' WDPs');setEl('cons-bursty',bursty+' WDPs');setEl('cons-avg',avg+'/'+N+' months');
-  const labels=dists.map(d=>d.name.split(' ').slice(0,3).join(' '));
-  const actMo=dists.map(d=>d.active_months);
-  const colors=actMo.map(v=>v===N?GREEN:v>=10?BLUE:v>=7?AMBER:v>=4?ORANGE:ROSE);
-  new Chart(document.getElementById('chart-consistency'),{
-    type:'bar',data:{labels,datasets:[{label:'Active Months (of '+N+')',data:actMo,backgroundColor:colors,borderRadius:4,borderWidth:0}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}/${N} months active`}}},scales:{x:{min:0,max:N,grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>v+'/'+N}},y:{grid:{display:false},ticks:{font:{size:8}}}}}
-  });
+  const ml=D.month_labels,listed=D.wdp_monthly_listed,unlisted=D.wdp_monthly_unlisted;
+  if(!ml||!ml.length) return;
+  const listedPct=D.total_wdp_gtv_cr>0?rnd(D.total_wdp_gtv_listed_cr/D.total_wdp_gtv_cr*100):0;
+  const unlistedPct=D.total_wdp_gtv_cr>0?rnd(D.total_wdp_gtv_unlisted_cr/D.total_wdp_gtv_cr*100):0;
+  setEl('plat-combined','₹'+D.total_wdp_gtv_cr+'cr');
+  setEl('plat-listed','₹'+D.total_wdp_gtv_listed_cr+'cr');
+  setEl('plat-unlisted','₹'+D.total_wdp_gtv_unlisted_cr+'cr');
+  setEl('plat-listed-pct',listedPct+'%');
+  setEl('plat-unlisted-pct',unlistedPct+'%');
+  setEl('plat-all-pct',D.wdp_pct_of_total+'%');
+  mkChart('chart-platcomp',[
+    {label:'Listed',data:listed,backgroundColor:LISTED_CLR+'bb',borderRadius:2},
+    {label:'Unlisted',data:unlisted,backgroundColor:UNLISTED_CLR+'bb',borderRadius:2},
+  ],ml,{legend:true,stacked:false,scales:{x:{ticks:{font:{size:7}}},y:{ticks:{font:{size:8}}}}});
+  const listedPeak=listed.indexOf(Math.max(...listed));
+  const unlistedPeak=unlisted.indexOf(Math.max(...unlisted));
+  insights('ins-platcomp',[
+    {color:LISTED_CLR,txt:`Listed peak: ${ml[listedPeak]} · ₹${rnd(listed[listedPeak])}cr — comprising ${listedPct}% of combined WDP GTV`},
+    {color:UNLISTED_CLR,txt:`Unlisted peak: ${ml[unlistedPeak]} · ₹${rnd(unlisted[unlistedPeak])}cr — ${unlistedPct}% of combined; unlisted platform launched ~1 year after listed`},
+  ]);
+})();
+
+// ── Slide 4: Cross-Platform ───────────────────────────────────────────────────
+(function(){
+  const xp=D.cross_platform;
+  if(!xp||!xp.length) return;
+  const totalL=xp.reduce((s,x)=>s+x.listed_total,0);
+  const totalU=xp.reduce((s,x)=>s+x.unlisted_total,0);
+  setEl('xp-count',D.cross_platform_count+' distributors');
+  setEl('xp-combined-gtv','₹'+rnd(totalL+totalU)+'cr');
+  setEl('xp-listed-gtv','₹'+rnd(totalL)+'cr');
+  setEl('xp-unlisted-gtv','₹'+rnd(totalU)+'cr');
+  setEl('xp-top1',xp[0].name.split(' ').slice(0,3).join(' '));
+  const names=xp.map(x=>shortName(x.name,22));
+  hBar('chart-xplatform',names,[
+    {label:'Listed GTV',data:xp.map(x=>x.listed_total),backgroundColor:LISTED_CLR+'cc',borderRadius:2},
+    {label:'Unlisted GTV',data:xp.map(x=>x.unlisted_total),backgroundColor:UNLISTED_CLR+'cc',borderRadius:2},
+  ],{stacked:true,legend:true});
+  insights('ins-xplatform',[
+    {color:BOTH_CLR,txt:`${D.cross_platform_count} WDPs trade on both platforms — top 20 shown here; combined GTV ₹${rnd(totalL+totalU)}cr`},
+    {color:VIOLET,txt:`#1 cross-platform: ${xp[0].name} · listed ₹${xp[0].listed_total}cr + unlisted ₹${xp[0].unlisted_total}cr`},
+  ]);
+})();
+
+// ── Slide 5: Monthly Trend ────────────────────────────────────────────────────
+(function(){
+  const dists=D.distributors_listed;
+  if(!dists||!dists.length) return;
+  const mt=D.wdp_monthly_total,ml=D.month_labels;
+  const peakIdx=mt.indexOf(Math.max(...mt));
+  const listedPeak=D.wdp_monthly_listed.indexOf(Math.max(...D.wdp_monthly_listed));
+  const unlistedPeak=D.wdp_monthly_unlisted.indexOf(Math.max(...D.wdp_monthly_unlisted));
+  setEl('mtrend-total','₹'+D.total_wdp_gtv_cr+'cr');
+  setEl('mtrend-peak',ml[peakIdx]+' · ₹'+rnd(mt[peakIdx])+'cr');
+  setEl('mtrend-lm',ml[ml.length-1]+' · ₹'+rnd(mt[mt.length-1])+'cr');
+  setEl('mtrend-lpeak',ml[listedPeak]+' · ₹'+rnd(D.wdp_monthly_listed[listedPeak])+'cr');
+  setEl('mtrend-upeak',ml[unlistedPeak]+' · ₹'+rnd(D.wdp_monthly_unlisted[unlistedPeak])+'cr');
+  const top5=dists.slice(0,5);
+  const colors5=[PALETTE[0],PALETTE[1],PALETTE[2],PALETTE[3],PALETTE[4]];
+  const top5total=top5.reduce((a,d)=>a.map((v,i)=>v+(d.gtv_monthly[i]||0)),new Array(14).fill(0));
+  const others=mt.map((v,i)=>Math.max(0,rnd(v-top5total[i])));
+  const datasets=[
+    ...top5.map((d,i)=>({label:shortName(d.name,15),data:d.gtv_monthly,backgroundColor:colors5[i]+'bb',borderRadius:2,stack:'s'})),
+    {label:'Others',data:others,backgroundColor:GREY+'88',borderRadius:2,stack:'s'},
+  ];
+  mkChart('chart-monthly-trend',datasets,ml,{stacked:true,legend:true,scales:{x:{stacked:true,ticks:{font:{size:7}}},y:{stacked:true,ticks:{font:{size:8}}}}});
+  insights('ins-mtrend',[
+    {color:BLUE,txt:`Peak month: ${ml[peakIdx]} · ₹${rnd(mt[peakIdx])}cr combined WDP GTV`},
+    {color:TEAL,txt:`Unlisted platform consistently contributes since ${D.month_labels[2]} — growing share of WDP total`},
+  ]);
+})();
+
+// ── Slide 6: Consistency ─────────────────────────────────────────────────────
+(function(){
+  const dists=D.distributors_listed;if(!dists||!dists.length)return;
+  const full=dists.filter(d=>d.active_months>=14).length;
+  const hi=dists.filter(d=>d.active_months>=10).length;
+  const mid=dists.filter(d=>d.active_months>=7).length;
+  const low=dists.filter(d=>d.active_months<=3).length;
+  setEl('cons-full',full+' WDPs');setEl('cons-10',hi+' WDPs');
+  setEl('cons-7',mid+' WDPs');setEl('cons-low',low+' WDPs');
+  const sorted=[...dists].sort((a,b)=>b.active_months-a.active_months);
+  const clr=d=>{if(d.active_months>=14)return GREEN;if(d.active_months>=10)return BLUE;if(d.active_months>=7)return AMBER;if(d.active_months>=4)return '#f97316';return ROSE};
+  hBar('chart-consistency',sorted.map(d=>shortName(d.name,20)),[
+    {data:sorted.map(d=>d.active_months),backgroundColor:sorted.map(d=>clr(d)),borderRadius:2},
+  ],{scales:{x:{max:14,ticks:{font:{size:8}}},y:{ticks:{font:{size:8}}}}});
   insights('ins-consistency',[
-    {color:GREEN,txt:`${alwaysOn} WDPs traded every single month — core reliable base`},
-    {color:ROSE,txt:`${bursty} WDPs active ≤5 months — high-GTV bursty players, likely large bulk trades`},
+    {color:GREEN,txt:`${full} WDPs active all 14 months — reliable recurring volume base`},
+    {color:AMBER,txt:`${low} WDPs active ≤3 months — sporadic / recently onboarded`},
   ]);
 })();
 
-// Individual Distributor Slides
-(function(){
-  const dists=D.distributors,deckEl=document.querySelector('.deck');
-  dists.forEach((d,gi)=>{
-    const bgColor=PALETTE[gi%PALETTE.length];
-    const cid14='c14-'+gi, cid8='c8-'+gi;
-    // Rank badge
+// ── Distributor deep-dive renderer ────────────────────────────────────────────
+function renderDistSlides(distsArr, platformLabel, bgPalette){
+  const deckEl=document.querySelector('.deck');
+  distsArr.forEach((d,gi)=>{
+    const bgColor=bgPalette[gi%bgPalette.length];
+    const c14='c14-'+platformLabel+'-'+gi;
+    const c8='c8-'+platformLabel+'-'+gi;
     let rankHtml;
-    if(d.rank_8wk>=50){
-      rankHtml=`<span class="rank-badge inactive">⊘ inactive 8wk</span>`;
-    }else{
-      const diff=d.rank_all-d.rank_8wk;
-      rankHtml=diff>0?`<span class="rank-badge up">▲${diff} recent</span>`:diff<0?`<span class="rank-badge down">▼${Math.abs(diff)} recent</span>`:`<span class="rank-badge flat">= stable</span>`;
-    }
-    // Inference
-    const allTradeTot=d.trades_monthly.reduce((a,b)=>a+b,0);
-    const avgOrdAll=allTradeTot>0?rnd(d.gtv_total_cr*100/allTradeTot,1):0;
-    const peakGtv=Math.max(...d.gtv_monthly);
-    const peakIdx=d.gtv_monthly.indexOf(peakGtv);
-    const recentSum=d.gtv_monthly.slice(-3).reduce((a,b)=>a+b,0);
-    const prevSum=d.gtv_monthly.slice(-6,-3).reduce((a,b)=>a+b,0);
-    const trendDir=recentSum>prevSum*1.15?'↗ Accelerating':recentSum<prevSum*0.85?'↘ Slowing':'→ Steady';
-    let inf1;
-    if(d.gtv_lw_cr>0){
-      const iss=d.top_issuer_lw&&d.top_issuer_lw!=='N/A'?` · ${d.top_issuer_lw.split(' ').slice(0,3).join(' ')} ${d.top_issuer_pct_lw>0?d.top_issuer_pct_lw+'%':''}` :'';
-      inf1=`Active last week · ₹${d.gtv_lw_cr}cr · ${d.trades_lw} trade${d.trades_lw!==1?'s':''}${d.avg_order_l_lw>0?' · ₹'+d.avg_order_l_lw+'L avg':''}${iss}`;
-    }else if(d.gtv_8wk_cr>0){
-      const aw=d.gtv_weekly_8.filter(v=>v>0).length;
-      inf1=`No trades last week · ₹${d.gtv_8wk_cr}cr over ${aw}/8 recent weeks`;
-    }else{
-      const lastArr=d.gtv_monthly.map((v,i)=>({v,i})).filter(x=>x.v>0);
-      const lastMo=lastArr.length?D.month_labels[lastArr[lastArr.length-1].i]:'N/A';
-      inf1=`Inactive last 8 weeks · last active ${lastMo}`;
-    }
-    const inf2=`${trendDir} trend · Peak ${D.month_labels[peakIdx]} ₹${peakGtv}cr · All-time avg ₹${avgOrdAll>0?avgOrdAll+'L':'N/A'}/trade · ${d.active_months}/${D.n_months} months active`;
-    const fmtIss=(n,p)=>n&&n!=='N/A'?n.split(' ').slice(0,3).join(' ')+(p>0?' · '+p+'%':''):'—';
-    const issLWDisp=fmtIss(d.top_issuer_lw,d.top_issuer_pct_lw);
-    const iss8Disp=fmtIss(d.top_issuer_8wk,d.top_issuer_pct_8wk);
-    const issAllDisp=fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime);
-    const fmtTop3=(arr,fallback)=>arr&&arr.length?arr.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${i+1}. ${x.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">₹${x.gtv_cr}cr · ${x.pct}%</span></div>`).join(''):`<div class="ds-sv-xs">${fallback}</div>`;
-    const top3Iss=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3);
-    const issTop3Html=`<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last Week</div>${fmtTop3(d.issuers_lw,issLWDisp)}</div>`+`<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last 8 Weeks</div>${fmtTop3(d.issuers_8wk,iss8Disp)}</div>`+(top3Iss.length?`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuers · Since Apr-25</div>`+top3Iss.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">₹${tot}cr · ${pct}%</span></div>`;}).join('')+'</div>':`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuer · Since Apr-25</div><div class="ds-sv-xs">${issAllDisp}</div></div>`);
-    const yb=d.yield_buckets||{};const ybEntries=Object.entries(yb).filter(([k,v])=>v.pct>0);const inf4html=ybEntries.length?`<div class="ds-inf"><div style="opacity:.6;font-size:.54rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Yield mix</div>`+ybEntries.map(([k,v])=>`<div style="display:flex;justify-content:space-between;gap:4px;line-height:1.65;font-size:.6rem"><span>${k}</span><span style="opacity:.85;white-space:nowrap">₹${v.gtv_cr}cr · ${v.pct}%</span></div>`).join('')+'</div>':'';
-    // Consistency strip
-    const consHtml=d.gtv_monthly.map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${D.month_labels[mi]}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
-    const rank8Disp=d.rank_8wk<50?'#'+d.rank_8wk:'Inactive';
-    const wdpShare=rnd(d.gtv_total_cr/D.total_wdp_gtv_cr*100,1);
+    if(d.rank_8wk>=50){rankHtml='<span class="rank-badge inactive">\u229b inactive 8wk</span>';}
+    else{const diff=d.rank_all-d.rank_8wk;rankHtml=diff>0?`<span class="rank-badge up">\u25b2${diff} recent</span>`:diff<0?`<span class="rank-badge down">\u25bc${Math.abs(diff)} recent</span>`:`<span class="rank-badge flat">= stable</span>`;}
+    const issTop3Html=buildIssuerHtml(d);
+    const consHtml=(d.gtv_monthly||[]).map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${(D.month_labels[mi]||'')}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
     const slideDiv=document.createElement('div');
     slideDiv.className='slide dist-slide';
-    slideDiv.innerHTML=`
-      <div class="ds-left" style="background:${bgColor}">
-        <div class="ds-rank-row">
-          <span class="ds-rank">#${d.rank_all} of 20</span>
-          <span class="ds-slide-count">WDP ${gi+1}/20</span>
-          ${rankHtml}
-        </div>
-        <div class="ds-name">${d.name}</div>
-        <div class="ds-period">${D.period_label} · HTM · WDP</div>
-        <div class="ds-stat-grid">
-          <div><div class="ds-sl">GTV Since 1 APR 2025</div><div class="ds-sv">₹${d.gtv_total_cr}cr</div></div>
-          <div><div class="ds-sl">Share of WDP</div><div class="ds-sv">${wdpShare}%</div></div>
-          <div><div class="ds-sl">8-Week GTV</div><div class="ds-sv">₹${d.gtv_8wk_cr}cr</div></div>
-          <div><div class="ds-sl">Last Week GTV</div><div class="ds-sv">₹${d.gtv_lw_cr}cr</div></div>
-          <div><div class="ds-sl">LW Trades</div><div class="ds-sv">${d.trades_lw}</div></div>
-          <div><div class="ds-sl">Avg Order (LW)</div><div class="ds-sv">${d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':'—'}</div></div>
-          <div><div class="ds-sl">All-time Trades</div><div class="ds-sv">${allTradeTot}</div></div>
-          <div><div class="ds-sl">Avg Order (All)</div><div class="ds-sv">${avgOrdAll>0?'₹'+avgOrdAll+'L':'—'}</div></div>
-        </div>
-        <hr class="ds-divider">
-        ${issTop3Html}
-        <div class="ds-infer">
-          <div class="ds-inf">${inf1}</div>
-          <div class="ds-inf">${inf2}</div>
-          ${inf4html}
-        </div>
-      </div>
-      <div class="ds-right">
-        <div class="ds-chart-lbl">Monthly GTV · ${D.period_label} (₹cr)</div>
-        <div class="ds-top-chart"><canvas id="${cid14}"></canvas></div>
-        <div class="ds-bottom">
-          <div class="ds-bottom-chart-wrap">
-            <div class="ds-chart-lbl">Last 8 Weeks GTV (₹cr) · week of ${D.latest_week} is latest</div>
-            <div class="ds-bottom-chart"><canvas id="${cid8}"></canvas></div>
-          </div>
-          <div class="ds-stats-panel">
-            <div class="ds-sp-item">
-              <div class="ds-spl">8-Week Rank · All-time Rank</div>
-              <div class="ds-spv-sm">${rank8Disp} recent · #${d.rank_all} all-time</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Peak Month</div>
-              <div class="ds-spv-sm">${D.month_labels[peakIdx]} · ₹${peakGtv}cr</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Recent Trend</div>
-              <div class="ds-spv-sm">${trendDir}</div>
-            </div>
-            <div class="ds-sp-item">
-              <div class="ds-spl">Monthly Activity · ${d.active_months}/${D.n_months}</div>
-              <div class="cons-strip">${consHtml}</div>
-            </div>
-          </div>
-        </div>
-      </div>`;
+    slideDiv.innerHTML=`<div class="ds-left" style="background:${bgColor}"><div class="ds-rank-row"><div class="ds-rank">#${d.rank_all}</div><div class="ds-rank-sub">${platformLabel} · ${rankHtml}</div></div><div class="ds-name">${d.name}</div><div class="ds-period">${D.period_label} · HTM · ${platformLabel}</div><div class="ds-stat-grid"><div><div class="ds-sl">All-time GTV</div><div class="ds-sv">\u20b9${d.gtv_total_cr}cr</div></div><div><div class="ds-sl">8-week GTV</div><div class="ds-sv">\u20b9${d.gtv_8wk_cr}cr</div></div><div><div class="ds-sl">Last week GTV</div><div class="ds-sv">\u20b9${d.gtv_lw_cr}cr</div></div><div><div class="ds-sl">Trades (LW)</div><div class="ds-sv">${d.trades_lw}</div></div><div><div class="ds-sl">Avg order (LW)</div><div class="ds-sv">\u20b9${d.avg_order_l_lw}L</div></div><div><div class="ds-sl">Active months</div><div class="ds-sv">${d.active_months}/${D.n_months}</div></div></div><hr class="ds-divider"><div class="ds-infer"><div class="ds-inf">Top Issuer LW: ${d.top_issuer_lw} (${d.top_issuer_pct_lw}%)</div><div class="ds-inf">Top Issuer 8wk: ${d.top_issuer_8wk} (${d.top_issuer_pct_8wk}%)</div></div></div><div class="ds-right"><div class="ds-chart-lbl">Monthly GTV \u00b7 ${D.n_months}-month view</div><div class="ds-top-chart"><canvas id="${c14}"></canvas></div><div class="ds-bottom"><div class="ds-bottom-chart-wrap"><div class="ds-chart-lbl">Weekly GTV \u00b7 Last 8 weeks</div><div class="ds-bottom-chart"><canvas id="${c8}"></canvas></div></div><div class="ds-stats-panel"><div class="ds-chart-lbl" style="margin-bottom:.4rem">Issuer breakdown</div>${issTop3Html}<hr style="border:none;border-top:1px solid #e2e8f0;margin:.3rem 0"><div style="font-size:.52rem;color:#94a3b8;margin-bottom:.25rem">Activity strip · ${D.n_months} months</div><div class="cons-strip">${consHtml}</div></div></div></div>`;
     deckEl.appendChild(slideDiv);
     requestAnimationFrame(()=>{
-      const avg8=rnd(d.gtv_weekly_8.reduce((a,b)=>a+b,0)/8,2);
-      const el14=document.getElementById(cid14);
-      if(el14){
-        const barC=d.gtv_monthly.map(v=>v>0?bgColor+'cc':'#e2e8f0');
-        new Chart(el14,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:barC,borderColor:d.gtv_monthly.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
-      }
-      const el8=document.getElementById(cid8);
-      if(el8){
-        const wkC=d.gtv_weekly_8.map(v=>v>=avg8&&v>0?bgColor:v>0?bgColor+'77':'#e2e8f0');
-        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
-      }
+      const lbl14=D.month_labels||[];
+      const c=document.getElementById(c14);if(c){const ex=Chart.getChart(c);if(ex)ex.destroy();new Chart(c,{type:'bar',data:{labels:lbl14,datasets:[{data:d.gtv_monthly,backgroundColor:d.gtv_monthly.map(v=>v>0?bgColor+'cc':'#e2e8f0'),borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.y+'cr'}}},scales:{x:{ticks:{font:{size:7}}},y:{ticks:{font:{size:8}}}},animation:false}});}
+      const c2=document.getElementById(c8);if(c2){const ex=Chart.getChart(c2);if(ex)ex.destroy();const avg8=d.gtv_8wk_cr/8;new Chart(c2,{type:'bar',data:{labels:D.week_labels_8||[],datasets:[{type:'bar',data:d.gtv_weekly_8,backgroundColor:d.gtv_weekly_8.map(v=>v>0?(v>=avg8?bgColor+'cc':bgColor+'77'):'#e2e8f0'),borderRadius:2},{type:'line',data:new Array(8).fill(avg8),borderColor:bgColor,borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.y+'cr'}}},scales:{x:{ticks:{font:{size:7}}},y:{ticks:{font:{size:7}}}},animation:false}});}
     });
   });
-  initNav();showSlide(0);
+}
+
+function buildIssuerHtml(d){
+  const fmtTop3=(arr,fb)=>arr&&arr.length?arr.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${i+1}. ${x.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">\u20b9${x.gtv_cr}cr \u00b7 ${x.pct}%</span></div>`).join(''):`<div class="ds-sv-xs">${fb}</div>`;
+  const fmtIss=(name,pct)=>name&&name!=='N/A'?`${name.split(' ').slice(0,3).join(' ')} (${pct}%)`:'—';
+  const issLWDisp=fmtIss(d.top_issuer_lw,d.top_issuer_pct_lw);
+  const iss8Disp=fmtIss(d.top_issuer_8wk,d.top_issuer_pct_8wk);
+  const top3=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3);
+  return `<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last Week</div>${fmtTop3(d.issuers_lw,issLWDisp)}</div>`+`<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers · Last 8 Weeks</div>${fmtTop3(d.issuers_8wk,iss8Disp)}</div>`+(top3.length?`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuers · Since Apr-25</div>`+top3.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">\u20b9${tot}cr \u00b7 ${pct}%</span></div>`;}).join('')+'</div>':`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuer · All-Time</div><div class="ds-sv-xs">${fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime)}</div></div>`);
+}
+
+// Render listed deep-dives
+const listedPalette=['#1d4ed8','#1e40af','#1e3a8a','#2563eb','#3b82f6','#1d4ed8','#1e40af','#1e3a8a','#2563eb','#3b82f6','#1d4ed8','#1e40af','#1e3a8a','#2563eb','#3b82f6','#1d4ed8','#1e40af','#1e3a8a','#2563eb','#3b82f6'];
+renderDistSlides(D.distributors_listed,'Listed',listedPalette);
+
+// Add unlisted section cover
+(function(){
+  const deckEl=document.querySelector('.deck');
+  const div=document.createElement('div');
+  div.className='slide sec-div';
+  div.style.cssText='background:linear-gradient(135deg,#134e4a,#065f46);color:#fff';
+  div.innerHTML=`<div style="font-size:.6rem;opacity:.4;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem">Section</div><div style="font-size:2.2rem;font-weight:800;margin-bottom:.6rem">Unlisted Platform</div><div style="font-size:.9rem;opacity:.6;margin-bottom:1.5rem">Top 20 WDP deep-dives \u00b7 Ranked by all-time unlisted GTV</div><div class="cover-metrics"><div class="cover-metric"><div class="cm-label">Unlisted WDP GTV</div><div class="cm-val">\u20b9${D.total_wdp_gtv_unlisted_cr}cr</div></div><div class="cover-metric"><div class="cm-label">Top 20 distributors</div><div class="cm-val">Ranked by all-time unlisted GTV</div></div></div>`;
+  deckEl.appendChild(div);
 })();
+
+// Render unlisted deep-dives
+const unlistedPalette=['#065f46','#047857','#059669','#10b981','#34d399','#065f46','#047857','#059669','#10b981','#34d399','#065f46','#047857','#059669','#10b981','#34d399','#065f46','#047857','#059669','#10b981','#34d399'];
+renderDistSlides(D.distributors_unlisted,'Unlisted',unlistedPalette);
+
+// Init navigation after all slides are inserted
+initNav();
+showSlide(0);
 </script>
 </body>
 </html>
