@@ -280,12 +280,12 @@
     <div class="cover-eyebrow">Yubi Wealth · BtoBtoC</div>
     <h1>FD Engagement<br>Weekly Review</h1>
     <div class="cover-sub">Distributor · Investor · Orders</div>
-    <div class="cover-period">Week ending May 17, 2026 &nbsp;·&nbsp; 8-week trailing view (from Mar 23)</div>
+    <div class="cover-period">Week ending May 24, 2026 &nbsp;·&nbsp; 8-week trailing view (from Mar 30)</div>
     <div class="cover-metrics">
       <div class="cover-metric">
         <div class="cm-label">Onboarded Distributors</div>
-        <div class="cm-val">9</div>
-        <div class="cm-wow down">▼ -10% vs prior wk</div>
+        <div class="cm-val">6</div>
+        <div class="cm-wow down">▼ -33% vs prior wk</div>
       </div>
       <div class="cover-metric">
         <div class="cm-label">Onboarded Investors</div>
@@ -311,11 +311,11 @@
       <div class="slide-num">FD · Slide 01</div>
       <div class="slide-ttl">Weekly Onboarded Distributors</div>
       <div class="slide-sub">Count of onboarded distributors per week</div>
-      <div class="hero-num">9</div>
+      <div class="hero-num">6</div>
       <div class="hero-lbl">Last week onboarded</div>
-      <div class="hero-badge down">▼ -10% vs prior wk</div>
+      <div class="hero-badge down">▼ -33% vs prior wk</div>
       <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">10</span></div>
+        <div class="stat-item"><span class="si-lbl">Prior Week</span><span class="si-val">9</span></div>
         <div class="stat-item"><span class="si-lbl">Peak (8-wk)</span><span class="si-val">11</span></div>
         <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">7.9</span></div>
       </div>
@@ -337,11 +337,11 @@
       <div class="slide-num">FD · Slide 02</div>
       <div class="slide-ttl">Onboarded vs Onboarding-Pending Distributors</div>
       <div class="slide-sub">Onboarded vs onboarding-pending</div>
-      <div class="hero-num">90%</div>
+      <div class="hero-num">86%</div>
       <div class="hero-lbl">Onboarded share (last wk)</div>
-      <div class="hero-badge flat">9 onboarded · 1 pending</div>
+      <div class="hero-badge flat">6 onboarded · 1 pending</div>
       <div class="stat-list">
-        <div class="stat-item"><span class="si-lbl">Onboarded (last wk)</span><span class="si-val">9</span></div>
+        <div class="stat-item"><span class="si-lbl">Onboarded (last wk)</span><span class="si-val">6</span></div>
         <div class="stat-item"><span class="si-lbl">Pending (last wk)</span><span class="si-val">1</span></div>
         <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">3</span></div>
       </div>
@@ -369,7 +369,7 @@
       <div class="stat-list">
         <div class="stat-item"><span class="si-lbl">Peak (8-wk)</span><span class="si-val">6</span></div>
         <div class="stat-item"><span class="si-lbl">Second peak</span><span class="si-val">5</span></div>
-        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">1.75</span></div>
+        <div class="stat-item"><span class="si-lbl">8-Wk Average</span><span class="si-val">1.6</span></div>
       </div>
     </div>
     <div class="right-panel">
@@ -395,7 +395,7 @@
       <div class="stat-list">
         <div class="stat-item"><span class="si-lbl">Peak Onboarded</span><span class="si-val">6</span></div>
         <div class="stat-item"><span class="si-lbl">Peak Pending</span><span class="si-val">2</span></div>
-        <div class="stat-item"><span class="si-lbl">Pending : Onboarded</span><span class="si-val">5 : 14</span></div>
+        <div class="stat-item"><span class="si-lbl">Pending : Onboarded</span><span class="si-val">3 : 13</span></div>
       </div>
     </div>
     <div class="right-panel">
@@ -877,7 +877,7 @@ function initNav(){
 
 
 // ══════════════════════════════════════════════════════════════ FD SLIDES ══
-const FD_LABELS = ['Mar 23','Mar 30','Apr 06','Apr 13','Apr 20','Apr 27','May 04','May 11'];
+const FD_LABELS = ['Mar 30','Apr 06','Apr 13','Apr 20','Apr 27','May 04','May 11','May 18'];
 const FD_GRID = '#f1f5f9';
 function fdBarOpts(maxY) {
   return {
@@ -892,35 +892,35 @@ function fdBarOpts(maxY) {
 }
 new Chart(document.getElementById('chart-fd-dist'), {
   type: 'bar',
-  data: { labels: FD_LABELS, datasets: [{ data: [6, 1, 8, 11, 9, 9, 10, 9], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
+  data: { labels: FD_LABELS, datasets: [{ data: [1, 8, 11, 9, 9, 10, 9, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false }] },
   options: fdBarOpts(12)
 });
 new Chart(document.getElementById('chart-fd-distpending'), {
   type: 'bar',
   data: { labels: FD_LABELS, datasets: [
-    { label: 'Onboarded', data: [6, 1, 8, 11, 9, 9, 10, 9], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
-    { label: 'Pending',   data: [0, 0, 0,  3, 2, 0,  0, 1], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+    { label: 'Onboarded', data: [1, 8, 11, 9, 9, 10, 9, 6], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'Pending',   data: [0, 0,  3, 2, 0,  0, 1, 1], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
   ]},
   options: fdBarOpts(12)
 });
 new Chart(document.getElementById('chart-fd-inv'), {
   type: 'bar',
-  data: { labels: FD_LABELS, datasets: [{ data: [1, 1, 5, 6, 1, 0, 0, 0], backgroundColor: '#10b981', borderRadius: 4, borderSkipped: false }] },
+  data: { labels: FD_LABELS, datasets: [{ data: [1, 5, 6, 1, 0, 0, 0, 0], backgroundColor: '#10b981', borderRadius: 4, borderSkipped: false }] },
   options: fdBarOpts(8)
 });
 new Chart(document.getElementById('chart-fd-invpending'), {
   type: 'bar',
   data: { labels: FD_LABELS, datasets: [
-    { label: 'New Onboarded', data: [1, 1, 5, 6, 1, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
-    { label: 'Pending',       data: [2, 0, 2, 0, 1, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+    { label: 'New Onboarded', data: [1, 5, 6, 1, 0, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'Pending',       data: [0, 2, 0, 1, 0, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
   ]},
   options: fdBarOpts(8)
 });
 new Chart(document.getElementById('chart-fd-orders'), {
   type: 'bar',
   data: { labels: FD_LABELS, datasets: [
-    { label: 'Total Orders', data: [1, 1, 14, 12, 0, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
-    { label: 'FD Booked',    data: [0, 0,  1,  2, 0, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
+    { label: 'Total Orders', data: [1, 14, 12, 0, 0, 0, 0, 0], backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false },
+    { label: 'FD Booked',    data: [0,  1,  2, 0, 0, 0, 0, 0], backgroundColor: '#ef4444', borderRadius: 4, borderSkipped: false }
   ]},
   options: fdBarOpts(16)
 });
