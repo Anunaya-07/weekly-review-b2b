@@ -471,7 +471,7 @@ function shortName(n,len=20){
 function buildIssuerHtml(d){
   const fmtTop3=(arr,fb)=>arr&&arr.length?arr.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${i+1}. ${x.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">\u20b9${x.gtv_cr}cr \u00b7 ${x.pct}%</span></div>`).join(''):`<div class="ds-sv-xs">${fb}</div>`;
   const fmtIss=(name,pct)=>name&&name!=='N/A'?`${name.split(' ').slice(0,3).join(' ')} (${pct}%)`:'—';
-  const top3=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3);
+  const top3=(d.issuers_m||[]).filter(i=>i.name!=='Others'&&i.vals.reduce((a,b)=>a+b,0)>=0.01).slice(0,3);
   return `<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers \u00b7 Last Week</div>${fmtTop3(d.issuers_lw,fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime))}</div>`+`<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers \u00b7 Last 8 Weeks</div>${fmtTop3(d.issuers_8wk,fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime))}</div>`+(top3.length?`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuers \u00b7 Last 1 Year</div>`+top3.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">\u20b9${tot}cr \u00b7 ${pct}%</span></div>`;}).join('')+'</div>':`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuer \u00b7 All-Time</div><div class="ds-sv-xs">${fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime)}</div></div>`);
 }
 
