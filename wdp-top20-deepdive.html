@@ -514,7 +514,7 @@ function buildInsightsHtml(d,bgColor){
     const ti=d.top_issuer_alltime.split(' ').slice(0,3).join(' ');
     ins.push(`Top issuer all-time: <span style="color:${bgColor};font-weight:600">${ti}</span> at ${d.top_issuer_pct_alltime}% of GTV`);
   }
-  return ins.map(t=>`<div style="font-size:.58rem;line-height:1.55;margin-bottom:.38rem;color:#cbd5e1">${t}</div>`).join('');
+  return ins.map(t=>`<div style="font-size:.58rem;line-height:1.55;margin-bottom:.38rem;color:#1e293b">${t}</div>`).join('');
 }
 
 function renderCombinedSlides(distsArr){
