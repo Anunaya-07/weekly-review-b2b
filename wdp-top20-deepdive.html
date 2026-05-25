@@ -475,6 +475,48 @@ function buildIssuerHtml(d){
   return `<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers \u00b7 Last Week</div>${fmtTop3(d.issuers_lw,fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime))}</div>`+`<div style="margin-bottom:3px"><div class="ds-sl">Top Issuers \u00b7 Last 8 Weeks</div>${fmtTop3(d.issuers_8wk,fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime))}</div>`+(top3.length?`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuers \u00b7 Last 1 Year</div>`+top3.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return `<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${idx+1}. ${iss.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">\u20b9${tot}cr \u00b7 ${pct}%</span></div>`;}).join('')+'</div>':`<div style="margin-bottom:6px"><div class="ds-sl">Top Issuer \u00b7 All-Time</div><div class="ds-sv-xs">${fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime)}</div></div>`);
 }
 
+function buildInsightsHtml(d,bgColor){
+  const ins=[];
+  // Platform mix (only when on both)
+  if(d.platform_tag==='both'&&d.gtv_total_cr>0){
+    const lp=Math.round(d.gtv_listed_cr/d.gtv_total_cr*100);
+    ins.push(`GTV split: <span style="color:#3b82f6;font-weight:600">${lp}% listed</span> / <span style="color:#14b8a6;font-weight:600">${100-lp}% unlisted</span>`);
+  }
+  // Trend: last 4 weeks vs prior 4 weeks
+  const wl=d.gtv_weekly_listed||[],wu=d.gtv_weekly_unlisted||[];
+  const weekly=wl.map((v,i)=>v+(wu[i]||0));
+  if(weekly.length===8){
+    const last4=weekly.slice(4).reduce((a,b)=>a+b,0);
+    const prev4=weekly.slice(0,4).reduce((a,b)=>a+b,0);
+    if(prev4>0){
+      const chg=Math.round((last4-prev4)/prev4*100);
+      const col=chg>=0?'#22c55e':'#f87171';
+      ins.push(`<span style="color:${col};font-weight:600">${chg>=0?'↑':'↓'} ${Math.abs(chg)}%</span> trend: last 4 wks vs prior 4 wks`);
+    } else if(last4>0){
+      ins.push(`<span style="color:#22c55e;font-weight:600">New activity</span> in last 4 weeks (none prior)`);
+    }
+  }
+  // Last week vs 8-week average
+  if(d.gtv_8wk_cr>0){
+    const avg=Math.round(d.gtv_8wk_cr/8*100)/100;
+    const lwPct=Math.round((d.gtv_lw_cr-avg)/avg*100);
+    const col=lwPct>=0?'#22c55e':'#f87171';
+    if(Math.abs(lwPct)>=10) ins.push(`Last week <span style="color:${col};font-weight:600">${Math.abs(lwPct)}% ${lwPct>=0?'above':'below'}</span> 8-week avg (₹${avg}cr/wk)`);
+    else ins.push(`Last week in line with 8-week avg (₹${avg}cr/wk)`);
+  }
+  // Consistency
+  const actPct=Math.round(d.active_months/D.n_months*100);
+  const consLbl=actPct>=90?'Very consistent':actPct>=70?'Fairly consistent':actPct>=50?'Moderate activity':'Sporadic activity';
+  const consCol=actPct>=70?'#22c55e':actPct>=50?'#f59e0b':'#f87171';
+  ins.push(`<span style="color:${consCol};font-weight:600">${consLbl}</span>: active ${d.active_months}/${D.n_months} months`);
+  // Issuer concentration
+  if(d.top_issuer_alltime&&d.top_issuer_alltime!=='N/A'){
+    const ti=d.top_issuer_alltime.split(' ').slice(0,3).join(' ');
+    ins.push(`Top issuer all-time: <span style="color:${bgColor};font-weight:600">${ti}</span> at ${d.top_issuer_pct_alltime}% of GTV`);
+  }
+  return ins.map(t=>`<div style="font-size:.58rem;line-height:1.55;margin-bottom:.38rem;color:#cbd5e1">${t}</div>`).join('');
+}
+
 function renderCombinedSlides(distsArr){
   const deckEl=document.querySelector('.deck');
   const PLAT_CLR={listed:'#3b82f6',unlisted:'#14b8a6',both:'#8b5cf6'};
@@ -486,13 +528,14 @@ function renderCombinedSlides(distsArr){
     const c14='c14-comb-'+gi;
     const c8='c8-comb-'+gi;
     const issHtml=buildIssuerHtml(d);
+    const insightsHtml=buildInsightsHtml(d,bgColor);
     const consHtml=(d.gtv_monthly||[]).map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${(D.month_labels[mi]||'')}: ${v>0?'\u20b9'+v+'cr':'inactive'}"></div>`).join('');
     const platBadge=`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:.58rem;font-weight:700;background:${bgColor}22;color:${bgColor};border:1px solid ${bgColor}55;margin-bottom:.35rem">${platLbl}</span>`;
     const lGtv=d.gtv_listed_cr>0?`<span style="color:#3b82f6">\u20b9${d.gtv_listed_cr}cr</span>`:'<span style="opacity:.4">—</span>';
     const uGtv=d.gtv_unlisted_cr>0?`<span style="color:#14b8a6">\u20b9${d.gtv_unlisted_cr}cr</span>`:'<span style="opacity:.4">—</span>';
     const slideDiv=document.createElement('div');
     slideDiv.className='slide dist-slide';
-    slideDiv.innerHTML=`<div class="ds-left" style="background:#0f172a;color:#fff"><div class="ds-rank-row"><div class="ds-rank" style="color:${bgColor}">#${d.rank}</div><div class="ds-rank-sub">Combined all-time rank</div></div><div>${platBadge}</div><div class="ds-name">${d.name}</div><div class="ds-period">${D.period_label} \u00b7 HTM \u00b7 ${platLbl}</div><div class="ds-stat-grid"><div><div class="ds-sl">All-time GTV</div><div class="ds-sv">\u20b9${d.gtv_total_cr}cr</div></div><div><div class="ds-sl">Listed GTV</div><div class="ds-sv">${lGtv}</div></div><div><div class="ds-sl">Unlisted GTV</div><div class="ds-sv">${uGtv}</div></div><div><div class="ds-sl">8-week GTV</div><div class="ds-sv">\u20b9${d.gtv_8wk_cr}cr</div></div><div><div class="ds-sl">Last week GTV</div><div class="ds-sv">\u20b9${d.gtv_lw_cr}cr</div></div><div><div class="ds-sl">Active months</div><div class="ds-sv">${d.active_months}/${D.n_months}</div></div></div><hr class="ds-divider"><div class="ds-infer"><div class="ds-inf">Top Issuer (all-time): ${d.top_issuer_alltime} (${d.top_issuer_pct_alltime}%)</div></div></div><div class="ds-right"><div class="ds-chart-lbl">Monthly GTV \u00b7 Last 12 months \u00b7 listed (blue) + unlisted (teal)</div><div class="ds-top-chart"><canvas id="${c14}"></canvas></div><div class="ds-bottom"><div class="ds-bottom-chart-wrap"><div class="ds-chart-lbl">Weekly GTV \u00b7 Last 8 weeks \u00b7 stacked by platform</div><div class="ds-bottom-chart"><canvas id="${c8}"></canvas></div></div><div class="ds-stats-panel"><div class="ds-chart-lbl" style="margin-bottom:.4rem">Issuer breakdown</div>${issHtml}<hr style="border:none;border-top:1px solid #e2e8f0;margin:.3rem 0"><div style="font-size:.52rem;color:#94a3b8;margin-bottom:.25rem">Activity strip \u00b7 ${D.n_months} months</div><div class="cons-strip">${consHtml}</div></div></div></div>`;
+    slideDiv.innerHTML=`<div class="ds-left" style="background:#0f172a;color:#fff"><div class="ds-rank-row"><div class="ds-rank" style="color:${bgColor}">#${d.rank}</div><div class="ds-rank-sub">Combined all-time rank</div></div><div>${platBadge}</div><div class="ds-name">${d.name}</div><div class="ds-period">${D.period_label} \u00b7 HTM \u00b7 ${platLbl}</div><div class="ds-stat-grid"><div><div class="ds-sl">All-time GTV</div><div class="ds-sv">\u20b9${d.gtv_total_cr}cr</div></div><div><div class="ds-sl">Listed GTV</div><div class="ds-sv">${lGtv}</div></div><div><div class="ds-sl">Unlisted GTV</div><div class="ds-sv">${uGtv}</div></div><div><div class="ds-sl">8-week GTV</div><div class="ds-sv">\u20b9${d.gtv_8wk_cr}cr</div></div><div><div class="ds-sl">Last week GTV</div><div class="ds-sv">\u20b9${d.gtv_lw_cr}cr</div></div><div><div class="ds-sl">Active months</div><div class="ds-sv">${d.active_months}/${D.n_months}</div></div></div><hr class="ds-divider"><div class="ds-chart-lbl" style="margin-bottom:.3rem;color:#94a3b8">Issuer breakdown</div>${issHtml}</div><div class="ds-right"><div class="ds-chart-lbl">Monthly GTV \u00b7 Last 12 months \u00b7 listed (blue) + unlisted (teal)</div><div class="ds-top-chart"><canvas id="${c14}"></canvas></div><div class="ds-bottom"><div class="ds-bottom-chart-wrap"><div class="ds-chart-lbl">Weekly GTV \u00b7 Last 8 weeks \u00b7 stacked by platform</div><div class="ds-bottom-chart"><canvas id="${c8}"></canvas></div></div><div class="ds-stats-panel"><div class="ds-chart-lbl" style="margin-bottom:.4rem">Key Insights</div>${insightsHtml}<hr style="border:none;border-top:1px solid #e2e8f0;margin:.3rem 0"><div style="font-size:.52rem;color:#94a3b8;margin-bottom:.25rem">Activity strip \u00b7 ${D.n_months} months</div><div class="cons-strip">${consHtml}</div></div></div></div>`;
     deckEl.appendChild(slideDiv);
     requestAnimationFrame(()=>{
       const lbl14=(D.month_labels||[]).slice(-12);
