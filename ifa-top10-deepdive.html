@@ -311,6 +311,10 @@
           <span class="si-lbl" style="color:#fbbf24;font-weight:600;">Never traded (onbd Apr 25+)</span>
           <span class="si-val" style="color:#fbbf24;" id="s2-never-traded">—</span>
         </div>
+        <div class="stat-item" style="border:1px solid rgba(251,191,36,.5);background:rgba(251,191,36,.15);border-radius:5px;padding:6px 8px;margin-top:4px;">
+          <span class="si-lbl" style="color:#fbbf24;font-weight:600;">Never traded (Biz team · 460)</span>
+          <span class="si-val" style="color:#fbbf24;">202 of 460 (44%)</span>
+        </div>
         <div class="takeaway-box" id="tw-s2"></div>
       </div>
     </div>
@@ -849,11 +853,13 @@ function initNav(){
   insights('ins-s2',[
     {color:TEAL,txt:`IFA onboarding is ${nd.this>=nd.avg?'on track':'below average'} at ${num(nd.this)} new IFAs this week vs 8-wk avg of ${nd.avg}/wk. New additions grow the pipeline but activation velocity must improve significantly.`},
     {color:AMBER,txt:`${ntApr25Pct}% dormant (Apr 25+ cohort) — ${num(ntApr25)} of ${num(postApr25)} IFAs onboarded since Apr 2025 have never placed a trade. All-time, ${num(neverTraded)} of ${num(D.total_dists_onboarded)} (${neverPct}%) IFAs are dormant. Converting even 10% would add ~75 active IFAs.`},
+    {color:ROSE,txt:`Business team's 460-distributor list: 202 (44%) have never traded. These represent a prioritised activation target — focused outreach on this cohort could meaningfully accelerate traded-distributor count.`},
   ]);
   takeaways('tw-s2',[
     `${num(nd.this)} new IFAs last wk vs 8-wk avg ${nd.avg}/wk`,
     `Only ${act8} of ${num(D.total_dists_onboarded)} onboarded IFAs active in last 8 wks`,
     `⚠ ${num(ntApr25)}/${num(postApr25)} IFAs (Apr 25+) dormant — ${ntApr25Pct}% never traded`,
+    `Biz team list: 202 of 460 distributors (44%) never traded`,
   ]);
 })();
 
