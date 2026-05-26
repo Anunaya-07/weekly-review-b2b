@@ -21,9 +21,17 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          exclude_assets: '.github,.git'
+      - name: Deploy to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          # Stage all HTML files and assets for deployment
+          cp -r . /tmp/gh-deploy
+          cd /tmp/gh-deploy
+          rm -rf .git .github
+          git init
+          git add .
+          git commit -m "Deploy from ${GITHUB_SHA::8}"
+          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/Anunaya-07/weekly-review-b2b.git" HEAD:gh-pages
