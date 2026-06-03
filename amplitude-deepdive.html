@@ -75,8 +75,8 @@
       <div class="cm-val" id="cv-wad">&ndash;</div>
     </div>
     <div class="cover-metric">
-      <div class="cm-label">FD Bookings (Last Week)</div>
-      <div class="cm-val" id="cv-fd">&ndash;</div>
+      <div class="cm-label">New Signups (Last Week)</div>
+      <div class="cm-val" id="cv-signups">&ndash;</div>
     </div>
     <div class="cover-metric">
       <div class="cm-label">Platform Health</div>
@@ -141,34 +141,10 @@
   </div>
 </div>
 
-<!-- ── Slide 3: FD Product Usage ──────────────────────────────────────── -->
-<div class="slide two-col">
-  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#4f46e5 100%)">
-    <div class="slide-num">Slide 03</div>
-    <div class="slide-ttl">FD Product Usage</div>
-    <div class="slide-sub">Explore &rarr; booking funnel &middot; client invites</div>
-    <div class="hero-lbl">FD Bookings (Last Week)</div>
-    <div class="hero-num" id="s3-fd">&ndash;</div>
-    <div class="hero-badge" id="s3-fd-badge">&ndash;</div>
-    <div class="stat-list">
-      <div class="stat-item"><span class="si-lbl">Prev Week Bookings</span><span class="si-val" id="s3-pw-fd">&ndash;</span></div>
-      <div class="stat-item"><span class="si-lbl">Booking Success Rate</span><span class="si-val" id="s3-book-rate">&ndash;</span></div>
-      <div class="stat-item"><span class="si-lbl">Client Invite Rate</span><span class="si-val" id="s3-inv-rate">&ndash;</span></div>
-      <div class="takeaway-box" id="s3-takeaway"><div class="tw-title">Key Takeaways</div></div>
-    </div>
-  </div>
-  <div class="right-panel" style="padding:16px 24px 10px">
-    <div class="rp-title">8-Week FD Booking Trend</div>
-    <div style="flex:1;position:relative;min-height:0;max-height:48%"><canvas id="c-fd-trend"></canvas></div>
-    <div style="font-size:.62rem;font-weight:700;color:#312e81;margin:8px 0 5px">FD Product Funnel &middot; Period Total</div>
-    <div style="flex:1;position:relative;min-height:0;max-height:35%"><canvas id="c-fd-funnel"></canvas></div>
-  </div>
-</div>
-
-<!-- ── Slide 4: Investor Management ───────────────────────────────────── -->
+<!-- ── Slide 3: Investor Management ───────────────────────────────────── -->
 <div class="slide two-col">
   <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#6d28d9 100%)">
-    <div class="slide-num">Slide 04</div>
+    <div class="slide-num">Slide 03</div>
     <div class="slide-ttl">Investor Management</div>
     <div class="slide-sub">New investor additions &middot; invite flow</div>
     <div class="hero-lbl">Investors Added (Last Week)</div>
@@ -194,7 +170,7 @@
 <!-- ── Slide 5: Platform Health ───────────────────────────────────────── -->
 <div class="slide two-col">
   <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#4f46e5 100%)">
-    <div class="slide-num">Slide 05</div>
+    <div class="slide-num">Slide 04</div>
     <div class="slide-ttl">Platform Health</div>
     <div class="slide-sub">Success rates across key journeys</div>
     <div class="hero-lbl">Overall Health Score</div>
@@ -220,7 +196,7 @@
 <!-- ── Slide 6: MF Engagement ─────────────────────────────────────────── -->
 <div class="slide two-col">
   <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#7c3aed 100%)">
-    <div class="slide-num">Slide 06</div>
+    <div class="slide-num">Slide 05</div>
     <div class="slide-ttl">MF Engagement</div>
     <div class="slide-sub">Page views &middot; onboarding funnel</div>
     <div class="hero-lbl">MF Page Views (Last Week)</div>
@@ -344,7 +320,7 @@ function populateSlides(){
   // Cover
   set('cv-period','Week of '+D.latest_week);
   set('cv-wad', D.lw_wad);
-  set('cv-fd', D.lw_fd);
+  set('cv-signups', D.lw_signups);
   set('cv-health', D.health_overall+'%');
   set('cv-gen', 'Generated '+D.generated);
 
@@ -382,24 +358,7 @@ function populateSlides(){
     {color:AMB, txt:`Funnel completion rate: ${D.funnel_rate}%`}
   ]);
 
-  // Slide 3: FD Product Usage
-  const totFdBk=D.fd_funnel&&D.fd_funnel[3]?D.fd_funnel[3].count:0;
-  set('s3-fd', D.lw_fd);
-  badge($('s3-fd-badge'), D.lw_fd-D.pw_fd);
-  set('s3-pw-fd', D.pw_fd);
-  set('s3-book-rate', D.fd_booking_rate+'%');
-  set('s3-inv-rate', D.client_invite_rate+'%');
-  tw('s3-takeaway',[
-    `${totFdBk} total FD bookings over 8 weeks`,
-    `Booking success rate: ${D.fd_booking_rate}% (initiated → success)`,
-    `Client invite conversion: ${D.client_invite_rate}%`
-  ]);
-  ins('s3-insight',[
-    {color:IND, txt:`FD bookings last week: ${D.lw_fd} (prev: ${D.pw_fd})`},
-    {color:VIO, txt:`Booking rate: ${D.fd_booking_rate}% · Client invite rate: ${D.client_invite_rate}%`}
-  ]);
-
-  // Slide 4: Investor Management
+  // Slide 3: Investor Management
   const totInv=D.weekly_investors?D.weekly_investors.reduce((a,b)=>a+b,0):0;
   set('s4-inv', D.lw_inv);
   badge($('s4-inv-badge'), D.lw_inv-D.pw_inv);
@@ -463,21 +422,7 @@ function initCharts(){
     );
   }
 
-  // Slide 3: FD weekly trend bar
-  mkBar('c-fd-trend', wl, [
-    {label:'FD Bookings',data:D.weekly_fd_bookings||[],backgroundColor:IND+'cc',borderColor:IND,borderWidth:1,borderRadius:3}
-  ]);
-
-  // Slide 3: FD funnel horizontal bar
-  if(D.fd_funnel&&D.fd_funnel.length){
-    mkHBar('c-fd-funnel',
-      D.fd_funnel.map(f=>f.step),
-      D.fd_funnel.map(f=>f.count),
-      D.fd_funnel.map((_,i)=>[IND,VIO,'#6d28d9','#9333ea'][i]+'cc')
-    );
-  }
-
-  // Slide 4: Investors added bar
+  // Slide 3: Investors added bar
   mkBar('c-inv', wl, [
     {label:'Investors Added',data:D.weekly_investors||[],backgroundColor:VIO+'cc',borderColor:VIO,borderWidth:1,borderRadius:3}
   ]);
