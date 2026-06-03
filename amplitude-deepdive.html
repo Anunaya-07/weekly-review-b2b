@@ -141,25 +141,25 @@
   </div>
 </div>
 
-<!-- ── Slide 3: Investor Management ───────────────────────────────────── -->
+<!-- ── Slide 3: Investor Self-KYC ─────────────────────────────────────── -->
 <div class="slide two-col">
   <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#6d28d9 100%)">
     <div class="slide-num">Slide 03</div>
-    <div class="slide-ttl">Investor Management</div>
-    <div class="slide-sub">New investor additions &middot; invite flow</div>
-    <div class="hero-lbl">Investors Added (Last Week)</div>
-    <div class="hero-num" id="s4-inv">&ndash;</div>
-    <div class="hero-badge" id="s4-inv-badge">&ndash;</div>
+    <div class="slide-ttl">Investor Self-KYC</div>
+    <div class="slide-sub">Email-initiated &middot; KYC completion funnel</div>
+    <div class="hero-lbl">KYC Completed (Last Week)</div>
+    <div class="hero-num" id="s4-inv-kyc">&ndash;</div>
+    <div class="hero-badge" id="s4-inv-kyc-badge">&ndash;</div>
     <div class="stat-list">
-      <div class="stat-item"><span class="si-lbl">Prev Week Investors</span><span class="si-val" id="s4-pw-inv">&ndash;</span></div>
-      <div class="stat-item"><span class="si-lbl">Invite Acceptance Rate</span><span class="si-val" id="s4-accept-rate">&ndash;</span></div>
-      <div class="stat-item"><span class="si-lbl">Period Total Added</span><span class="si-val" id="s4-tot-inv">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Prev Week Completions</span><span class="si-val" id="s4-pw-inv-kyc">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Funnel Completion Rate</span><span class="si-val" id="s4-kyc-rate">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Period Total Completions</span><span class="si-val" id="s4-tot-inv-kyc">&ndash;</span></div>
       <div class="takeaway-box" id="s4-takeaway"><div class="tw-title">Key Takeaways</div></div>
     </div>
   </div>
   <div class="right-panel">
-    <div class="rp-title">8-Week Investor Addition Trend</div>
-    <div class="chart-area"><canvas id="c-inv"></canvas></div>
+    <div class="rp-title">Investor Self-KYC Funnel &middot; Period Total</div>
+    <div class="chart-area"><canvas id="c-inv-kyc-funnel"></canvas></div>
     <div class="insight-box">
       <div class="ib-title">Insight</div>
       <div class="ib-body" id="s4-insight"></div>
@@ -227,7 +227,7 @@
 </nav>
 
 <script>
-const D={"generated":"Jun 3, 2026","latest_week":"May 25–29","week_labels":["Apr 6–10","Apr 13–17","Apr 20–24","Apr 27–May 1","May 4–8","May 11–15","May 18–22","May 25–29"],"wad":[0,0,0,7,27,33,37,39],"login_rate":[0.0,0.0,0.0,72.7,76.7,77.1,78.4,88.0],"lw_wad":39,"pw_wad":37,"lw_lr":88.0,"pw_lr":78.4,"weekly_signups":[0,0,0,2,11,11,10,9],"funnel":[{"step":"Signup","count":43,"pct":100.0},{"step":"PAN Verified","count":40,"pct":93.0},{"step":"Entity Created","count":35,"pct":81.4},{"step":"Terms Accepted","count":34,"pct":79.1},{"step":"Bank Verified","count":28,"pct":65.1}],"funnel_rate":65.1,"lw_signups":9,"pw_signups":10,"weekly_fd_bookings":[0,0,0,0,0,0,0,0],"fd_funnel":[{"step":"Explore","count":481,"pct":100.0},{"step":"Detail View","count":96,"pct":20.0},{"step":"Booking Initiated","count":0,"pct":0.0},{"step":"Booking Success","count":0,"pct":0.0}],"fd_booking_rate":0.0,"client_invite_rate":0.0,"lw_fd":0,"pw_fd":0,"weekly_investors":[0,0,0,0,0,0,0,0],"inv_accept_rate":0.0,"lw_inv":0,"pw_inv":0,"health_login":79.8,"health_kyc":88.8,"health_fd":0.0,"health_overall":84.3,"weekly_mf_views":[0,0,0,20,52,61,50,35],"mf_onb_rate":57.8,"lw_mf":35};
+const D={"generated":"Jun 3, 2026","latest_week":"May 25–29","week_labels":["Apr 6–10","Apr 13–17","Apr 20–24","Apr 27–May 1","May 4–8","May 11–15","May 18–22","May 25–29"],"wad":[0,0,0,7,27,33,37,39],"login_rate":[0.0,0.0,0.0,72.7,76.7,77.1,78.4,88.0],"lw_wad":39,"pw_wad":37,"lw_lr":88.0,"pw_lr":78.4,"weekly_signups":[0,0,0,2,11,11,10,9],"funnel":[{"step":"Signup","count":43,"pct":100.0},{"step":"PAN Verified","count":40,"pct":93.0},{"step":"Entity Created","count":35,"pct":81.4},{"step":"Terms Accepted","count":34,"pct":79.1},{"step":"Bank Verified","count":28,"pct":65.1}],"funnel_rate":65.1,"lw_signups":9,"pw_signups":10,"weekly_fd_bookings":[0,0,0,0,0,0,0,0],"fd_funnel":[{"step":"Explore","count":481,"pct":100.0},{"step":"Detail View","count":96,"pct":20.0},{"step":"Booking Initiated","count":0,"pct":0.0},{"step":"Booking Success","count":0,"pct":0.0}],"fd_booking_rate":0.0,"client_invite_rate":0.0,"lw_fd":0,"pw_fd":0,"inv_kyc_funnel":[{"step":"Email Link Clicked","count":0,"pct":100.0},{"step":"KYC Initiated","count":0,"pct":0.0},{"step":"Phone Verified","count":0,"pct":0.0},{"step":"Email Verified","count":0,"pct":0.0},{"step":"PAN Completed","count":0,"pct":0.0},{"step":"Address Completed","count":0,"pct":0.0},{"step":"Bank Completed","count":0,"pct":0.0},{"step":"KYC Completed","count":0,"pct":0.0}],"inv_kyc_completion_rate":0.0,"weekly_inv_kyc":[0,0,0,0,0,0,0,0],"lw_inv_kyc":0,"pw_inv_kyc":0,"health_login":79.8,"health_kyc":88.8,"health_fd":0.0,"health_overall":84.3,"weekly_mf_views":[0,0,0,20,52,61,50,35],"mf_onb_rate":57.8,"lw_mf":35};
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const IND='#4f46e5',VIO='#7c3aed',INDB='#818cf8',BLU='#3b82f6',GRN='#10b981',AMB='#f59e0b',ROS='#f43f5e',GRY='#94a3b8';
@@ -358,21 +358,22 @@ function populateSlides(){
     {color:AMB, txt:`Funnel completion rate: ${D.funnel_rate}%`}
   ]);
 
-  // Slide 3: Investor Management
-  const totInv=D.weekly_investors?D.weekly_investors.reduce((a,b)=>a+b,0):0;
-  set('s4-inv', D.lw_inv);
-  badge($('s4-inv-badge'), D.lw_inv-D.pw_inv);
-  set('s4-pw-inv', D.pw_inv);
-  set('s4-accept-rate', D.inv_accept_rate+'%');
-  set('s4-tot-inv', totInv);
+  // Slide 3: Investor Self-KYC
+  const totInvKyc=D.inv_kyc_funnel&&D.inv_kyc_funnel.length?D.inv_kyc_funnel[7].count:0;
+  const topFunnel=D.inv_kyc_funnel&&D.inv_kyc_funnel.length?D.inv_kyc_funnel[0].count:0;
+  set('s4-inv-kyc', D.lw_inv_kyc);
+  badge($('s4-inv-kyc-badge'), D.lw_inv_kyc-D.pw_inv_kyc);
+  set('s4-pw-inv-kyc', D.pw_inv_kyc);
+  set('s4-kyc-rate', D.inv_kyc_completion_rate+'%');
+  set('s4-tot-inv-kyc', totInvKyc);
   tw('s4-takeaway',[
-    `${totInv} total investors added over 8 weeks`,
-    `Invite acceptance rate: ${D.inv_accept_rate}%`,
-    `Last week: ${D.lw_inv} investors added (prev: ${D.pw_inv})`
+    `${topFunnel} email links clicked → ${totInvKyc} KYC completions over 8 weeks`,
+    `End-to-end completion rate: ${D.inv_kyc_completion_rate}%`,
+    `Last week: ${D.lw_inv_kyc} KYC completions (prev: ${D.pw_inv_kyc})`
   ]);
   ins('s4-insight',[
-    {color:IND, txt:`New investors last week: ${D.lw_inv} (prev: ${D.pw_inv})`},
-    {color:GRN, txt:`Invite acceptance rate: ${D.inv_accept_rate}%`}
+    {color:IND, txt:`KYC completions last week: ${D.lw_inv_kyc} (prev: ${D.pw_inv_kyc})`},
+    {color:GRN, txt:`Funnel completion rate: ${D.inv_kyc_completion_rate}%`}
   ]);
 
   // Slide 5: Platform Health
@@ -422,10 +423,14 @@ function initCharts(){
     );
   }
 
-  // Slide 3: Investors added bar
-  mkBar('c-inv', wl, [
-    {label:'Investors Added',data:D.weekly_investors||[],backgroundColor:VIO+'cc',borderColor:VIO,borderWidth:1,borderRadius:3}
-  ]);
+  // Slide 3: Investor Self-KYC funnel horizontal bar
+  if(D.inv_kyc_funnel&&D.inv_kyc_funnel.length){
+    mkHBar('c-inv-kyc-funnel',
+      D.inv_kyc_funnel.map(f=>f.step),
+      D.inv_kyc_funnel.map(f=>f.count),
+      ['#312e81cc','#3730a3cc','#4338cacc','#4f46e5cc','#6d28d9cc','#7c3aedcc','#8b5cf6cc','#a78bfacc']
+    );
+  }
 
   // Slide 5: Health scores horizontal bar
   mkHBar('c-health',
