@@ -216,10 +216,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- SLIDE 6: Consistency Tracker -->
+<!-- SLIDE 6: Weekly GTV Activity -->
 <div class="slide two-col">
   <div class="left-panel" style="background:#0c1a3a">
     <div class="slide-num">Slide 06</div>
+    <div class="slide-ttl">Weekly GTV Activity</div>
+    <div class="slide-sub">WDP category 8-week trend · top performers</div>
+    <div class="hero-lbl">WDP GTV Last Week</div>
+    <div class="hero-num" id="wkgtv-lw">—</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Listed GTV last week</span><span class="si-val" id="wkgtv-lw-l">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Unlisted GTV last week</span><span class="si-val" id="wkgtv-lw-u">—</span></div>
+      <div class="stat-item"><span class="si-lbl">#1 WDP · 8 weeks</span><span class="si-val" id="wkgtv-top8wk">—</span></div>
+      <div class="stat-item"><span class="si-lbl">#1 WDP · last week</span><span class="si-val" id="wkgtv-toplw">—</span></div>
+      <div class="stat-item"><span class="si-lbl">Active WDPs last week</span><span class="si-val" id="wkgtv-active-lw">—</span></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div style="font-size:.65rem;font-weight:600;opacity:.5;text-transform:uppercase;letter-spacing:.08em;padding:6px 12px 2px">Weekly WDP GTV · Listed vs Unlisted</div>
+    <div class="chart-area" style="flex:1 1 0;min-height:0"><canvas id="chart-wk-gtv"></canvas></div>
+    <div id="wkgtv-top5-tables" style="display:flex;gap:12px;padding:6px 12px;font-size:.62rem;border-top:1px solid rgba(255,255,255,.07)"></div>
+    <div class="insight-row" id="ins-wkgtv"></div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Consistency Tracker -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:#0c1a3a">
+    <div class="slide-num">Slide 07</div>
     <div class="slide-ttl">Consistency Tracker</div>
     <div class="slide-sub">Active months (listed platform) · 14-month window</div>
     <div class="hero-lbl">Always Active (14/14 months)</div>
@@ -447,7 +471,59 @@ function shortName(n,len=20){
   ]);
 })();
 
-// ── Slide 6: Consistency ─────────────────────────────────────────────────────
+// ── Slide 6: Weekly GTV Activity ──────────────────────────────────────────────
+(function(){
+  const dists=D.distributors_combined; if(!dists||!dists.length) return;
+  const wl=D.week_labels_8||[];
+  // Aggregate weekly totals from top-20 distributor per-week arrays
+  const weeklyL=new Array(8).fill(0), weeklyU=new Array(8).fill(0);
+  dists.forEach(d=>{
+    (d.gtv_weekly_listed||[]).forEach((v,i)=>{ weeklyL[i]+=(v||0); });
+    (d.gtv_weekly_unlisted||[]).forEach((v,i)=>{ weeklyU[i]+=(v||0); });
+  });
+  weeklyL.forEach((v,i)=>{ weeklyL[i]=rnd(v); });
+  weeklyU.forEach((v,i)=>{ weeklyU[i]=rnd(v); });
+  const weeklyT=weeklyL.map((v,i)=>rnd(v+weeklyU[i]));
+  // Last week (index 7)
+  const lwL=rnd(weeklyL[7]), lwU=rnd(weeklyU[7]), lwT=rnd(weeklyL[7]+weeklyU[7]);
+  setEl('wkgtv-lw','₹'+lwT+'cr');
+  setEl('wkgtv-lw-l','₹'+lwL+'cr');
+  setEl('wkgtv-lw-u','₹'+lwU+'cr');
+  // Top 8-week (leaderboard_8wk already sorted by combined_8wk)
+  const top8=D.leaderboard_8wk&&D.leaderboard_8wk[0];
+  setEl('wkgtv-top8wk', top8 ? shortName(top8.name,18)+' · ₹'+top8.combined_8wk+'cr' : '—');
+  // Top last week
+  const sortedLw=[...dists].filter(d=>d.gtv_lw_cr>0).sort((a,b)=>b.gtv_lw_cr-a.gtv_lw_cr);
+  const topLw=sortedLw[0];
+  setEl('wkgtv-toplw', topLw ? shortName(topLw.name,18)+' · ₹'+topLw.gtv_lw_cr+'cr' : '—');
+  setEl('wkgtv-active-lw', sortedLw.length+' WDPs');
+  // Stacked bar: listed + unlisted per week
+  mkChart('chart-wk-gtv',[
+    {label:'Listed',  data:weeklyL, backgroundColor:BLUE+'cc', stack:'s', borderRadius:2},
+    {label:'Unlisted',data:weeklyU, backgroundColor:TEAL+'cc', stack:'s', borderRadius:2},
+  ], wl, {stacked:true, legend:true,
+    scales:{x:{stacked:true,ticks:{font:{size:8}}}, y:{stacked:true,ticks:{font:{size:8}}}}});
+  // Top-5 side-by-side tables
+  const top5lw=sortedLw.slice(0,5);
+  const top58wk=(D.leaderboard_8wk||[]).slice(0,5);
+  const mkTable=(title,rows,valFn)=>{
+    const body=rows.length
+      ? rows.map((r,i)=>`<div style="display:flex;justify-content:space-between;gap:4px;line-height:1.65;color:rgba(255,255,255,.85)"><span style="opacity:.5">${i+1}.</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${shortName(r.name,17)}</span><span style="white-space:nowrap;opacity:.75">₹${valFn(r)}cr</span></div>`).join('')
+      : '<div style="opacity:.35">No data</div>';
+    return `<div style="flex:1"><div style="font-weight:700;opacity:.45;font-size:.58rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">${title}</div>${body}</div>`;
+  };
+  document.getElementById('wkgtv-top5-tables').innerHTML=
+    mkTable('Top 5 · Last Week', top5lw, r=>r.gtv_lw_cr)+
+    mkTable('Top 5 · 8-Week GTV', top58wk, r=>r.combined_8wk);
+  // Insights
+  const peakIdx=weeklyT.indexOf(Math.max(...weeklyT));
+  insights('ins-wkgtv',[
+    {color:BLUE, txt:`Last week: ₹${lwT}cr total (Listed ₹${lwL}cr · Unlisted ₹${lwU}cr)`},
+    {color:TEAL, txt:`Peak week: ${wl[peakIdx]||'—'} · ₹${weeklyT[peakIdx]||0}cr combined WDP GTV`},
+  ]);
+})();
+
+// ── Slide 7: Consistency ─────────────────────────────────────────────────────
 (function(){
   const dists=D.distributors_combined;if(!dists||!dists.length)return;
   const full=dists.filter(d=>d.active_months>=14).length;
