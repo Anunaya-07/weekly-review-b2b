@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OBPP Top 6 · Deep Dive</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px 56px}
+    .deck-wrap{width:min(100%,1200px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
+    .deck{width:100%;height:100%}
+    .slide{display:none;width:100%;height:100%;position:absolute;inset:0}
+    .slide.active{display:flex}
+    .cover{background:linear-gradient(135deg,#1e0a3c 0%,#2d1060 55%,#7c3aed 100%);flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:32px 40px}
+    .cover-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px}
+    .cover h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:8px}
+    .cover-sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:20px}
+    .cover-period{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:5px 18px;font-size:.76rem;color:rgba(255,255,255,.75);margin-bottom:32px}
+    .cover-metrics{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .cover-metric{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 20px;text-align:left;min-width:130px}
+    .cm-label{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:5px}
+    .cm-val{font-size:1.35rem;font-weight:700}
+    .two-col{flex-direction:row}
+    .left-panel{width:30%;flex-shrink:0;display:flex;flex-direction:column;padding:28px 22px 24px;color:#fff;position:relative;overflow:hidden}
+    .left-panel::before{content:'';position:absolute;bottom:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+    .slide-num{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.45;margin-bottom:3px}
+    .slide-ttl{font-size:clamp(.9rem,1.5vw,1.1rem);font-weight:700;line-height:1.25;margin-bottom:3px}
+    .slide-sub{font-size:.67rem;opacity:.55;margin-bottom:20px}
+    .hero-num{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+    .hero-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-bottom:8px}
+    .stat-list{display:flex;flex-direction:column;gap:0;margin-top:auto}
+    .stat-item{display:flex;justify-content:space-between;align-items:flex-end;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .si-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5}
+    .si-val{font-size:.88rem;font-weight:700}
+    .right-panel{flex:1;display:flex;flex-direction:column;background:#fff;padding:20px 24px 14px}
+    .chart-area{flex:1;position:relative;min-height:0}
+    .insight-row{margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;gap:18px;flex-wrap:wrap}
+    .ins-chip{display:flex;align-items:center;gap:5px;font-size:.67rem;color:#64748b}
+    .ins-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .nav-bar{margin-top:16px;display:flex;align-items:center;gap:14px}
+    .nav-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .nav-btn:hover{background:rgba(255,255,255,.2)}
+    .nav-btn:disabled{opacity:.25;cursor:default}
+    .dots{display:flex;gap:6px;align-items:center}
+    .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
+    .dot-btn.active{background:#fff;transform:scale(1.35)}
+    .dist-slide{flex-direction:row;background:#fff}
+    .ds-left{width:27%;flex-shrink:0;display:flex;flex-direction:column;padding:16px 14px 12px;color:#fff;overflow:hidden;position:relative}
+    .ds-left::before{content:'';position:absolute;bottom:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+    .ds-rank-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap}
+    .ds-rank{background:rgba(255,255,255,.22);border-radius:4px;font-size:.72rem;font-weight:800;padding:2px 7px;white-space:nowrap}
+    .ds-slide-count{font-size:.5rem;opacity:.38;margin-left:auto}
+    .ds-name{font-size:clamp(.68rem,1.05vw,.88rem);font-weight:700;line-height:1.25;margin-bottom:2px}
+    .ds-period{font-size:.52rem;opacity:.42;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .ds-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px}
+    .ds-sl{font-size:.49rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5;margin-bottom:1px}
+    .ds-sv{font-size:.8rem;font-weight:700;line-height:1.1}
+    .ds-sv-xs{font-size:.66rem;font-weight:600;line-height:1.3}
+    .ds-divider{border:none;border-top:1px solid rgba(255,255,255,.12);margin:7px 0}
+    .ds-infer{margin-top:8px;background:rgba(0,0,0,.18);border-radius:6px;padding:6px 8px;flex-shrink:0}
+    .ds-inf{font-size:.62rem;line-height:1.55;opacity:.9}
+    .ds-inf+.ds-inf{margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1)}
+    .ds-right{flex:1;display:flex;flex-direction:column;padding:10px 14px 8px;background:#fff;gap:4px;min-height:0}
+    .ds-chart-lbl{font-size:.5rem;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:600;flex-shrink:0}
+    .ds-top-chart{flex:1;position:relative;min-height:0}
+    .ds-bottom{display:flex;gap:8px;height:42%;flex-shrink:0}
+    .ds-bottom-chart-wrap{flex:1;display:flex;flex-direction:column;gap:2px;min-height:0}
+    .ds-bottom-chart{flex:1;position:relative;min-height:0}
+    .ds-stats-panel{width:155px;flex-shrink:0;background:#f8fafc;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+    .ds-sp-item{display:flex;flex-direction:column}
+    .ds-spl{font-size:.46rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:1px}
+    .ds-spv{font-size:.78rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ds-spv-sm{font-size:.62rem;font-weight:600;color:#475569}
+    .cons-strip{display:flex;gap:2px;margin-top:2px}
+    .cons-cell{height:8px;border-radius:2px;flex:1}
+    .rank-badge{font-size:.56rem;padding:1px 5px;border-radius:3px;white-space:nowrap}
+    .rank-badge.up{background:rgba(74,222,128,.2);color:#16a34a}
+    .rank-badge.down{background:rgba(248,113,113,.2);color:#dc2626}
+    .rank-badge.flat{background:rgba(100,116,139,.1);color:#64748b}
+    .rank-badge.inactive{background:rgba(248,113,113,.1);color:#94a3b8}
+    @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
+  </style>
+</head>
+<body>
+<div class="deck-wrap"><div class="deck">
+  <!-- Cover -->
+  <div class="slide cover">
+    <div class="cover-eyebrow">Yubi Wealth B2B · OBPP Segment</div>
+    <h1>OBPP Top 6<br>Deep Dive</h1>
+    <div class="cover-sub">Online Bond Platform Partners · Performance Analysis</div>
+    <div class="cover-period" id="cover-period">—</div>
+    <div class="cover-metrics" id="cover-metrics"></div>
+  </div>
+  <!-- Slide 1: Leaderboard -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#2d1060;">
+      <div class="slide-num">Slide 01</div>
+      <div class="slide-ttl">GTV Leaderboard</div>
+      <div class="slide-sub">All 6 OBPPs ranked by total GTV · 14-month period</div>
+      <div class="hero-lbl">Total OBPP GTV</div>
+      <div class="hero-num" id="lb-total-gtv">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">OBPP % of total HTM</span><span class="si-val" id="lb-obpp-pct">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Active OBPPs (7+ months)</span><span class="si-val" id="lb-active-count">—</span></div>
+        <div class="stat-item"><span class="si-lbl">#1 platform share</span><span class="si-val" id="lb-top1-share">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Top 3 combined</span><span class="si-val" id="lb-top3-share">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Total all-time trades</span><span class="si-val" id="lb-trades">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-leaderboard"></canvas></div>
+      <div class="insight-row" id="ins-leaderboard"></div>
+    </div>
+  </div>
+  <!-- Slide 2: Monthly Trend -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#3b0f8c;">
+      <div class="slide-num">Slide 02</div>
+      <div class="slide-ttl">Monthly GTV Trend</div>
+      <div class="slide-sub">OBPP segment total · stacked by platform</div>
+      <div class="hero-lbl">Peak Month GTV</div>
+      <div class="hero-num" id="trend-peak-gtv">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Peak Month</span><span class="si-val" id="trend-peak-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Latest month MTD</span><span class="si-val" id="trend-latest-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">13-month average</span><span class="si-val" id="trend-avg-mo">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Months above avg</span><span class="si-val" id="trend-above-avg">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-monthly-trend"></canvas></div>
+      <div class="insight-row" id="ins-monthly-trend"></div>
+    </div>
+  </div>
+  <!-- Slide 3: Platform Activity -->
+  <div class="slide two-col">
+    <div class="left-panel" style="background:#4c1d95;">
+      <div class="slide-num">Slide 03</div>
+      <div class="slide-ttl">Platform Activity</div>
+      <div class="slide-sub">Total trades · active months · avg order comparison</div>
+      <div class="hero-lbl">Total Trades (All-Time)</div>
+      <div class="hero-num" id="act-total-trades">—</div>
+      <div class="stat-list">
+        <div class="stat-item"><span class="si-lbl">Highest-volume platform</span><span class="si-val" id="act-top-platform">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Platforms active 8wk</span><span class="si-val" id="act-active-8wk">—</span></div>
+        <div class="stat-item"><span class="si-lbl">8-week OBPP GTV</span><span class="si-val" id="act-8wk-gtv">—</span></div>
+        <div class="stat-item"><span class="si-lbl">Largest avg order (LW)</span><span class="si-val" id="act-largest-avg">—</span></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="chart-area"><canvas id="chart-activity"></canvas></div>
+      <div class="insight-row" id="ins-activity"></div>
+    </div>
+  </div>
+</div></div>
+<div class="nav-bar">
+  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+</div>
+<script>
+const D={"generated":"Jun 1, 2026","period_label":"Apr 2025 – May 2026","latest_week":"May 25–29","n_months":14,"total_obpp_gtv_cr":422.25,"total_all_gtv_cr":10434.31,"obpp_pct_of_total":4.0,"obpp_8wk_total":35.29,"total_trades":8666,"week_labels_8":["Apr 6–10","Apr 13–17","Apr 20–24","Apr 27–May 1","May 4–8","May 11–15","May 18–22","May 25–29"],"month_labels":["Apr-25","May-25","Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26"],"obpp_monthly_total":[19.5,20.37,56.78,25.88,29.13,23.18,9.32,16.49,47.97,21.82,23.92,16.85,31.96,8.64],"distributors":[{"rank_all":1,"rank_8wk":1,"rank_lw":3,"name":"Stable Finserv Private Limited","gtv_total_cr":247.7,"gtv_8wk_cr":23.29,"gtv_lw_cr":0.0,"gtv_monthly":[19.5,16.92,37.25,13.73,7.73,9.87,1.97,6.49,30.58,15.35,4.51,10.88,25.39,1.59],"gtv_weekly_8":[9.81,10.9,1.0,1.51,0.08,0.0,0.0,0.0],"trades_monthly":[18,13,21,13,8,10,3,4,12,8,3,5,12,3],"trades_lw":0,"avg_order_l_lw":0,"active_months":14,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"FINNABLE CREDIT PRIVATE LIMITED","top_issuer_pct_8wk":57.3,"top_issuer_alltime":"Satya Microcapital Limited","top_issuer_pct_alltime":9.4,"issuers_m":[{"name":"Satya Microcapital Limited","short_name":"Satya Microcapital Limited","vals":[0.0,0.0,14.32,9.06,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","vals":[0.0,0.0,5.31,0.17,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4.91,9.28,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV PRIVATE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,16.68,1.96,0.0,0.0,0.0,0.0]},{"name":"Muthoot Capital Services Limited","short_name":"Muthoot Capital Services Limited","vals":[12.95,0.69,0.2,0.0,0.98,2.46,0.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"KRAZYBEE SERVICES PRIVATE LIMITED","short_name":"KRAZYBEE SERVICES PRIVATE LIMITED","vals":[0.0,11.57,1.59,1.75,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"FINNABLE CREDIT PRIVATE LIMITED","short_name":"FINNABLE CREDIT PRIVATE LIMITED","gtv_cr":13.35,"pct":57.3,"vals":[3.46,9.9,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Indel Money Limited","short_name":"Indel Money Limited","gtv_cr":6.35,"pct":27.3,"vals":[6.35,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Arman Financial Services Limited","short_name":"Arman Financial Services Limited","gtv_cr":3.01,"pct":12.9,"vals":[0.0,1.0,1.0,1.01,0.0,0.0,0.0,0.0]},{"name":"Spandana Sphoorty Financial Limited","short_name":"Spandana Sphoorty Financial Limited","gtv_cr":0.58,"pct":2.5,"vals":[0.0,0.0,0.0,0.5,0.08,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":2,"rank_8wk":5,"rank_lw":5,"name":"GOLDENPI SECURITIES PRIVATE LIMITED","gtv_total_cr":83.7,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,3.44,19.53,12.15,21.39,13.13,3.04,1.89,2.06,1.52,2.48,1.49,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,175,934,475,938,606,129,74,96,77,99,38,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":11,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"KEERTANA FINSERV PRIVATE LIMITED","top_issuer_pct_alltime":40.8,"issuers_m":[{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV PRIVATE LIMITED","vals":[0.0,0.82,9.35,8.62,10.85,4.01,0.0,0.0,0.0,0.0,0.0,0.49,0.0,0.0]},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE LIMITED","vals":[0.0,0.0,0.0,1.51,3.86,1.92,1.76,0.77,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"Krazybee Services Private Limited","short_name":"Krazybee Services Private Limited","vals":[0.0,0.0,0.0,0.0,5.1,4.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"name":"HARI AND COMPANY INVESTMENTS MADRAS PRIVATE LIMITED","short_name":"HARI AND COMPANY INVESTMENTS","vals":[0.0,0.08,1.0,0.72,0.28,0.27,0.16,0.36,1.02,0.2,0.8,0.5,0.0,0.0]},{"name":"MUTHOOTTU MINI FINANCIERS LTD","short_name":"MUTHOOTTU MINI FINANCIERS LTD","vals":[0.0,0.19,3.5,0.34,0.04,0.0,0.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":3,"rank_8wk":6,"rank_lw":6,"name":"STABLE BROKING PRIVATE LIMITED","gtv_total_cr":42.3,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,4.31,7.77,15.25,2.11,11.21,1.65,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,1,0,0,0,2,228,333,1044,110,454,82,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":6,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"MUTHOOT FINCORP LIMITED","top_issuer_pct_alltime":59.1,"issuers_m":[{"name":"MUTHOOT FINCORP LIMITED","short_name":"MUTHOOT FINCORP LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.09,6.0,1.04,11.21,1.65,0.0,0.0]},{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORATION","vals":[0.0,0.0,0.0,0.0,0.0,0.0,4.3,1.91,5.96,1.08,0.0,0.0,0.0,0.0]},{"name":"IIFL SAMASTA FINANCE LIMITED","short_name":"IIFL SAMASTA FINANCE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.89,0.0,0.0,0.0,0.0,0.0]},{"name":"EARLYSALARY SERVICES PRIVATE LIMITED","short_name":"EARLYSALARY SERVICES PRIVATE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.5,0.49,0.0,0.0,0.0,0.0,0.0]},{"name":"MONEYBOXX FINANCE LIMITED","short_name":"MONEYBOXX FINANCE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":4,"rank_8wk":2,"rank_lw":1,"name":"SUSTVEST BROKING PRIVATE LIMITED","gtv_total_cr":24.82,"gtv_8wk_cr":11.71,"gtv_lw_cr":0.27,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.18,0.0,0.34,0.08,2.82,5.52,2.69,6.27,6.91],"gtv_weekly_8":[1.51,2.82,0.47,0.34,1.03,2.54,2.73,0.27],"trades_monthly":[0,0,0,0,1,3,0,5,10,268,437,301,711,592],"trades_lw":26,"avg_order_l_lw":1.05,"active_months":8,"top_issuer_lw":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_lw":100.3,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":63.9,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":69.2,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS PRIVATE","vals":[0.0,0.0,0.0,0.0,0.0,0.16,0.0,0.05,0.08,2.58,3.7,1.97,4.66,3.98]},{"name":"Muthoot Microfin Limited","short_name":"Muthoot Microfin Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.99,0.01,0.03,0.0]},{"name":"KEERTANA FINSERV PRIVATE LIMITED","short_name":"KEERTANA FINSERV PRIVATE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.02,0.0,0.2,0.0,0.03,0.43,0.12,0.15,0.0]},{"name":"TATA MOTORS FINANCE LIMITED","short_name":"TATA MOTORS FINANCE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.95]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.13,0.11,0.17,0.33,0.11]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS PRIVATE","gtv_cr":7.48,"pct":63.9,"vals":[1.2,2.3,0.0,0.0,0.33,1.94,1.44,0.27]},{"name":"TATA MOTORS FINANCE LIMITED","short_name":"TATA MOTORS FINANCE LIMITED","gtv_cr":0.95,"pct":8.1,"vals":[0.0,0.0,0.0,0.0,0.14,0.0,0.81,0.0]},{"name":"SAMUNNATI FINANCE PRIVATE LIMITED","short_name":"SAMUNNATI FINANCE PRIVATE LIMITED","gtv_cr":0.4,"pct":3.4,"vals":[0.08,0.08,0.03,0.1,0.03,0.05,0.03,0.0]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE LIMITED","gtv_cr":0.39,"pct":3.4,"vals":[0.15,0.11,0.03,0.0,0.03,0.09,0.0,0.0]},{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV LIMITED","gtv_cr":0.37,"pct":3.1,"vals":[0.04,0.04,0.05,0.04,0.06,0.09,0.06,0.0]}],"issuers_lw":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS PRIVATE","gtv_cr":0.27,"pct":99.3},{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV LIMITED","gtv_cr":0.0,"pct":0.7}]},{"rank_all":5,"rank_8wk":7,"rank_lw":7,"name":"GOLDENPI TECHNOLOGIES PRIVATE LIMITED","gtv_total_cr":22.74,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"Spandana Sphoorty Financial Limited","top_issuer_pct_alltime":56.5,"issuers_m":[],"issuers_8wk":[],"issuers_lw":[]},{"rank_all":6,"rank_8wk":3,"rank_lw":2,"name":"EQUIRIZE SECURITIES PRIVATE LIMITED","gtv_total_cr":0.52,"gtv_8wk_cr":0.27,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.06,0.04,0.29,0.12],"gtv_weekly_8":[0.0,0.05,0.1,0.0,0.0,0.06,0.06,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,7,27,16,24,10],"trades_lw":0,"avg_order_l_lw":0,"active_months":4,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_8wk":44.6,"top_issuer_alltime":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","top_issuer_pct_alltime":35.9,"issuers_m":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS PRIVATE","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.02,0.09,0.07]},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.03,0.01,0.0,0.05]},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.03,0.0]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.03,0.0]},{"name":"MUFIN GREEN FINANCE LIMITED","short_name":"MUFIN GREEN FINANCE LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.01,0.0,0.02,0.0]}],"issuers_8wk":[{"name":"AKARA CAPITAL ADVISORS PRIVATE LIMITED","short_name":"AKARA CAPITAL ADVISORS PRIVATE","gtv_cr":0.12,"pct":44.6,"vals":[0.0,0.05,0.0,0.0,0.0,0.06,0.01,0.0]},{"name":"RDC CONCRETEINDIA LIMITED","short_name":"RDC CONCRETEINDIA LIMITED","gtv_cr":0.05,"pct":18.2,"vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.05,0.0]},{"name":"KEERTANA FINSERV LIMITED","short_name":"KEERTANA FINSERV LIMITED","gtv_cr":0.03,"pct":10.8,"vals":[0.0,0.0,0.03,0.0,0.0,0.0,0.0,0.0]},{"name":"Ugro Capital Limited","short_name":"Ugro Capital Limited","gtv_cr":0.03,"pct":10.7,"vals":[0.0,0.0,0.03,0.0,0.0,0.0,0.0,0.0]},{"name":"SATIN FINSERV LIMITED","short_name":"SATIN FINSERV LIMITED","gtv_cr":0.01,"pct":4.0,"vals":[0.0,0.0,0.01,0.0,0.0,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":7,"rank_8wk":4,"rank_lw":4,"name":"FINGEEK DIGITAL PRIVATE LIMITED","gtv_total_cr":0.29,"gtv_8wk_cr":0.02,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.02,0.15,0.1,0.0,0.02],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,3,1,3,2,1],"trades_lw":0,"avg_order_l_lw":0,"active_months":4,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"Navi Finserv Limited","top_issuer_pct_8wk":100.0,"top_issuer_alltime":"Navi Finserv Limited","top_issuer_pct_alltime":76.1,"issuers_m":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.15,0.05,0.0,0.02]},{"name":"SHRI RAM FINANCE CORPORATION PRIVATE LIMITED","short_name":"SHRI RAM FINANCE CORPORATION","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.05,0.0,0.0]},{"name":"INCRED FINANCIAL SERVICES LIMITED","short_name":"INCRED FINANCIAL SERVICES LIMITED","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0,0.0]},{"name":"NATIONAL HIGHWAYS INFRA TRUST","short_name":"NATIONAL HIGHWAYS INFRA TRUST","vals":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}],"issuers_8wk":[{"name":"Navi Finserv Limited","short_name":"Navi Finserv Limited","gtv_cr":0.02,"pct":100.0,"vals":[0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0]}],"issuers_lw":[]},{"rank_all":8,"rank_8wk":8,"rank_lw":8,"name":"Stable Alpha Technologies Private Limited","gtv_total_cr":0.19,"gtv_8wk_cr":0.0,"gtv_lw_cr":0.0,"gtv_monthly":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"gtv_weekly_8":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"trades_monthly":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"trades_lw":0,"avg_order_l_lw":0,"active_months":0,"top_issuer_lw":"N/A","top_issuer_pct_lw":0.0,"top_issuer_8wk":"N/A","top_issuer_pct_8wk":0.0,"top_issuer_alltime":"VIVRITI CAPITAL LIMITED","top_issuer_pct_alltime":89.3,"issuers_m":[],"issuers_8wk":[],"issuers_lw":[]}]};
+const PALETTE=['#7c3aed','#9333ea','#a855f7','#c084fc','#d8b4fe','#5b21b6','#6d28d9','#7e22ce','#8b5cf6','#4c1d95'];
+const PURPLE='#7c3aed',VIOLET='#6d28d9',LILAC='#a855f7',MAUVE='#c084fc',ROSE='#f43f5e',AMBER='#f59e0b',TEAL='#14b8a6',BLUE='#3b82f6',GREEN='#10b981',GREY='#94a3b8';
+const ISS_PALETTE=['#60a5fa','#fbbf24','#34d399','#f87171','#94a3b8'];
+function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function rnd(v,n=2){return Math.round(v*Math.pow(10,n))/Math.pow(10,n)}
+function insights(id,arr){const el=document.getElementById(id);if(!el)return;el.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('')}
+let cur=0;
+function showSlide(n){
+  const slides=document.querySelectorAll('.slide');
+  slides.forEach((s,i)=>{s.classList.toggle('active',i===n)});
+  cur=n;
+  document.getElementById('btn-prev').disabled=n===0;
+  document.getElementById('btn-next').disabled=n===slides.length-1;
+  document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+function navigate(dir){
+  const slides=document.querySelectorAll('.slide');
+  const next=Math.max(0,Math.min(slides.length-1,cur+dir));
+  showSlide(next);
+}
+function initNav(){
+  const slides=document.querySelectorAll('.slide');
+  const dots=document.getElementById('dots');
+  dots.innerHTML=Array.from(slides).map((_,i)=>`<button class="dot-btn" onclick="showSlide(${i})" title="Slide ${i+1}"></button>`).join('');
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);else if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1);});
+}
+
+// Cover
+(function(){
+  setEl('cover-period',D.period_label);
+  document.getElementById('cover-metrics').innerHTML=`
+    <div class="cover-metric"><div class="cm-label">Total OBPP GTV</div><div class="cm-val">₹${D.total_obpp_gtv_cr}cr</div></div>
+    <div class="cover-metric"><div class="cm-label">OBPP Share of HTM</div><div class="cm-val">${D.obpp_pct_of_total}%</div></div>
+    <div class="cover-metric"><div class="cm-label">8-Week GTV</div><div class="cm-val">₹${D.obpp_8wk_total}cr</div></div>
+    <div class="cover-metric"><div class="cm-label">All-Time Trades</div><div class="cm-val">${D.total_trades.toLocaleString()}</div></div>`;
+})();
+
+// Leaderboard
+(function(){
+  const dists=D.distributors;
+  const top1pct=rnd(dists[0].gtv_total_cr/D.total_obpp_gtv_cr*100,1);
+  const top3pct=rnd((dists[0].gtv_total_cr+dists[1].gtv_total_cr+dists[2].gtv_total_cr)/D.total_obpp_gtv_cr*100,1);
+  const active7=dists.filter(d=>d.active_months>=7).length;
+  setEl('lb-total-gtv','₹'+D.total_obpp_gtv_cr+'cr');
+  setEl('lb-obpp-pct',D.obpp_pct_of_total+'%');
+  setEl('lb-active-count',active7+' OBPPs');
+  setEl('lb-top1-share',top1pct+'%');
+  setEl('lb-top3-share',top3pct+'%');
+  setEl('lb-trades',D.total_trades.toLocaleString());
+  new Chart(document.getElementById('chart-leaderboard'),{
+    type:'bar',
+    data:{labels:dists.map(d=>d.name.split(' ').slice(0,3).join(' ')),datasets:[{label:'Total GTV (₹cr)',data:dists.map(d=>d.gtv_total_cr),backgroundColor:PALETTE,borderRadius:4,borderWidth:0}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.x}cr · ${rnd(ctx.parsed.x/D.total_obpp_gtv_cr*100,1)}% of OBPP`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
+  });
+  insights('ins-leaderboard',[
+    {color:PURPLE,txt:`#1 ${dists[0].name.split(' ').slice(0,3).join(' ')} · ₹${dists[0].gtv_total_cr}cr (${top1pct}% of OBPP total)`},
+    {color:VIOLET,txt:`Top 3 account for ${top3pct}% of total OBPP GTV · ${D.period_label}`},
+  ]);
+})();
+
+// Monthly Trend
+(function(){
+  const mo=D.obpp_monthly_total;
+  const peak=Math.max(...mo);const peakIdx=mo.indexOf(peak);
+  const exLast=mo.slice(0,-1);
+  const avg=rnd(exLast.reduce((a,b)=>a+b,0)/exLast.length,2);
+  const aboveAvg=exLast.filter(v=>v>=avg).length;
+  setEl('trend-peak-gtv','₹'+peak+'cr');setEl('trend-peak-mo',D.month_labels[peakIdx]);
+  setEl('trend-latest-mo','₹'+mo[mo.length-1]+'cr');setEl('trend-avg-mo','₹'+avg+'cr');setEl('trend-above-avg',aboveAvg+'/13');
+  const top5=D.distributors.slice(0,5);
+  const othersMo=D.month_labels.map((_,i)=>{const s=top5.reduce((a,d)=>a+(d.gtv_monthly[i]||0),0);return rnd(Math.max(0,(mo[i]||0)-s),2)});
+  const colors5=[PURPLE,LILAC,MAUVE,TEAL,AMBER];
+  const datasets=top5.map((d,i)=>({label:d.name.split(' ').slice(0,3).join(' '),data:d.gtv_monthly,backgroundColor:colors5[i],stack:'s',borderRadius:2,borderWidth:0}));
+  datasets.push({label:'Others',data:othersMo,backgroundColor:'#cbd5e1',stack:'s',borderRadius:2,borderWidth:0});
+  new Chart(document.getElementById('chart-monthly-trend'),{
+    type:'bar',data:{labels:D.month_labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:5}}},scales:{x:{stacked:true,grid:{color:'#f8fafc'},ticks:{font:{size:8}}},y:{stacked:true,beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:8},callback:v=>'₹'+v+'cr'}}}}
+  });
+  insights('ins-monthly-trend',[
+    {color:PURPLE,txt:`Peak: ${D.month_labels[peakIdx]} at ₹${peak}cr · 13-month avg: ₹${avg}cr/month`},
+    {color:VIOLET,txt:`May-26 MTD: ₹${mo[mo.length-1]}cr (partial month) · ${aboveAvg}/13 months above avg`},
+  ]);
+})();
+
+// Platform Activity
+(function(){
+  const dists=D.distributors;
+  const byTrades=dists.slice().sort((a,b)=>b.trades_monthly.reduce((x,y)=>x+y,0)-a.trades_monthly.reduce((x,y)=>x+y,0));
+  const topPlatform=byTrades[0];
+  const topTrades=byTrades[0].trades_monthly.reduce((a,b)=>a+b,0);
+  const active8wk=dists.filter(d=>d.gtv_8wk_cr>0).length;
+  const avgOrders=dists.filter(d=>d.avg_order_l_lw>0).map(d=>d.avg_order_l_lw);
+  const largestAvg=avgOrders.length?Math.max(...avgOrders):0;
+  setEl('act-total-trades',D.total_trades.toLocaleString());
+  setEl('act-top-platform',topPlatform.name.split(' ').slice(0,3).join(' '));
+  setEl('act-active-8wk',active8wk+'/'+dists.length+' OBPPs');
+  setEl('act-8wk-gtv','₹'+D.obpp_8wk_total+'cr');
+  setEl('act-largest-avg',largestAvg>0?'₹'+largestAvg+'L':'—');
+  const labels=dists.map(d=>d.name.split(' ').slice(0,3).join(' '));
+  const tradeTotals=dists.map(d=>d.trades_monthly.reduce((a,b)=>a+b,0));
+  new Chart(document.getElementById('chart-activity'),{
+    type:'bar',data:{labels,datasets:[{label:'Total Trades',data:tradeTotals,backgroundColor:PALETTE,borderRadius:4,borderWidth:0}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x.toLocaleString()} trades`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:8},callback:v=>v.toLocaleString()},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:8}}}}}
+  });
+  insights('ins-activity',[
+    {color:PURPLE,txt:`${topPlatform.name.split(' ').slice(0,3).join(' ')} leads in trade count with ${topTrades.toLocaleString()} all-time trades`},
+    {color:TEAL,txt:`${active8wk} OBPPs active in last 8 weeks · ${dists.filter(d=>d.active_months>=10).length} active 10+ months`},
+  ]);
+})();
+
+// Individual Distributor Slides
+(function(){
+  const dists=D.distributors,deckEl=document.querySelector('.deck');
+  dists.forEach((d,gi)=>{
+    const bgColor=PALETTE[gi%PALETTE.length];
+    const cid14='c14-'+gi, cid8='c8-'+gi;
+    let rankHtml;
+    if(d.rank_8wk>=50){
+      rankHtml=`<span class="rank-badge inactive">⊘ inactive 8wk</span>`;
+    }else{
+      const diff=d.rank_all-d.rank_8wk;
+      rankHtml=diff>0?`<span class="rank-badge up">▲${diff} recent</span>`:diff<0?`<span class="rank-badge down">▼${Math.abs(diff)} recent</span>`:`<span class="rank-badge flat">= stable</span>`;
+    }
+    const allTradeTot=d.trades_monthly.reduce((a,b)=>a+b,0);
+    const avgOrdAll=allTradeTot>0?rnd(d.gtv_total_cr*100/allTradeTot,1):0;
+    const peakGtv=Math.max(...d.gtv_monthly);
+    const peakIdx=d.gtv_monthly.indexOf(peakGtv);
+    const recentSum=d.gtv_monthly.slice(-3).reduce((a,b)=>a+b,0);
+    const prevSum=d.gtv_monthly.slice(-6,-3).reduce((a,b)=>a+b,0);
+    const trendDir=recentSum>prevSum*1.15?'↗ Accelerating':recentSum<prevSum*0.85?'↘ Slowing':'→ Steady';
+    let inf1;
+    if(d.gtv_lw_cr>0){
+      const iss=d.top_issuer_lw&&d.top_issuer_lw!=='N/A'?` · ${d.top_issuer_lw.split(' ').slice(0,3).join(' ')} ${d.top_issuer_pct_lw>0?d.top_issuer_pct_lw+'%':''}` :'';
+      inf1=`Active last week · ₹${d.gtv_lw_cr}cr · ${d.trades_lw} trade${d.trades_lw!==1?'s':''}${d.avg_order_l_lw>0?' · ₹'+d.avg_order_l_lw+'L avg':''}${iss}`;
+    }else if(d.gtv_8wk_cr>0){
+      const aw=d.gtv_weekly_8.filter(v=>v>0).length;
+      inf1=`No trades last week · ₹${d.gtv_8wk_cr}cr over ${aw}/8 recent weeks`;
+    }else{
+      const lastArr=d.gtv_monthly.map((v,i)=>({v,i})).filter(x=>x.v>0);
+      const lastMo=lastArr.length?D.month_labels[lastArr[lastArr.length-1].i]:'N/A';
+      inf1=`Inactive last 8 weeks · last active ${lastMo}`;
+    }
+    const inf2=`${trendDir} trend · Peak ${D.month_labels[peakIdx]} ₹${peakGtv}cr · All-time avg ₹${avgOrdAll>0?avgOrdAll+'L':'N/A'}/trade · ${d.active_months}/${D.n_months} months active`;
+    const top3Iss=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3);
+    const inf3=top3Iss.length?`Top issuers (since Apr-25): `+top3Iss.map((iss,idx)=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;return `${idx+1}. ${iss.short_name.split(' ').slice(0,3).join(' ')} ₹${tot}cr`;}).join(' · '):'';
+    const consHtml=d.gtv_monthly.map((v,mi)=>`<div class="cons-cell" style="background:${v>0?bgColor:'#e2e8f0'};opacity:${v>0?1:0.35}" title="${D.month_labels[mi]}: ${v>0?'₹'+v+'cr':'inactive'}"></div>`).join('');
+    const rank8Disp=d.rank_8wk<50?'#'+d.rank_8wk:'Inactive';
+    const fmtIss=(n,p)=>n&&n!=='N/A'?n.split(' ').slice(0,3).join(' ')+(p>0?' · '+p+'%':''):'—';
+    const issLWDisp=fmtIss(d.top_issuer_lw,d.top_issuer_pct_lw);
+    const iss8Disp=fmtIss(d.top_issuer_8wk,d.top_issuer_pct_8wk);
+    const issAllDisp=fmtIss(d.top_issuer_alltime,d.top_issuer_pct_alltime);
+    const fmtTop3=(arr,fb)=>arr&&arr.length?arr.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:3px;line-height:1.7" class="ds-sv-xs"><span>${i+1}. ${x.short_name}</span><span style="opacity:.85;white-space:nowrap;font-size:.6rem">₹${x.gtv_cr}cr · ${x.pct}%</span></div>`).join(''):`<div class="ds-sv-xs">${fb}</div>`;
+    const iss_alltime_arr=(d.issuers_m||[]).filter(i=>i.name!=='Others').slice(0,3).map(iss=>{const tot=Math.round(iss.vals.reduce((a,b)=>a+b,0)*100)/100;const pct=d.gtv_total_cr>0?Math.round(tot/d.gtv_total_cr*1000)/10:0;return {short_name:iss.short_name,gtv_cr:tot,pct}});
+    const obppShare=rnd(d.gtv_total_cr/D.total_obpp_gtv_cr*100,1);
+    const slideDiv=document.createElement('div');
+    slideDiv.className='slide dist-slide';
+    slideDiv.innerHTML=`
+      <div class="ds-left" style="background:${bgColor}">
+        <div class="ds-rank-row">
+          <span class="ds-rank">#${d.rank_all} of ${dists.length}</span>
+          <span class="ds-slide-count">OBPP ${gi+1}/${dists.length}</span>
+          ${rankHtml}
+        </div>
+        <div class="ds-name">${d.name}</div>
+        <div class="ds-period">${D.period_label} · HTM · OBPP</div>
+        <div class="ds-stat-grid">
+          <div><div class="ds-sl">GTV Since 1 APR 2025</div><div class="ds-sv">₹${d.gtv_total_cr}cr</div></div>
+          <div><div class="ds-sl">Share of OBPP</div><div class="ds-sv">${obppShare}%</div></div>
+          <div><div class="ds-sl">8-Week GTV</div><div class="ds-sv">₹${d.gtv_8wk_cr}cr</div></div>
+          <div><div class="ds-sl">Last Week GTV</div><div class="ds-sv">₹${d.gtv_lw_cr}cr</div></div>
+          <div><div class="ds-sl">LW Trades</div><div class="ds-sv">${d.trades_lw}</div></div>
+          <div><div class="ds-sl">Avg Order (LW)</div><div class="ds-sv">${d.avg_order_l_lw>0?'₹'+d.avg_order_l_lw+'L':'—'}</div></div>
+          <div><div class="ds-sl">All-time Trades</div><div class="ds-sv">${allTradeTot}</div></div>
+          <div><div class="ds-sl">Avg Order (All)</div><div class="ds-sv">${avgOrdAll>0?'₹'+avgOrdAll+'L':'—'}</div></div>
+        </div>
+        <hr class="ds-divider">
+        <div style="margin-bottom:3px">
+          <div class="ds-sl">Top Issuers · Last Week</div>
+          ${fmtTop3(d.issuers_lw,issLWDisp)}
+        </div>
+        <div style="margin-bottom:3px">
+          <div class="ds-sl">Top Issuers · Last 8 Weeks</div>
+          ${fmtTop3(d.issuers_8wk,iss8Disp)}
+        </div>
+        <div style="margin-bottom:6px">
+          <div class="ds-sl">Top Issuers · Since APR-25</div>
+          ${fmtTop3(iss_alltime_arr,issAllDisp)}
+        </div>
+        <div class="ds-infer">
+          <div class="ds-inf">${inf1}</div>
+          <div class="ds-inf">${inf2}</div>
+          ${inf3?`<div class="ds-inf">${inf3}</div>`:''}
+        </div>
+      </div>
+      <div class="ds-right">
+        <div class="ds-chart-lbl">Monthly GTV · ${D.period_label} (₹cr) · Issuer breakdown</div>
+        <div class="ds-top-chart"><canvas id="${cid14}"></canvas></div>
+        <div class="ds-bottom">
+          <div class="ds-bottom-chart-wrap">
+            <div class="ds-chart-lbl">Last 8 Weeks GTV (₹cr) · week of ${D.latest_week} is latest</div>
+            <div class="ds-bottom-chart"><canvas id="${cid8}"></canvas></div>
+          </div>
+          <div class="ds-stats-panel">
+            <div class="ds-sp-item">
+              <div class="ds-spl">8-Week Rank · All-time Rank</div>
+              <div class="ds-spv-sm">${rank8Disp} recent · #${d.rank_all} all-time</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Peak Month</div>
+              <div class="ds-spv-sm">${D.month_labels[peakIdx]} · ₹${peakGtv}cr</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Recent Trend</div>
+              <div class="ds-spv-sm">${trendDir}</div>
+            </div>
+            <div class="ds-sp-item">
+              <div class="ds-spl">Monthly Activity · ${d.active_months}/${D.n_months}</div>
+              <div class="cons-strip">${consHtml}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    deckEl.appendChild(slideDiv);
+    requestAnimationFrame(()=>{
+      const avg8=rnd(d.gtv_weekly_8.reduce((a,b)=>a+b,0)/8,2);
+      const el14=document.getElementById(cid14);
+      if(el14){
+        const barC=d.gtv_monthly.map(v=>v>0?bgColor+'cc':'#e2e8f0');
+        new Chart(el14,{type:'bar',data:{labels:D.month_labels,datasets:[{label:'Monthly GTV',data:d.gtv_monthly,backgroundColor:barC,borderColor:d.gtv_monthly.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:45}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
+      }
+      const el8=document.getElementById(cid8);
+      if(el8){
+        const wkC=d.gtv_weekly_8.map(v=>v>=avg8&&v>0?bgColor:v>0?bgColor+'77':'#e2e8f0');
+        new Chart(el8,{type:'bar',data:{labels:D.week_labels_8,datasets:[{label:'Weekly GTV',data:d.gtv_weekly_8,backgroundColor:wkC,borderColor:d.gtv_weekly_8.map(v=>v>0?bgColor:'#cbd5e1'),borderWidth:1,borderRadius:3},{type:'line',label:'8wk avg',data:Array(8).fill(avg8),borderColor:bgColor+'66',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label==='8wk avg'?` avg ₹${avg8}cr`:` ₹${ctx.parsed.y}cr`}}},scales:{x:{grid:{display:false},ticks:{font:{size:7},maxRotation:30}},y:{beginAtZero:true,grid:{color:'#f8fafc'},ticks:{font:{size:7},callback:v=>v>0?'₹'+v+'cr':''}}}}});
+      }
+    });
+  });
+  initNav();showSlide(0);
+})();
+</script>
+</body>
+</html>
