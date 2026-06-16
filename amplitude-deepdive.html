@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amplitude Analytics · Deep Dive</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px 56px}
+    .deck-wrap{width:min(100%,1200px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
+    .deck{width:100%;height:100%}
+    .slide{display:none;width:100%;height:100%;position:absolute;inset:0}
+    .slide.active{display:flex}
+    .cover{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 55%,#4f46e5 100%);flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:32px 40px}
+    .cover-eyebrow{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px}
+    .cover h1{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:8px}
+    .cover-sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:20px}
+    .cover-period{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:5px 18px;font-size:.76rem;color:rgba(255,255,255,.75);margin-bottom:32px}
+    .cover-metrics{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .cover-metric{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 20px;text-align:left;min-width:130px}
+    .cm-label{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:5px}
+    .cm-val{font-size:1.35rem;font-weight:700}
+    .two-col{flex-direction:row}
+    .left-panel{width:30%;flex-shrink:0;display:flex;flex-direction:column;padding:28px 22px 24px;color:#fff;position:relative;overflow:hidden}
+    .left-panel::before{content:'';position:absolute;bottom:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+    .slide-num{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.45;margin-bottom:3px}
+    .slide-ttl{font-size:clamp(.9rem,1.5vw,1.1rem);font-weight:700;line-height:1.25;margin-bottom:3px}
+    .slide-sub{font-size:.67rem;opacity:.55;margin-bottom:20px}
+    .hero-num{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+    .hero-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-bottom:8px}
+    .hero-badge{display:inline-block;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px}
+    .hero-badge.up{background:rgba(74,222,128,.2);color:#4ade80}
+    .hero-badge.down{background:rgba(248,113,113,.2);color:#f87171}
+    .hero-badge.flat{background:rgba(148,163,184,.15);color:#94a3b8}
+    .stat-list{display:flex;flex-direction:column;gap:0;margin-top:auto}
+    .stat-item{display:flex;justify-content:space-between;align-items:flex-end;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
+    .si-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.5}
+    .si-val{font-size:.88rem;font-weight:700}
+    .right-panel{flex:1;display:flex;flex-direction:column;background:#fff;padding:20px 24px 14px}
+    .chart-area{flex:1;position:relative;min-height:0}
+    .rp-title{font-size:.68rem;font-weight:700;color:#312e81;letter-spacing:-.01em;margin-bottom:10px}
+    .insight-box{margin-top:8px;padding:7px 10px 8px;border-top:2px solid #e0e7ff;background:#eef2ff;border-radius:0 0 5px 5px}
+    .ib-title{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:#4338ca;font-weight:700;margin-bottom:5px}
+    .ib-body{display:flex;flex-direction:column;gap:4px}
+    .ins-chip{display:flex;align-items:flex-start;gap:6px;font-size:.67rem;color:#1e1b4b;line-height:1.5}
+    .ins-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:.35em}
+    .takeaway-box{margin-top:8px;background:rgba(255,255,255,.13);border-radius:7px;padding:8px 10px;font-size:.58rem;line-height:1.55;color:rgba(255,255,255,.92)}
+    .tw-title{font-size:.47rem;text-transform:uppercase;letter-spacing:.12em;opacity:.5;margin-bottom:5px;font-weight:700}
+    .tw-row{display:flex;gap:5px;margin-bottom:3px;align-items:flex-start}
+    .tw-row:last-child{margin-bottom:0}
+    .tw-dot{flex-shrink:0;width:4px;height:4px;background:rgba(255,255,255,.65);border-radius:50%;margin-top:.42em}
+    .nav-bar{margin-top:16px;display:flex;align-items:center;gap:14px}
+    .nav-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .nav-btn:hover{background:rgba(255,255,255,.2)}
+    .nav-btn:disabled{opacity:.25;cursor:default}
+    .dots{display:flex;gap:6px;align-items:center}
+    .dot-btn{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);border:none;cursor:pointer;padding:0;transition:all .15s}
+    .dot-btn.active{background:#818cf8;transform:scale(1.35)}
+    @media print{body{background:#fff;padding:0}.deck-wrap{box-shadow:none;border-radius:0}.nav-bar{display:none}}
+  </style>
+</head>
+<body>
+<div class="deck-wrap"><div class="deck">
+
+<!-- ── Slide 0: Cover ──────────────────────────────────────────────────── -->
+<div class="slide cover">
+  <div class="cover-eyebrow">Yubi Wealth B2B &middot; Product Analytics</div>
+  <h1>Platform Analytics<br>Deep Dive</h1>
+  <div class="cover-sub">Amplitude event data &middot; distributor &amp; product metrics</div>
+  <div class="cover-period" id="cv-period">Week of &ndash;</div>
+  <div class="cover-metrics">
+    <div class="cover-metric">
+      <div class="cm-label">Weekly Active Distributors</div>
+      <div class="cm-val" id="cv-wad">&ndash;</div>
+    </div>
+    <div class="cover-metric">
+      <div class="cm-label">New Signups (Last Week)</div>
+      <div class="cm-val" id="cv-signups">&ndash;</div>
+    </div>
+    <div class="cover-metric">
+      <div class="cm-label">Platform Health</div>
+      <div class="cm-val" id="cv-health">&ndash;</div>
+    </div>
+    <div class="cover-metric">
+      <div class="cm-label">Generated</div>
+      <div class="cm-val" style="font-size:.85rem" id="cv-gen">&ndash;</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Slide 1: Platform Activity ─────────────────────────────────────── -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#4f46e5 100%)">
+    <div class="slide-num">Slide 01</div>
+    <div class="slide-ttl">Platform Activity</div>
+    <div class="slide-sub">Weekly active distributors &middot; login health</div>
+    <div class="hero-lbl">Weekly Active Distributors</div>
+    <div class="hero-num" id="s1-wad">&ndash;</div>
+    <div class="hero-badge" id="s1-wad-badge">&ndash;</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Prev Week WAD</span><span class="si-val" id="s1-pw-wad">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Login Success Rate</span><span class="si-val" id="s1-lr">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Prev Week Rate</span><span class="si-val" id="s1-pw-lr">&ndash;</span></div>
+      <div class="takeaway-box" id="s1-takeaway"><div class="tw-title">Key Takeaways</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="rp-title">8-Week WAD Trend &amp; Login Success Rate</div>
+    <div class="chart-area"><canvas id="c-wad"></canvas></div>
+    <div class="insight-box">
+      <div class="ib-title">Insight</div>
+      <div class="ib-body" id="s1-insight"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Slide 2: Distributor Onboarding Funnel ─────────────────────────── -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#7c3aed 100%)">
+    <div class="slide-num">Slide 02</div>
+    <div class="slide-ttl">Distributor Onboarding</div>
+    <div class="slide-sub">Signup &rarr; KYC completion funnel</div>
+    <div class="hero-lbl">New Signups (Last Week)</div>
+    <div class="hero-num" id="s2-signups">&ndash;</div>
+    <div class="hero-badge" id="s2-signups-badge">&ndash;</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Prev Week Signups</span><span class="si-val" id="s2-pw-signups">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Funnel Completion</span><span class="si-val" id="s2-funnel-rate">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Period Total Signups</span><span class="si-val" id="s2-tot-signups">&ndash;</span></div>
+      <div class="takeaway-box" id="s2-takeaway"><div class="tw-title">Key Takeaways</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="rp-title">KYC Onboarding Funnel &middot; Apr 6 &ndash; May 29</div>
+    <div class="chart-area"><canvas id="c-funnel"></canvas></div>
+    <div class="insight-box">
+      <div class="ib-title">Insight</div>
+      <div class="ib-body" id="s2-insight"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Slide 3: Investor Self-KYC ─────────────────────────────────────── -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#6d28d9 100%)">
+    <div class="slide-num">Slide 03</div>
+    <div class="slide-ttl">Investor Self-KYC</div>
+    <div class="slide-sub">Email-initiated &middot; KYC completion funnel</div>
+    <div class="hero-lbl">KYC Completed (Last Week)</div>
+    <div class="hero-num" id="s4-inv-kyc">&ndash;</div>
+    <div class="hero-badge" id="s4-inv-kyc-badge">&ndash;</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Prev Week Completions</span><span class="si-val" id="s4-pw-inv-kyc">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Funnel Completion Rate</span><span class="si-val" id="s4-kyc-rate">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Period Total Completions</span><span class="si-val" id="s4-tot-inv-kyc">&ndash;</span></div>
+      <div class="takeaway-box" id="s4-takeaway"><div class="tw-title">Key Takeaways</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="rp-title">Investor Self-KYC Funnel &middot; Period Total</div>
+    <div class="chart-area"><canvas id="c-inv-kyc-funnel"></canvas></div>
+    <div class="insight-box">
+      <div class="ib-title">Insight</div>
+      <div class="ib-body" id="s4-insight"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Slide 5: Platform Health ───────────────────────────────────────── -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#4f46e5 100%)">
+    <div class="slide-num">Slide 04</div>
+    <div class="slide-ttl">Platform Health</div>
+    <div class="slide-sub">Success rates across key journeys</div>
+    <div class="hero-lbl">Overall Health Score</div>
+    <div class="hero-num" id="s5-overall">&ndash;</div>
+    <div class="hero-badge flat">Period Avg &middot; Apr 6 &ndash; May 29</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">Login Success Rate</span><span class="si-val" id="s5-login">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">KYC Success Rate</span><span class="si-val" id="s5-kyc">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">FD Booking Rate</span><span class="si-val" id="s5-fd-h">&ndash;</span></div>
+      <div class="takeaway-box" id="s5-takeaway"><div class="tw-title">Key Takeaways</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="rp-title">Health Score by Journey &middot; Period Total</div>
+    <div class="chart-area"><canvas id="c-health"></canvas></div>
+    <div class="insight-box">
+      <div class="ib-title">Insight</div>
+      <div class="ib-body" id="s5-insight"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Slide 6: MF Engagement ─────────────────────────────────────────── -->
+<div class="slide two-col">
+  <div class="left-panel" style="background:linear-gradient(160deg,#1e1b4b 0%,#7c3aed 100%)">
+    <div class="slide-num">Slide 05</div>
+    <div class="slide-ttl">MF Engagement</div>
+    <div class="slide-sub">Page views &middot; onboarding funnel</div>
+    <div class="hero-lbl">MF Page Views (Last Week)</div>
+    <div class="hero-num" id="s6-mf">&ndash;</div>
+    <div class="hero-badge flat">Product Engagement</div>
+    <div class="stat-list">
+      <div class="stat-item"><span class="si-lbl">MF Onboarding Rate</span><span class="si-val" id="s6-onb-rate">&ndash;</span></div>
+      <div class="stat-item"><span class="si-lbl">Period Total Views</span><span class="si-val" id="s6-tot-views">&ndash;</span></div>
+      <div class="takeaway-box" id="s6-takeaway"><div class="tw-title">Key Takeaways</div></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="rp-title">8-Week MF Page Views Trend</div>
+    <div class="chart-area"><canvas id="c-mf"></canvas></div>
+    <div class="insight-box">
+      <div class="ib-title">Insight</div>
+      <div class="ib-body" id="s6-insight"></div>
+    </div>
+  </div>
+</div>
+
+</div></div>
+
+<nav class="nav-bar">
+  <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="navigate(1)">&#8594;</button>
+</nav>
+
+<script>
+const D={"generated":"Jun 3, 2026","latest_week":"May 25–29","week_labels":["Apr 6–10","Apr 13–17","Apr 20–24","Apr 27–May 1","May 4–8","May 11–15","May 18–22","May 25–29"],"wad":[0,0,0,7,27,33,37,39],"login_rate":[0.0,0.0,0.0,72.7,76.7,77.1,78.4,88.0],"lw_wad":39,"pw_wad":37,"lw_lr":88.0,"pw_lr":78.4,"weekly_signups":[0,0,0,2,11,11,10,9],"funnel":[{"step":"Signup","count":43,"pct":100.0},{"step":"PAN Verified","count":40,"pct":93.0},{"step":"Entity Created","count":35,"pct":81.4},{"step":"Terms Accepted","count":34,"pct":79.1},{"step":"Bank Verified","count":28,"pct":65.1}],"funnel_rate":65.1,"lw_signups":9,"pw_signups":10,"weekly_fd_bookings":[0,0,0,0,0,0,0,0],"fd_funnel":[{"step":"Explore","count":481,"pct":100.0},{"step":"Detail View","count":96,"pct":20.0},{"step":"Booking Initiated","count":0,"pct":0.0},{"step":"Booking Success","count":0,"pct":0.0}],"fd_booking_rate":0.0,"client_invite_rate":0.0,"lw_fd":0,"pw_fd":0,"inv_kyc_funnel":[{"step":"Email Link Clicked","count":0,"pct":100.0},{"step":"KYC Initiated","count":0,"pct":0.0},{"step":"Phone Verified","count":0,"pct":0.0},{"step":"Email Verified","count":0,"pct":0.0},{"step":"PAN Completed","count":0,"pct":0.0},{"step":"Address Completed","count":0,"pct":0.0},{"step":"Bank Completed","count":0,"pct":0.0},{"step":"KYC Completed","count":0,"pct":0.0}],"inv_kyc_completion_rate":0.0,"weekly_inv_kyc":[0,0,0,0,0,0,0,0],"lw_inv_kyc":0,"pw_inv_kyc":0,"health_login":79.8,"health_kyc":88.8,"health_fd":0.0,"health_overall":84.3,"weekly_mf_views":[0,0,0,20,52,61,50,35],"mf_onb_rate":57.8,"lw_mf":35};
+
+// ── Constants ──────────────────────────────────────────────────────────────
+const IND='#4f46e5',VIO='#7c3aed',INDB='#818cf8',BLU='#3b82f6',GRN='#10b981',AMB='#f59e0b',ROS='#f43f5e',GRY='#94a3b8';
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function $(id){return document.getElementById(id)}
+function set(id,v){const e=$(id);if(e)e.textContent=v}
+function badge(el,delta,suffix){
+  if(!el)return;
+  const up=delta>0,dn=delta<0,sgn=up?'+':'';
+  el.textContent=sgn+(delta||0)+(suffix||'')+' WoW';
+  el.className='hero-badge '+(up?'up':dn?'down':'flat');
+}
+function tw(id,items){
+  const e=$(id);if(!e)return;
+  e.innerHTML='<div class="tw-title">Key Takeaways</div>'+items.map(t=>`<div class="tw-row"><span class="tw-dot"></span><span>${t}</span></div>`).join('');
+}
+function ins(id,arr){
+  const e=$(id);if(!e)return;
+  e.innerHTML=arr.map(({color,txt})=>`<span class="ins-chip"><span class="ins-dot" style="background:${color}"></span>${txt}</span>`).join('');
+}
+function findDropOff(funnel){
+  if(!funnel||funnel.length<2)return 'unknown step';
+  let maxDrop=0,step='';
+  for(let i=1;i<funnel.length;i++){
+    const drop=funnel[i-1].pct-funnel[i].pct;
+    if(drop>maxDrop){maxDrop=drop;step=funnel[i].step;}
+  }
+  return step||funnel[1].step;
+}
+
+// ── Chart builders ─────────────────────────────────────────────────────────
+function mkBarLine(id,labels,barData,lineData,barLabel,lineLabel,barColor,lineColor){
+  const el=$(id);if(!el)return;
+  new Chart(el,{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:barLabel,data:barData,backgroundColor:barColor+'cc',borderColor:barColor,borderWidth:1,borderRadius:3,yAxisID:'y'},
+      {type:'line',label:lineLabel,data:lineData,borderColor:lineColor,backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.3,yAxisID:'y2'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:6}}},
+      scales:{
+        x:{grid:{color:'#f0f0ff'},ticks:{font:{size:8},maxRotation:30}},
+        y:{beginAtZero:true,grid:{color:'#f0f0ff'},ticks:{font:{size:8}},title:{display:true,text:'WAD',font:{size:7}}},
+        y2:{position:'right',beginAtZero:true,max:100,grid:{drawOnChartArea:false},ticks:{font:{size:8},callback:v=>v+'%'}}
+      }
+    }
+  });
+}
+function mkHBar(id,labels,data,colors){
+  const el=$(id);if(!el)return;
+  const fallback=[IND,VIO,'#6d28d9','#9333ea','#c026d3'];
+  new Chart(el,{
+    type:'bar',
+    data:{labels,datasets:[{
+      data,
+      backgroundColor:colors||data.map((_,i)=>fallback[i%5]+'cc'),
+      borderColor:colors||data.map((_,i)=>fallback[i%5]),
+      borderWidth:1,borderRadius:3
+    }]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{beginAtZero:true,grid:{color:'#f0f0ff'},ticks:{font:{size:8}}},
+        y:{grid:{display:false},ticks:{font:{size:8}}}
+      }
+    }
+  });
+}
+function mkBar(id,labels,datasets){
+  const el=$(id);if(!el)return;
+  new Chart(el,{
+    type:'bar',
+    data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:8},boxWidth:10,padding:6}}},
+      scales:{
+        x:{grid:{color:'#f0f0ff'},ticks:{font:{size:8},maxRotation:30}},
+        y:{beginAtZero:true,grid:{color:'#f0f0ff'},ticks:{font:{size:8}}}
+      }
+    }
+  });
+}
+
+// ── Slide population ───────────────────────────────────────────────────────
+function populateSlides(){
+  const wl=D.week_labels||[];
+
+  // Cover
+  set('cv-period','Week of '+D.latest_week);
+  set('cv-wad', D.lw_wad);
+  set('cv-signups', D.lw_signups);
+  set('cv-health', D.health_overall+'%');
+  set('cv-gen', 'Generated '+D.generated);
+
+  // Slide 1: Platform Activity
+  set('s1-wad', D.lw_wad);
+  badge($('s1-wad-badge'), D.lw_wad-D.pw_wad);
+  set('s1-pw-wad', D.pw_wad);
+  set('s1-lr', D.lw_lr+'%');
+  set('s1-pw-lr', D.pw_lr+'%');
+  tw('s1-takeaway',[
+    `WAD ${D.lw_wad>D.pw_wad?'up':'down'} ${Math.abs(D.lw_wad-D.pw_wad)} vs prior week (${D.pw_wad})`,
+    `Login success rate ${D.lw_lr}% — ${D.lw_lr>=95?'healthy platform':'monitor closely'}`,
+    `8-week trend shows ${D.wad&&D.wad[7]>D.wad[0]?'growth in':'declining'} active users`
+  ]);
+  ins('s1-insight',[
+    {color:IND, txt:`WAD this week: ${D.lw_wad} unique distributors logged in`},
+    {color:GRN, txt:`Login success rate: ${D.lw_lr}% (prev week: ${D.pw_lr}%)`}
+  ]);
+
+  // Slide 2: Onboarding Funnel
+  const totSignups=D.funnel&&D.funnel[0]?D.funnel[0].count:0;
+  const bankVer=D.funnel&&D.funnel[4]?D.funnel[4].count:0;
+  set('s2-signups', D.lw_signups);
+  badge($('s2-signups-badge'), D.lw_signups-D.pw_signups);
+  set('s2-pw-signups', D.pw_signups);
+  set('s2-funnel-rate', D.funnel_rate+'%');
+  set('s2-tot-signups', totSignups);
+  tw('s2-takeaway',[
+    `${totSignups} total signups across the 8-week period`,
+    `${bankVer} completed full KYC (bank verified) — ${D.funnel_rate}% completion`,
+    `Largest drop-off at ${findDropOff(D.funnel)} step`
+  ]);
+  ins('s2-insight',[
+    {color:IND, txt:`Period signups: ${totSignups} → KYC complete: ${bankVer}`},
+    {color:AMB, txt:`Funnel completion rate: ${D.funnel_rate}%`}
+  ]);
+
+  // Slide 3: Investor Self-KYC
+  const totInvKyc=D.inv_kyc_funnel&&D.inv_kyc_funnel.length?D.inv_kyc_funnel[7].count:0;
+  const topFunnel=D.inv_kyc_funnel&&D.inv_kyc_funnel.length?D.inv_kyc_funnel[0].count:0;
+  set('s4-inv-kyc', D.lw_inv_kyc);
+  badge($('s4-inv-kyc-badge'), D.lw_inv_kyc-D.pw_inv_kyc);
+  set('s4-pw-inv-kyc', D.pw_inv_kyc);
+  set('s4-kyc-rate', D.inv_kyc_completion_rate+'%');
+  set('s4-tot-inv-kyc', totInvKyc);
+  tw('s4-takeaway',[
+    `${topFunnel} email links clicked → ${totInvKyc} KYC completions over 8 weeks`,
+    `End-to-end completion rate: ${D.inv_kyc_completion_rate}%`,
+    `Last week: ${D.lw_inv_kyc} KYC completions (prev: ${D.pw_inv_kyc})`
+  ]);
+  ins('s4-insight',[
+    {color:IND, txt:`KYC completions last week: ${D.lw_inv_kyc} (prev: ${D.pw_inv_kyc})`},
+    {color:GRN, txt:`Funnel completion rate: ${D.inv_kyc_completion_rate}%`}
+  ]);
+
+  // Slide 5: Platform Health
+  set('s5-overall', D.health_overall+'%');
+  set('s5-login', D.health_login+'%');
+  set('s5-kyc', D.health_kyc+'%');
+  set('s5-fd-h', D.health_fd+'%');
+  tw('s5-takeaway',[
+    `Overall platform health: ${D.health_overall}% (avg of 3 journey scores)`,
+    `Login: ${D.health_login}% · KYC: ${D.health_kyc}% · FD: ${D.health_fd}%`,
+    D.health_overall>=90?'Platform is healthy across all journeys':'Review the journey with the lowest score first'
+  ]);
+  ins('s5-insight',[
+    {color:GRN, txt:`Login health: ${D.health_login}%`},
+    {color:IND, txt:`KYC health: ${D.health_kyc}% · FD booking health: ${D.health_fd}%`}
+  ]);
+
+  // Slide 6: MF Engagement
+  const totMfViews=D.weekly_mf_views?D.weekly_mf_views.reduce((a,b)=>a+b,0):0;
+  set('s6-mf', D.lw_mf);
+  set('s6-onb-rate', D.mf_onb_rate+'%');
+  set('s6-tot-views', totMfViews);
+  tw('s6-takeaway',[
+    `${totMfViews} total MF page views over 8 weeks`,
+    `MF onboarding conversion: ${D.mf_onb_rate}%`,
+    `Last week: ${D.lw_mf} page views recorded`
+  ]);
+  ins('s6-insight',[
+    {color:VIO, txt:`MF page views last week: ${D.lw_mf}`},
+    {color:IND, txt:`MF onboarding conversion rate: ${D.mf_onb_rate}%`}
+  ]);
+}
+
+// ── Charts ─────────────────────────────────────────────────────────────────
+function initCharts(){
+  const wl=D.week_labels||[];
+
+  // Slide 1: WAD bar + login rate line (dual axis)
+  mkBarLine('c-wad', wl, D.wad||[], D.login_rate||[], 'WAD (Unique Logins)', 'Login Success Rate %', IND, GRN);
+
+  // Slide 2: Onboarding funnel horizontal bar
+  if(D.funnel&&D.funnel.length){
+    mkHBar('c-funnel',
+      D.funnel.map(f=>f.step),
+      D.funnel.map(f=>f.count),
+      D.funnel.map((_,i)=>[IND,VIO,'#6d28d9','#9333ea','#c026d3'][i]+'cc')
+    );
+  }
+
+  // Slide 3: Investor Self-KYC funnel horizontal bar
+  if(D.inv_kyc_funnel&&D.inv_kyc_funnel.length){
+    mkHBar('c-inv-kyc-funnel',
+      D.inv_kyc_funnel.map(f=>f.step),
+      D.inv_kyc_funnel.map(f=>f.count),
+      ['#312e81cc','#3730a3cc','#4338cacc','#4f46e5cc','#6d28d9cc','#7c3aedcc','#8b5cf6cc','#a78bfacc']
+    );
+  }
+
+  // Slide 5: Health scores horizontal bar
+  mkHBar('c-health',
+    ['Login Success','KYC Success','FD Booking'],
+    [D.health_login||0, D.health_kyc||0, D.health_fd||0],
+    [GRN+'cc', IND+'cc', VIO+'cc']
+  );
+
+  // Slide 6: MF views bar
+  mkBar('c-mf', wl, [
+    {label:'MF Page Views',data:D.weekly_mf_views||[],backgroundColor:VIO+'cc',borderColor:VIO,borderWidth:1,borderRadius:3}
+  ]);
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+let cur=0;
+function showSlide(n){
+  const slides=document.querySelectorAll('.slide');
+  slides.forEach((s,i)=>s.classList.toggle('active',i===n));
+  cur=n;
+  $('btn-prev').disabled=n===0;
+  $('btn-next').disabled=n===slides.length-1;
+  document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+function navigate(dir){
+  const slides=document.querySelectorAll('.slide');
+  const next=Math.max(0,Math.min(slides.length-1,cur+dir));
+  showSlide(next);
+}
+function initNav(){
+  const slides=document.querySelectorAll('.slide');
+  const dots=$('dots');
+  dots.innerHTML=Array.from(slides).map((_,i)=>`<button class="dot-btn" onclick="showSlide(${i})" title="Slide ${i+1}"></button>`).join('');
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')navigate(1);
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp')navigate(-1);
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  initNav();
+  populateSlides();
+  initCharts();
+  showSlide(0);
+});
+</script>
+</body>
+</html>
